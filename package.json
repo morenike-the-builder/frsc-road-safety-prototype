@@ -1,0 +1,19 @@
+{
+  "name": "frsc-road-safety-prototype",
+  "version": "1.0.0",
+  "description": "FRSC Road Safety & Responsible Mobility Interactive Prototype - Student learning experience",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python -m http.server 8000",
+    "start": "python -m http.server 8000"
+  },
+  "keywords": [
+    "FRSC",
+    "Road Safety",
+    "Nigeria",
+    "Driver Education",
+    "Cubbes"
+  ],
+  "author": "Morenike (Cubbes)",
+  "license": "MIT"
+}

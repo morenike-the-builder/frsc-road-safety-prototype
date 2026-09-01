@@ -1,0 +1,2216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cubbes - National Road Safety & Responsible Mobility Platform</title>
+<meta name="description" content="Cubbes FRSC Mobility Course — road safety education, simulation readiness, practical driving training, and the FRSC licensing pathway.">
+<meta name="theme-color" content="#1E3A8A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cubbes">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<style>
+:root {
+  --primary:#1E3A8A; --primary-light:#2563EB; --primary-bg:#EFF6FF; --accent:#0D9488;
+  --text-main:#0F172A; --text-muted:#64748B; --bg-canvas:#F8FAFC; --surface:#FFFFFF;
+  --border:#E2E8F0; --success:#16A34A; --success-bg:#DCFCE7; --warning:#D97706; --warning-bg:#FEF3C7;
+  --danger:#DC2626; --danger-bg:#FEE2E2;
+  --radius-lg:16px; --radius-md:12px; --radius-sm:8px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.05); --shadow-md:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+}
+* { box-sizing:border-box; margin:0; padding:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+body { background-color:var(--bg-canvas); color:var(--text-main); display:flex; justify-content:center; min-height:100vh; }
+.app-container { width:100%; max-width:480px; background:var(--surface); min-height:100vh; display:flex; flex-direction:column; position:relative; box-shadow:0 0 20px rgba(0,0,0,0.05); overflow:hidden; }
+.app-header { padding:14px 20px; background:var(--surface); border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:20; gap:10px; }
+.brand-logo { font-weight:800; font-size:20px; color:var(--primary); letter-spacing:-0.5px; display:flex; align-items:center; gap:8px; }
+.header-right { display:flex; align-items:center; gap:8px; }
+.streak-pill { display:flex; align-items:center; gap:4px; background:var(--warning-bg); padding:6px 10px; border-radius:20px; font-size:12px; font-weight:700; color:var(--warning); white-space:nowrap; }
+.user-badge { display:flex; align-items:center; gap:6px; background:var(--primary-bg); padding:6px 12px; border-radius:20px; font-size:13px; font-weight:600; color:var(--primary-light); white-space:nowrap; }
+.notif-bell { position:relative; width:34px; height:34px; border-radius:50%; background:var(--bg-canvas); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+.notif-count { position:absolute; top:-4px; right:-4px; background:var(--danger); color:white; font-size:10px; font-weight:700; min-width:16px; height:16px; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:0 3px; }
+.notif-panel { display:none; position:absolute; top:58px; right:12px; width:300px; max-height:400px; overflow-y:auto; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); box-shadow:var(--shadow-md); z-index:30; }
+.notif-panel-header { padding:12px 14px; font-size:13px; font-weight:700; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+.notif-item { padding:12px 14px; border-bottom:1px solid var(--border); cursor:pointer; }
+.notif-item:last-child { border-bottom:none; }
+.notif-item.unread { background:var(--primary-bg); }
+.notif-title { font-size:13px; font-weight:600; }
+.notif-message { font-size:12px; color:var(--text-muted); margin-top:2px; }
+.notif-time { font-size:10px; color:var(--text-muted); margin-top:4px; }
+.content-viewport { flex:1; padding:20px; padding-bottom:90px; overflow-y:auto; }
+.view-section { display:none; }
+.view-section.active { display:block; }
+.card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px; margin-bottom:16px; box-shadow:var(--shadow-sm); }
+.btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:14px; border-radius:var(--radius-md); font-size:15px; font-weight:600; border:none; cursor:pointer; transition:background 0.2s; }
+.btn-primary { background:var(--primary); color:white; }
+.btn-primary:hover { background:var(--primary-light); }
+.btn-primary:disabled { background:var(--border); color:var(--text-muted); cursor:not-allowed; }
+.btn-secondary { background:var(--primary-bg); color:var(--primary-light); }
+.btn-outline { background:transparent; border:1px solid var(--border); color:var(--text-main); }
+.section-title { font-size:18px; font-weight:700; color:var(--text-main); margin-bottom:12px; }
+.progress-banner { background:linear-gradient(135deg, var(--primary), var(--primary-light)); color:white; border-radius:var(--radius-lg); padding:20px; margin-bottom:20px; }
+.progress-bar { height:8px; background:rgba(255,255,255,0.3); border-radius:4px; overflow:hidden; margin-top:12px; }
+.progress-bar.light { background:var(--border); }
+.progress-fill { height:100%; background:white; }
+.progress-fill.colored { background:var(--primary-light); }
+.module-list { display:flex; flex-direction:column; gap:12px; }
+.module-item { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--surface); cursor:pointer; transition:border-color 0.2s; position:relative; }
+.module-item:hover { border-color:var(--primary-light); }
+.module-info { display:flex; align-items:center; gap:12px; }
+.module-number { width:32px; height:32px; border-radius:50%; background:var(--primary-bg); color:var(--primary); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0; }
+.module-title { font-size:14px; font-weight:600; }
+.module-item.future-module { opacity:0.65; cursor:not-allowed; border-style:dashed; }
+.future-tag { font-size:10px; font-weight:700; background:var(--warning-bg); color:var(--warning); padding:3px 8px; border-radius:10px; text-transform:uppercase; }
+.outcome-badge { display:inline-block; background:var(--primary-bg); color:var(--primary-light); font-size:11px; font-weight:700; padding:4px 8px; border-radius:4px; margin-bottom:8px; text-transform:uppercase; }
+.topic-pill-list { display:flex; flex-wrap:wrap; gap:6px; margin:12px 0; }
+.topic-pill { background:var(--bg-canvas); border:1px solid var(--border); padding:4px 10px; border-radius:12px; font-size:12px; color:var(--text-main); font-weight:500; }
+.quiz-option { border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; margin-top:8px; cursor:pointer; font-size:13px; transition:all 0.2s; }
+.quiz-option:hover { border-color:var(--primary-light); background:var(--primary-bg); }
+.ai-prompt-box { background:var(--primary-bg); border:1px solid rgba(37,99,235,0.2); border-radius:var(--radius-md); padding:16px; margin-top:16px; }
+.ai-header { display:flex; align-items:center; gap:8px; color:var(--primary-light); font-weight:700; font-size:14px; margin-bottom:10px; }
+.ai-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+.ai-tab-btn { font-size:11px; font-weight:700; padding:7px 10px; border-radius:16px; border:1px solid rgba(37,99,235,0.3); background:white; color:var(--primary-light); cursor:pointer; }
+.ai-tab-btn.active { background:var(--primary-light); color:white; border-color:var(--primary-light); }
+.app-body { flex:1; position:relative; overflow:hidden; display:flex; flex-direction:column; }
+.bottom-nav { position:absolute; bottom:0; width:100%; height:65px; background:var(--surface); border-top:1px solid var(--border); display:flex; justify-content:space-around; align-items:center; z-index:10; }
+.nav-item { display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--text-muted); font-size:10px; font-weight:500; text-decoration:none; cursor:pointer; border:none; background:none; flex:1; }
+.nav-item.active { color:var(--primary-light); font-weight:700; }
+
+/* ===================== RESPONSIVE: SIDEBAR NAV ON WIDER SCREENS =====================
+   Below 900px (phones/small tablets): bottom-fixed tab bar, single-column mobile card.
+   900px and up (desktop/web): the same nav becomes a left sidebar; content widens. */
+@media (min-width:900px) {
+  body { align-items:stretch; }
+  .app-container { max-width:1180px; margin:0 auto; box-shadow:none; border-left:1px solid var(--border); border-right:1px solid var(--border); }
+  .app-body { flex-direction:row; }
+  .bottom-nav {
+    position:static; order:-1; width:230px; height:auto; flex-shrink:0;
+    flex-direction:column; justify-content:flex-start; align-items:stretch;
+    border-top:none; border-right:1px solid var(--border); padding:20px 0; gap:4px;
+  }
+  .nav-item {
+    flex-direction:row; justify-content:flex-start; gap:14px; padding:12px 24px;
+    font-size:14px; flex:none;
+  }
+  .nav-item .icon-svg { width:22px; height:22px; }
+  .content-viewport { padding-bottom:24px; max-width:760px; margin:0 auto; width:100%; }
+}
+.icon-svg { display:inline-block; width:20px; height:20px; stroke-width:2; stroke:currentColor; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+.video-container { position:relative; width:100%; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:var(--radius-md); background:#000; margin-bottom:16px; }
+.video-container iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:none; border-radius:var(--radius-md); }
+.module-video-indicator { position:absolute; top:12px; right:12px; width:16px; height:16px; background:white; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--accent); font-size:10px; font-weight:700; }
+.lesson-sections { display:flex; gap:8px; margin-bottom:16px; border-bottom:1px solid var(--border); }
+.lesson-tab { padding:12px 16px; border:none; background:none; color:var(--text-muted); font-size:13px; font-weight:600; cursor:pointer; position:relative; border-bottom:3px solid transparent; transition:all 0.2s; }
+.lesson-tab.active { color:var(--primary-light); border-bottom-color:var(--primary-light); }
+.lesson-content { display:none; }
+.lesson-content.active { display:block; }
+.cubbes-toast { position:fixed; bottom:90px; left:50%; transform:translate(-50%, 20px); background:var(--text-main); color:white; padding:12px 18px; border-radius:24px; font-size:13px; font-weight:600; box-shadow:var(--shadow-md); z-index:100; opacity:0; transition:all 0.3s ease; max-width:90%; text-align:center; pointer-events:none; }
+.cubbes-toast.show { opacity:1; transform:translate(-50%, 0); }
+.badges-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; }
+.badge-tile { border:1px solid var(--border); border-radius:var(--radius-md); padding:12px 8px; text-align:center; background:var(--bg-canvas); }
+.badge-tile.earned { background:var(--success-bg); border-color:var(--success); }
+.badge-tile .badge-icon { font-size:26px; opacity:0.35; }
+.badge-tile.earned .badge-icon { opacity:1; }
+.badge-tile .badge-name { font-size:10px; font-weight:700; margin-top:6px; }
+.badge-tile .badge-desc { font-size:9px; color:var(--text-muted); margin-top:2px; }
+.leaderboard-row { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
+.leaderboard-row:last-child { border-bottom:none; }
+.leaderboard-row.you { background:var(--primary-bg); border-radius:var(--radius-sm); padding:10px 8px; }
+.lb-rank { width:24px; font-weight:700; font-size:13px; color:var(--text-muted); }
+.lb-name { font-size:13px; font-weight:600; }
+.lb-xp { font-size:12px; font-weight:700; color:var(--primary); }
+.drag-tray { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; min-height:44px; }
+.sign-chip { padding:8px 12px; border-radius:8px; border:2px solid var(--primary-light); background:white; font-size:12px; font-weight:700; cursor:grab; user-select:none; transition:background 0.3s; }
+.drop-zones { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+.drop-zone { min-height:90px; border:2px dashed var(--border); border-radius:var(--radius-sm); padding:8px; font-size:11px; font-weight:700; color:var(--text-muted); text-align:center; display:flex; flex-direction:column; align-items:center; gap:6px; }
+.drop-zone.regulatory { border-color:#DC2626; }
+.drop-zone.warning { border-color:var(--warning); }
+.drop-zone.informational { border-color:var(--primary-light); }
+.hazard-stage { background:#0F172A; color:white; border-radius:var(--radius-md); padding:30px 16px; text-align:center; margin-bottom:12px; min-height:100px; display:flex; align-items:center; justify-content:center; }
+.att-table { width:100%; font-size:12px; border-collapse:collapse; margin-top:10px; }
+.att-table th, .att-table td { text-align:left; padding:6px 4px; border-bottom:1px solid var(--border); }
+.certificate-frame { border:3px double var(--primary); border-radius:var(--radius-md); padding:26px 20px; text-align:center; background:linear-gradient(180deg, #ffffff, #F8FAFF); }
+.cert-qr { width:90px; height:90px; margin:14px auto 6px; border:1px solid var(--border); background-image:linear-gradient(45deg,#000 25%,transparent 25%),linear-gradient(-45deg,#000 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#000 75%),linear-gradient(-45deg,transparent 75%,#000 75%); background-size:12px 12px; background-position:0 0,0 6px,6px -6px,-6px 0; }
+.grad-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.grad-card { border:1px solid var(--border); border-radius:var(--radius-md); padding:12px; cursor:pointer; background:var(--surface); }
+.grad-card .grad-icon { font-size:22px; }
+.grad-card .grad-title { font-size:13px; font-weight:700; margin-top:6px; }
+.grad-card .grad-desc { font-size:11px; color:var(--text-muted); margin-top:4px; display:none; }
+.grad-card.open .grad-desc { display:block; }
+.checklist-row { display:flex; align-items:center; gap:10px; font-size:13px; padding:6px 0; cursor:pointer; }
+.avatar-circle { width:52px; height:52px; border-radius:50%; background:var(--primary); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:18px; flex-shrink:0; }
+.booking-summary-card { cursor:pointer; transition:border-color 0.2s; }
+.booking-summary-card:hover { border-color:var(--primary-light); }
+.accordion-header { display:flex; justify-content:space-between; align-items:center; cursor:pointer; padding:4px 0; }
+.chevron { transition:transform 0.2s; font-size:12px; color:var(--text-muted); }
+.chevron.open { transform:rotate(180deg); }
+.accordion-body { display:none; }
+.accordion-body.open { display:block; }
+.stepper-row { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); cursor:pointer; }
+.stepper-row:last-child { border-bottom:none; }
+.stepper-icon { width:30px; height:30px; border-radius:50%; background:var(--bg-canvas); border:1px solid var(--border); color:var(--text-muted); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px; flex-shrink:0; }
+.stepper-icon.done { background:var(--success); color:white; border-color:var(--success); }
+.tf-btns { display:flex; gap:10px; margin-top:6px; }
+.tf-btns label { flex:1; text-align:center; border:1px solid var(--border); border-radius:8px; padding:8px; font-size:12px; cursor:pointer; }
+.back-btn { width:auto; padding:8px 14px; margin-bottom:16px; font-size:13px; }
+
+/* Annotated module diagram — floating labeled callouts over a hand-drawn SVG scene */
+.diagram-frame { position:relative; width:100%; padding-bottom:50%; border-radius:var(--radius-md); overflow:hidden; background:var(--bg-canvas); margin-bottom:16px; border:1px solid var(--border); }
+.diagram-illustration { position:absolute; top:0; left:0; width:100%; height:100%; }
+.diagram-illustration svg { width:100%; height:100%; display:block; }
+.callout-wrap { position:absolute; display:flex; flex-direction:column; align-items:center; transform:translate(-50%, -100%); }
+.callout-chip { background:rgba(255,255,255,0.96); border:1px solid var(--border); border-radius:10px; padding:5px 9px; box-shadow:var(--shadow-sm); white-space:nowrap; margin-bottom:2px; }
+.callout-label { font-size:11px; font-weight:700; color:var(--text-main); line-height:1.2; }
+.callout-sub { font-size:9px; color:var(--text-muted); line-height:1.2; }
+.callout-connector { width:1px; height:22px; background:var(--border); }
+.callout-dot { width:8px; height:8px; border-radius:50%; border:2px solid white; margin-top:-4px; box-shadow:0 0 0 1px var(--border); }
+.callout-dot.dot-primary { background:var(--primary-light); }
+.callout-dot.dot-warning { background:var(--warning); }
+.callout-dot.dot-danger { background:#DC2626; }
+.callout-dot.dot-success { background:var(--success); }
+@media (max-width:380px){ .callout-sub { display:none; } }
+@media print { body * { visibility:hidden; } #view-certificate, #view-certificate * { visibility:visible; } #view-certificate { position:absolute; top:0; left:0; width:100%; } }
+</style>
+</head>
+<body>
+<div class="app-container">
+  <header class="app-header">
+    <div class="brand-logo">
+      <svg class="icon-svg" viewBox="0 0 24 24" style="color:var(--primary);"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+      Cubbes
+    </div>
+    <div class="header-right">
+      <div class="streak-pill" id="streak-pill">1 day</div>
+      <div class="user-badge"><span id="user-xp">0 XP</span></div>
+      <div class="notif-bell" onclick="toggleNotifPanel()">
+        <svg class="icon-svg" viewBox="0 0 24 24" style="width:18px;height:18px;color:var(--text-main);"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        <div class="notif-count" id="notif-count" style="display:none;">0</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="notif-panel" id="notif-panel">
+    <div class="notif-panel-header"><span>Notifications</span><span style="cursor:pointer; color:var(--primary-light); font-weight:600;" onclick="markAllNotifsRead()">Mark all read</span></div>
+    <div id="notif-list"></div>
+  </div>
+
+  <div class="app-body">
+  <main class="content-viewport">
+
+    <!-- HOME -->
+    <section id="view-home" class="view-section active">
+      <div class="progress-banner">
+        <span style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.9;">National Framework</span>
+        <h2 style="font-size:20px; margin-top:4px;">Road Safety & Responsible Mobility</h2>
+        <p style="font-size:13px; opacity:0.9; margin-top:6px;">FRSC Standardization Programme (DSSP) Aligned</p>
+        <div class="progress-bar"><div class="progress-fill" id="home-progress-fill" style="width:0%;"></div></div>
+        <div style="font-size:12px; margin-top:8px; display:flex; justify-content:space-between;">
+          <span id="home-progress-text">Progress: 0 / 15 Modules Completed</span>
+          <span id="home-progress-pct">0%</span>
+        </div>
+      </div>
+
+      <div class="section-title">Program Phases</div>
+
+      <div class="card" onclick="switchView('view-modules')" style="cursor:pointer;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <span id="phase1-tag" style="font-size:11px; font-weight:700; color:var(--primary-light); text-transform:uppercase;">Phase 1 • Active</span>
+            <h3 style="font-size:16px; margin-top:2px;">Digital Road Safety Education</h3>
+            <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">15 interactive modules + a 20-question final assessment.</p>
+          </div>
+          <svg class="icon-svg" viewBox="0 0 24 24" style="color:var(--primary-light);"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </div>
+
+      <div class="card" onclick="switchView('view-simulation')" style="cursor:pointer;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <span id="phase2-tag" style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Phase 2 • Locked</span>
+            <h3 style="font-size:16px; margin-top:2px;">Simulation & Driving Readiness</h3>
+            <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">Book a simulator session and pass your readiness assessment.</p>
+          </div>
+          <svg class="icon-svg" viewBox="0 0 24 24" style="color:var(--text-muted);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        </div>
+      </div>
+
+      <div class="card" onclick="switchView('view-practical')" style="cursor:pointer;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <span id="phase3-tag" style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Phase 3 • Locked</span>
+            <h3 style="font-size:16px; margin-top:2px;">Accredited Driving School</h3>
+            <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">On-road practical lessons with verified partners.</p>
+          </div>
+          <svg class="icon-svg" viewBox="0 0 24 24" style="color:var(--text-muted);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        </div>
+      </div>
+
+      <div class="card" onclick="switchView('view-tracker')" style="cursor:pointer;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <span id="phase4-tag" style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Phase 4 • Locked</span>
+            <h3 style="font-size:16px; margin-top:2px;">FRSC Licensing Pathway</h3>
+            <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">Official licence application, guided end-to-end.</p>
+          </div>
+          <svg class="icon-svg" viewBox="0 0 24 24" style="color:var(--text-muted);"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        </div>
+      </div>
+
+      <div class="card" onclick="switchView('view-profile')" style="cursor:pointer;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <span id="phase5-tag" style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Phase 5 • Preview</span>
+            <h3 style="font-size:16px; margin-top:2px;">Continuous Safe Driver Development</h3>
+            <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">Lifelong learning for licensed graduates — preview it anytime in your Profile.</p>
+          </div>
+          <svg class="icon-svg" viewBox="0 0 24 24" style="color:var(--text-muted);"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODULES LIST -->
+    <section id="view-modules" class="view-section">
+      <div class="section-title">Course Curriculum (15 Modules)</div>
+      <div class="module-list" id="modules-container"></div>
+    </section>
+
+    <!-- MODULE DETAIL -->
+    <section id="view-module-detail" class="view-section">
+      <button class="btn btn-secondary back-btn" onclick="switchView('view-modules')">
+        <svg class="icon-svg" viewBox="0 0 24 24" style="width:16px;height:16px;"><polyline points="15 18 9 12 15 6"></polyline></svg> Back to Modules
+      </button>
+      <div id="module-detail-container"></div>
+    </section>
+
+    <!-- BOOKINGS HUB -->
+    <section id="view-booking" class="view-section">
+      <div class="section-title">Training Pathway</div>
+      <div class="card booking-summary-card" onclick="switchView('view-simulation')">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="flex:1;">
+            <div style="font-size:14px; font-weight:700;">Phase 2 · Simulation & Driving Readiness</div>
+            <div id="sim-summary-status" style="font-size:12px; color:var(--text-muted); margin-top:2px;">Loading...</div>
+          </div>
+          <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </div>
+      <div class="card booking-summary-card" onclick="switchView('view-practical')">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="flex:1;">
+            <div style="font-size:14px; font-weight:700;">Phase 3 · Practical Driving Training</div>
+            <div id="practical-summary-status" style="font-size:12px; color:var(--text-muted); margin-top:2px;">Loading...</div>
+          </div>
+          <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- PHASE 2 DETAIL -->
+    <section id="view-simulation" class="view-section">
+      <button class="btn btn-secondary back-btn" onclick="switchView('view-booking')">
+        <svg class="icon-svg" viewBox="0 0 24 24" style="width:16px;height:16px;"><polyline points="15 18 9 12 15 6"></polyline></svg> Back
+      </button>
+      <div class="section-title">Phase 2: Simulation & Driving Readiness</div>
+      <div class="card">
+        <p style="font-size:13px; color:var(--text-main);">Structured simulator-based learning to build hazard awareness and confidence before real-world driving.</p>
+        <div class="accordion-header" onclick="toggleAccordion('sim-activities')">
+          <span style="font-size:12px; font-weight:700;">What you'll practice</span>
+          <span class="chevron" id="sim-activities-chevron">▾</span>
+        </div>
+        <div class="accordion-body" id="sim-activities-body">
+          <div style="font-size:12px; color:var(--text-muted); line-height:1.8; padding-top:8px;">Vehicle Familiarisation • Steering & Control • Hazard Perception • Junction Navigation • Parking & Lane Discipline • Night/Wet-Weather Scenarios • Emergency Braking • Decision-Making Exercises</div>
+        </div>
+      </div>
+      <div class="card" id="simulator-booking-card"></div>
+      <div class="card" id="readiness-assessment-card"></div>
+    </section>
+
+    <!-- PHASE 3 DETAIL -->
+    <section id="view-practical" class="view-section">
+      <button class="btn btn-secondary back-btn" onclick="switchView('view-booking')">
+        <svg class="icon-svg" viewBox="0 0 24 24" style="width:16px;height:16px;"><polyline points="15 18 9 12 15 6"></polyline></svg> Back
+      </button>
+      <div class="section-title">Phase 3: Practical Driving Training</div>
+      <div class="card">
+        <p style="font-size:13px; color:var(--text-main);">On-road instruction with an accredited driving school partner — vehicle handling, urban/highway driving, defensive practice, parking, and a final competency sign-off.</p>
+        <div class="accordion-header" onclick="toggleAccordion('prac-curriculum')">
+          <span style="font-size:12px; font-weight:700;">Training curriculum</span>
+          <span class="chevron" id="prac-curriculum-chevron">▾</span>
+        </div>
+        <div class="accordion-body" id="prac-curriculum-body">
+          <div style="font-size:12px; color:var(--text-muted); line-height:1.8; padding-top:8px;">Vehicle Handling • Urban Driving • Highway Driving • Defensive Driving Practice • Parking Techniques • Reversing • Traffic Interaction • Practical Competency Assessment</div>
+        </div>
+      </div>
+      <div class="card" id="driving-school-card"></div>
+      <div class="card" id="attendance-card" style="display:none;"></div>
+    </section>
+
+    <!-- TRACKER -->
+    <section id="view-tracker" class="view-section">
+      <div class="section-title">FRSC Licensing Pathway Tracker</div>
+      <div class="card" id="tracker-hero"></div>
+      <div class="card"><div id="tracker-stepper"></div></div>
+
+      <div class="card">
+        <div class="accordion-header" onclick="toggleAccordion('outstanding')">
+          <span style="font-size:13px; font-weight:700;">Outstanding Requirements</span>
+          <span class="chevron open" id="outstanding-chevron">▾</span>
+        </div>
+        <div class="accordion-body open" id="outstanding-body"><div id="outstanding-card" style="margin-top:8px;"></div></div>
+      </div>
+
+      <div class="card">
+        <div class="accordion-header" onclick="toggleAccordion('checklist')">
+          <span style="font-size:13px; font-weight:700;">Pre-Licensing Checklist</span>
+          <span class="chevron" id="checklist-chevron">▾</span>
+        </div>
+        <div class="accordion-body" id="checklist-body"><div id="checklist-card" style="margin-top:8px;"></div></div>
+      </div>
+
+      <div class="card" id="licensing-stage-card"></div>
+    </section>
+
+    <!-- CERTIFICATE -->
+    <section id="view-certificate" class="view-section">
+      <button class="btn btn-secondary back-btn" onclick="switchView('view-tracker')">
+        <svg class="icon-svg" viewBox="0 0 24 24" style="width:16px;height:16px;"><polyline points="15 18 9 12 15 6"></polyline></svg> Back to Tracker
+      </button>
+      <div id="certificate-container"></div>
+    </section>
+
+    <!-- PROFILE -->
+    <section id="view-profile" class="view-section">
+      <div class="section-title">Your Profile</div>
+      <div class="card" id="profile-header-card"></div>
+
+      <div class="section-title">Institution Leaderboard</div>
+      <div class="card" id="leaderboard-card"></div>
+
+      <div class="section-title">Your Badges</div>
+      <div class="card"><div class="badges-grid" id="badges-grid"></div></div>
+
+      <div class="section-title">Review My Performance</div>
+      <div class="card">
+        <button class="btn btn-secondary" onclick="renderPerformanceReview()">Ask Cubbes AI: Review My Performance</button>
+        <div id="performance-review-output" style="margin-top:10px; font-size:13px; color:var(--primary); font-style:italic;"></div>
+      </div>
+
+      <div class="section-title">Continuous Safe Driver Development</div>
+      <div id="graduate-container"></div>
+
+      <div style="text-align:center; margin-top:10px;">
+        <button class="btn btn-outline" style="width:auto; padding:8px 16px; font-size:12px;" onclick="resetProgress()">Reset Progress (Debug)</button>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-idx="0" onclick="switchView('view-home')">
+      <svg class="icon-svg" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>Home
+    </button>
+    <button class="nav-item" data-idx="1" onclick="switchView('view-modules')">
+      <svg class="icon-svg" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>Learn
+    </button>
+    <button class="nav-item" data-idx="2" onclick="switchView('view-booking')">
+      <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>Bookings
+    </button>
+    <button class="nav-item" data-idx="3" onclick="switchView('view-tracker')">
+      <svg class="icon-svg" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>Tracker
+    </button>
+    <button class="nav-item" data-idx="4" onclick="switchView('view-profile')">
+      <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>Profile
+    </button>
+  </nav>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   CUBBES FRSC MOBILITY COURSE — APPLICATION ENGINE
+   ========================================================================= */
+
+// ---------------------------------------------------------------------
+// MODULE DATA (modules 1-14 standard; module 15 is a 20-question final exam)
+// ---------------------------------------------------------------------
+const modulesData = [
+  { id:1, title:"Introduction to Road Safety", frscAlignment:"Road Safety Foundations",
+    videoUrl:"https://www.youtube.com/embed/dQw4w9WgXcQ", videoDuration:"8:42",
+    outcomes:["Understand the importance of road safety","Recognise common causes of road crashes","Appreciate the responsibilities of all road users","Understand the role of FRSC"],
+    topics:["Road Safety Fundamentals","Vulnerable Road Users","Role of FRSC"],
+    content:"Road safety is a shared responsibility among all road users, including drivers, pedestrians, cyclists, and motorcyclists. The Federal Road Safety Corps (FRSC) acts as the primary regulatory body in Nigeria, enforcing traffic laws and establishing safety standards to prevent crashes.",
+    quiz:{ question:"What is the primary operational role of the Federal Road Safety Corps (FRSC) in Nigeria?", options:["Vehicle sales tax collection","Enforcing traffic laws & crash prevention","Constructing federal highways","Issuing commercial shipping permits"], correct:1 },
+    practice:{ question:"Which group is considered a 'vulnerable road user'?", options:["Truck drivers","Pedestrians, cyclists and motorcyclists","Bus companies","Toll booth operators"], correct:1 },
+    diagram:{
+      svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="200" fill="#F8FAFC"/>
+        <rect x="0" y="0" width="400" height="34" fill="#E2E8F0"/>
+        <rect x="0" y="34" width="400" height="26" fill="#BBF7D0"/>
+        <rect x="0" y="60" width="400" height="140" fill="#94A3B8"/>
+        <line x1="0" y1="130" x2="400" y2="130" stroke="#FACC15" stroke-width="3" stroke-dasharray="14 10"/>
+        <circle cx="55" cy="16" r="8" fill="#0F172A"/>
+        <line x1="55" y1="24" x2="55" y2="42" stroke="#0F172A" stroke-width="4"/>
+        <circle cx="150" cy="60" r="10" fill="#0F172A"/>
+        <circle cx="176" cy="60" r="10" fill="#0F172A"/>
+        <line x1="150" y1="60" x2="163" y2="42" stroke="#16A34A" stroke-width="4"/>
+        <line x1="176" y1="60" x2="163" y2="42" stroke="#16A34A" stroke-width="4"/>
+        <circle cx="163" cy="34" r="7" fill="#16A34A"/>
+        <rect x="270" y="95" width="70" height="30" rx="8" fill="#2563EB"/>
+        <rect x="285" y="82" width="40" height="20" rx="6" fill="#2563EB"/>
+        <circle cx="288" cy="128" r="8" fill="#0F172A"/>
+        <circle cx="322" cy="128" r="8" fill="#0F172A"/>
+        <circle cx="360" cy="115" r="9" fill="#0F172A"/>
+        <circle cx="340" cy="115" r="9" fill="#0F172A"/>
+        <rect x="335" y="98" width="30" height="16" rx="4" fill="#D97706"/>
+      </svg>`,
+      callouts:[
+        { top:8, left:14, label:"Pedestrians", sub:"Use sidewalks & crossings", color:"success" },
+        { top:17, left:41, label:"Cyclists", sub:"Dedicated lanes where available", color:"success" },
+        { top:41, left:80, label:"Motorists & Motorcyclists", sub:"Share the road responsibly", color:"primary" }
+      ]
+    } },
+
+  { id:2, title:"Driver Orientation & Responsible Mobility", frscAlignment:"Driver Orientation",
+    videoUrl:"https://www.youtube.com/embed/2-D81tpEzp0", videoDuration:"7:15",
+    outcomes:["Understand driver responsibility","Build risk awareness","Practice responsible mobility","Make safe decisions"],
+    topics:["Driver Responsibility","Risk Awareness","Responsible Mobility","Safe Decision-Making"],
+    content:"Responsible mobility begins before turning the ignition key. Drivers must cultivate situational awareness, emotional discipline, and respect for other commuters. Safe drivers prioritize risk avoidance over speed or aggressive overtaking.",
+    quiz:{ question:"Which attitude represents safe and responsible mobility on public roads?", options:["Asserting right-of-way by force","Prioritizing hazard avoidance over speed","Using horn constantly to clear traffic","Tailgating slow vehicles"], correct:1 },
+    practice:{ question:"Responsible mobility begins:", options:["Only after a crash occurs","Before the ignition key is even turned","Only on highways","Only when police are present"], correct:1 },
+    diagram:{
+      svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="200" fill="#0F172A"/>
+        <path d="M0,180 Q200,140 400,180 L400,200 L0,200 Z" fill="#1E293B"/>
+        <rect x="150" y="20" width="100" height="26" rx="6" fill="#334155" stroke="#64748B" stroke-width="2"/>
+        <rect x="160" y="27" width="80" height="12" rx="3" fill="#94A3B8"/>
+        <circle cx="200" cy="140" r="46" fill="none" stroke="#475569" stroke-width="10"/>
+        <circle cx="200" cy="140" r="46" fill="none" stroke="#2563EB" stroke-width="10" stroke-dasharray="40 250"/>
+        <line x1="200" y1="140" x2="200" y2="96" stroke="#94A3B8" stroke-width="6"/>
+        <line x1="200" y1="140" x2="166" y2="162" stroke="#94A3B8" stroke-width="6"/>
+        <line x1="200" y1="140" x2="234" y2="162" stroke="#94A3B8" stroke-width="6"/>
+        <path d="M70,130 Q60,80 90,55" fill="none" stroke="#DC2626" stroke-width="6" stroke-linecap="round"/>
+        <rect x="55" y="110" width="45" height="60" rx="10" fill="#334155"/>
+      </svg>`,
+      callouts:[
+        { top:8, left:50, label:"Mirror Check", sub:"Adjust before moving off", color:"primary" },
+        { top:44, left:50, label:"Hands on the Wheel", sub:"Steady, controlled steering", color:"primary" },
+        { top:38, left:18, label:"Seatbelt On", sub:"Buckle up before driving", color:"danger" }
+      ]
+    } },
+
+  { id:3, title:"Traffic Signs & Road Markings", frscAlignment:"Road Signs & Markings",
+    videoUrl:"https://www.youtube.com/embed/jNQXAC9IVRw", videoDuration:"9:05",
+    outcomes:["Identify regulatory signs","Interpret warning signs","Understand informational signs","Read pavement markings and signals"],
+    topics:["Regulatory Signs","Warning Signs","Informational Signs","Road Markings","Traffic Signals"],
+    content:"Traffic signs are categorized into three groups: Regulatory Signs (Circular — mandatory/prohibitory), Warning Signs (Triangular — alerts to hazards ahead), and Informational Signs (Rectangular — directions and routes). Solid double yellow lines prohibit overtaking.",
+    quiz:{ question:"What shape are regulatory traffic signs that give mandatory commands under FRSC standard?", options:["Triangular","Circular","Rectangular","Diamond-shaped"], correct:1 },
+    practice:{ question:"A triangular sign on Nigerian roads typically indicates:", options:["A mandatory command","An informational direction","A warning of a hazard ahead","A parking zone"], correct:2 },
+    dragDrop:true,
+    diagram:{
+      svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="400" height="140" fill="#EFF6FF"/>
+        <rect x="0" y="140" width="400" height="60" fill="#94A3B8"/>
+        <line x1="0" y1="170" x2="400" y2="170" stroke="#FACC15" stroke-width="3" stroke-dasharray="14 10"/>
+        <line x1="80" y1="140" x2="80" y2="95" stroke="#64748B" stroke-width="4"/>
+        <circle cx="80" cy="76" r="24" fill="#FFFFFF" stroke="#DC2626" stroke-width="5"/>
+        <line x1="66" y1="76" x2="94" y2="76" stroke="#DC2626" stroke-width="5"/>
+        <line x1="200" y1="140" x2="200" y2="100" stroke="#64748B" stroke-width="4"/>
+        <polygon points="200,58 176,98 224,98" fill="#FEF3C7" stroke="#D97706" stroke-width="5" stroke-linejoin="round"/>
+        <text x="200" y="93" text-anchor="middle" font-size="20" font-weight="700" fill="#D97706">!</text>
+        <line x1="320" y1="140" x2="320" y2="100" stroke="#64748B" stroke-width="4"/>
+        <rect x="290" y="62" width="60" height="38" rx="4" fill="#2563EB"/>
+        <rect x="298" y="73" width="44" height="6" rx="2" fill="#FFFFFF"/>
+        <rect x="298" y="84" width="30" height="6" rx="2" fill="#FFFFFF"/>
+      </svg>`,
+      callouts:[
+        { top:26, left:20, label:"Regulatory", sub:"Circular = Mandatory", color:"danger" },
+        { top:27, left:50, label:"Warning", sub:"Triangular = Hazard Ahead", color:"warning" },
+        { top:29, left:80, label:"Informational", sub:"Rectangular = Directions", color:"primary" }
+      ]
+    } },
+
+  { id:4, title:"Road Traffic Laws & Rules", frscAlignment:"Road Traffic Laws",
+    videoUrl:"https://www.youtube.com/embed/E8JkYrKm7_8", videoDuration:"7:30",
+    outcomes:["Understand right-of-way rules","Comply with speed limits","Practice proper lane discipline","Respect parking regulations and pedestrian responsibilities"],
+    topics:["Right of Way","Speed Limits","Lane Discipline","Parking Regulations","Pedestrian Responsibilities"],
+    content:"Traffic rules ensure orderly vehicular flow. Statutory speed limits in Nigeria dictate maximum speeds: 100 km/h on expressways, 80 km/h on highways, and 50 km/h in built-up urban zones unless indicated otherwise by signage.",
+    quiz:{ question:"What is the standard national speed limit for private cars on Nigerian expressways?", options:["80 km/h","100 km/h","120 km/h","60 km/h"], correct:1 },
+    practice:{ question:"In a built-up urban zone with no other signage, the standard speed limit is:", options:["50 km/h","80 km/h","100 km/h","No limit"], correct:0 },
+    diagram:{
+      svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="200" fill="#F8FAFC"/>
+        <rect x="0" y="80" width="400" height="55" fill="#94A3B8"/>
+        <rect x="170" y="0" width="60" height="200" fill="#94A3B8"/>
+        <line x1="0" y1="107" x2="400" y2="107" stroke="#FACC15" stroke-width="3" stroke-dasharray="14 10"/>
+        <line x1="200" y1="0" x2="200" y2="200" stroke="#FACC15" stroke-width="3" stroke-dasharray="14 10"/>
+        <circle cx="310" cy="45" r="24" fill="#FFFFFF" stroke="#DC2626" stroke-width="5"/>
+        <text x="310" y="52" text-anchor="middle" font-size="18" font-weight="700" fill="#0F172A">50</text>
+        <path d="M20,170 L60,170 M20,175 L55,175 M20,180 L60,180" stroke="#FACC15" stroke-width="4"/>
+        <rect x="10" y="160" width="70" height="30" fill="none" stroke="#DC2626" stroke-width="3" stroke-dasharray="6 4"/>
+      </svg>`,
+      callouts:[
+        { top:37, left:50, label:"Right of Way", sub:"Yield appropriately at junctions", color:"primary" },
+        { top:11, left:78, label:"Speed Limit", sub:"Obey posted limits", color:"danger" },
+        { top:80, left:12, label:"No Parking Zone", sub:"Respect road markings", color:"warning" }
+      ]
+    } },
+
+  { id:5, title:"Road Traffic Crashes: Causes, Prevention & Responsibility", frscAlignment:"Crash Prevention",
+    videoUrl:"https://www.youtube.com/embed/7r6g2hf7PtQ", videoDuration:"10:20",
+    outcomes:["Identify common causes of crashes","Understand human factors","Apply crash-prevention habits","Take personal responsibility for behavioural change"],
+    topics:["Common Causes","Human Factors","Crash Prevention","Personal Responsibility"],
+    content:"Over 80% of road crashes stem from human error, including speeding, loss of control, dangerous overtaking, and distracted driving. Proactive vehicle checks and disciplined driving significantly diminish crash probability.",
+    quiz:{ question:"Which factor contributes to the vast majority of recorded traffic crashes?", options:["Severe weather conditions","Human error & driver behavior","Unmapped roads","Daylight glare"], correct:1 },
+    practice:{ question:"Personal responsibility for crash prevention mainly involves:", options:["Blaming other drivers","Behavioural change and disciplined driving habits","Buying a bigger vehicle","Avoiding driving lessons"], correct:1 },
+    scenario:{ situation:"You're driving and notice the car ahead braking erratically. What's the responsible response?",
+      choices:[
+        {text:"Overtake quickly to get away from them", correct:false, outcome:"Risky — overtaking into uncertainty increases crash risk. Increase following distance instead."},
+        {text:"Increase your following distance and stay alert", correct:true, outcome:"Correct. Defensive spacing gives you time to react safely."},
+        {text:"Flash your headlights repeatedly", correct:false, outcome:"This doesn't address the hazard — it may distract you from watching the road."}
+      ] },
+    diagram:{
+      svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="200" fill="#F8FAFC"/>
+        <rect x="0" y="90" width="400" height="80" fill="#94A3B8"/>
+        <line x1="0" y1="130" x2="400" y2="130" stroke="#FACC15" stroke-width="3" stroke-dasharray="14 10"/>
+        <path d="M60,150 Q110,140 90,115 Q75,98 120,100" fill="none" stroke="#0F172A" stroke-width="4" stroke-linecap="round" opacity="0.55"/>
+        <g transform="rotate(-8 120 118)">
+          <rect x="90" y="103" width="70" height="30" rx="8" fill="#DC2626"/>
+          <rect x="105" y="90" width="40" height="20" rx="6" fill="#DC2626"/>
+          <circle cx="108" cy="136" r="8" fill="#0F172A"/>
+          <circle cx="142" cy="136" r="8" fill="#0F172A"/>
+        </g>
+        <circle cx="131" cy="98" r="9" fill="#FFFFFF" stroke="#0F172A" stroke-width="2"/>
+        <rect x="126" y="94" width="10" height="7" rx="2" fill="#0F172A"/>
+        <line x1="230" y1="145" x2="300" y2="145" stroke="#0F172A" stroke-width="2" stroke-dasharray="4 4"/>
+        <rect x="300" y="112" width="70" height="30" rx="8" fill="#16A34A"/>
+        <rect x="315" y="99" width="40" height="20" rx="6" fill="#16A34A"/>
+        <circle cx="318" cy="145" r="8" fill="#0F172A"/>
+        <circle cx="352" cy="145" r="8" fill="#0F172A"/>
+      </svg>`,
+      callouts:[
+        { top:47, left:33, label:"Distraction", sub:"Divides attention from the road", color:"danger" },
+        { top:44, left:20, label:"Loss of Control", sub:"Speeding & sudden manoeuvres", color:"danger" },
+        { top:56, left:66, label:"Safe Stopping Distance", sub:"Reduces crash severity", color:"success" }
+      ]
+    } },
+
+  { id:6, title:"Defensive Driving Techniques", frscAlignment:"Defensive Driving",
+    videoUrl:"https://www.youtube.com/embed/4N8w2P_PqAw", videoDuration:"8:15",
+    outcomes:["Master hazard perception","Maintain safe following distance","Anticipate risk","Manage distractions and make defensive decisions"],
+    topics:["Hazard Perception","Safe Following Distance","Anticipating Risk","Managing Distractions"],
+    content:"Defensive driving means driving to save lives, time, and money, regardless of conditions or the actions of others. Always maintain at least a 3-second following distance behind the lead vehicle under normal weather conditions.",
+    quiz:{ question:"What is the recommended minimum following distance behind a vehicle under ideal road conditions?", options:["1 Second","3 Seconds","5 Seconds","10 Seconds"], correct:1 },
+    practice:{ question:"Defensive driving primarily means driving:", options:["As fast as traffic allows","To save lives, time and money regardless of others' actions","Only in daylight","With minimal mirror checks"], correct:1 },
+    scenario:{ situation:"A distraction (phone notification) buzzes while you're driving in traffic. What's the defensive choice?",
+      choices:[
+        {text:"Check it quickly at a red light only", correct:false, outcome:"Better than while moving, but still a distraction near traffic — full attention should return before moving again."},
+        {text:"Ignore it completely until you're safely parked", correct:true, outcome:"Correct. Full attention on the road is the defensive choice."},
+        {text:"Ask a passenger to read it to you while driving", correct:false, outcome:"Even listening can divide attention — safest to wait until stopped."}
+      ] },
+    diagram:{
+      svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="400" height="200" fill="#F8FAFC"/>
+        <rect x="0" y="70" width="400" height="90" fill="#94A3B8"/>
+        <line x1="0" y1="115" x2="400" y2="115" stroke="#FACC15" stroke-width="3" stroke-dasharray="14 10"/>
+        <polygon points="330,95 400,58 400,132" fill="#FDE68A" opacity="0.55"/>
+        <rect x="40" y="95" width="70" height="30" rx="8" fill="#2563EB"/>
+        <rect x="55" y="82" width="40" height="20" rx="6" fill="#2563EB"/>
+        <circle cx="58" cy="128" r="8" fill="#0F172A"/>
+        <circle cx="92" cy="128" r="8" fill="#0F172A"/>
+        <line x1="115" y1="110" x2="245" y2="110" stroke="#0F172A" stroke-width="2" stroke-dasharray="4 4"/>
+        <rect x="250" y="95" width="70" height="30" rx="8" fill="#16A34A"/>
+        <rect x="265" y="82" width="40" height="20" rx="6" fill="#16A34A"/>
+        <circle cx="268" cy="128" r="8" fill="#0F172A"/>
+        <circle cx="302" cy="128" r="8" fill="#0F172A"/>
+      </svg>`,
+      callouts:[
+        { top:45, left:45, label:"Safe Following Distance", sub:"3-second minimum gap", color:"primary" },
+        { top:29, left:88, label:"Hazard Scanning Zone", sub:"Scan well ahead", color:"warning" },
+        { top:41, left:16, label:"Mirror & Blind Spot Check", sub:"Before any manoeuvre", color:"success" }
+      ]
+    } },
+
+  { id:7, title:"Sharing the Road Responsibly", frscAlignment:"Sharing the Road",
+    videoUrl:"https://www.youtube.com/embed/tYzd0MY0ywY", videoDuration:"6:45",
+    outcomes:["Safely interact with pedestrians","Understand commercial vehicle blind spots","Respect motorcyclists & cyclists","Yield to emergency vehicles"],
+    topics:["Pedestrians","Cyclists","Commercial Vehicles","Emergency Vehicles","Motorcyclists"],
+    content:"Roads are shared ecosystems. Large commercial vehicles have massive blind spots known as 'No-Zones' along their sides, rear, and front. Drivers must immediately pull over to the right when emergency vehicles approach with sirens active.",
+    quiz:{ question:"What should a driver do when an emergency vehicle with active sirens approaches from behind?", options:["Accelerate to stay ahead","Safely pull over to yield space","Honk horn to clear front traffic","Maintain speed and lane"], correct:1 },
+    practice:{ question:"'No-Zones' refer to:", options:["Areas where parking is free","Blind spots around large commercial vehicles","Speed-limit-free zones","Pedestrian-only streets"], correct:1 },
+    scenario:{ situation:"You're beside a large truck at a junction and need to turn the same direction it's signalling to turn. What should you do?",
+      choices:[
+        {text:"Squeeze past quickly before it turns", correct:false, outcome:"Dangerous — you may be in its blind spot ('No-Zone') and it may not see you."},
+        {text:"Hold back and let the truck complete its turn first", correct:true, outcome:"Correct. Staying out of the No-Zone until the truck clears is the safe choice."},
+        {text:"Honk continuously to alert the driver", correct:false, outcome:"Doesn't remove the blind-spot risk — positioning safely is what matters."}
+      ] },
+    diagram:{
+      svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="200" fill="#F8FAFC"/>
+        <rect x="0" y="90" width="400" height="80" fill="#94A3B8"/>
+        <line x1="0" y1="130" x2="400" y2="130" stroke="#FACC15" stroke-width="3" stroke-dasharray="14 10"/>
+        <polygon points="60,95 220,95 220,165 60,165" fill="#FCA5A5" opacity="0.4"/>
+        <rect x="60" y="95" width="160" height="70" rx="6" fill="#64748B"/>
+        <rect x="70" y="80" width="60" height="20" rx="4" fill="#64748B"/>
+        <circle cx="90" cy="168" r="10" fill="#0F172A"/>
+        <circle cx="190" cy="168" r="10" fill="#0F172A"/>
+        <circle cx="300" cy="80" r="9" fill="#0F172A"/>
+        <circle cx="280" cy="80" r="9" fill="#0F172A"/>
+        <rect x="278" y="63" width="26" height="14" rx="3" fill="#DC2626"/>
+        <rect x="255" y="60" width="70" height="24" rx="6" fill="#DC2626"/>
+        <circle cx="345" cy="130" r="9" fill="#0F172A"/>
+        <line x1="345" y1="121" x2="345" y2="105" stroke="#0F172A" stroke-width="4"/>
+        <circle cx="345" cy="98" r="7" fill="#0F172A"/>
+      </svg>`,
+      callouts:[
+        { top:47, left:35, label:"Truck Blind Spot", sub:"Stay out of the 'No-Zone'", color:"danger" },
+        { top:31, left:72, label:"Emergency Vehicle", sub:"Give way immediately", color:"danger" },
+        { top:50, left:86, label:"Motorcyclists", sub:"Extra following distance", color:"warning" }
+      ]
+    } },
+
+  { id:8, title:"Vehicle Familiarisation & Basic Maintenance", frscAlignment:"Vehicle Mechanisms, Maintenance & Tyres",
+    videoUrl:"https://www.youtube.com/embed/_KaaDEL3YqM", videoDuration:"11:30",
+    outcomes:["Identify vehicle controls & dashboard indicators","Inspect tyre safety","Perform routine vehicle checks","Understand basic maintenance"],
+    topics:["Vehicle Controls","Dashboard Indicators","Tyre Safety","Routine Inspections"],
+    content:"Before driving, perform the daily 'FORCES' check: Fuel, Oil, Rubber (Tyres), Coolant, Electrics, and Steering. Never drive on tyres with a tread depth lower than 1.6mm or tyres past their manufacture expiration date.",
+    quiz:{ question:"What does the 'R' in the daily pre-drive vehicle safety check acronym stand for?", options:["Radiator","Rubber (Tyres)","Reverse gear","Rear light"], correct:1 },
+    practice:{ question:"The minimum legal tyre tread depth referenced in this module is:", options:["0.5mm","1.6mm","5mm","No minimum"], correct:1 },
+    diagram:{
+      svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="200" fill="#F8FAFC"/>
+        <rect x="0" y="150" width="400" height="6" fill="#E2E8F0"/>
+        <path d="M40,140 Q40,110 70,105 L140,80 Q160,70 190,70 L280,70 Q320,70 340,100 L360,140 Z" fill="#2563EB"/>
+        <path d="M150,80 L185,80 Q195,80 198,90 L200,105 L150,105 Z" fill="#DBEAFE"/>
+        <path d="M210,80 L270,80 Q290,80 300,100 L305,105 L210,105 Z" fill="#DBEAFE"/>
+        <rect x="145" y="93" width="12" height="7" rx="2" fill="#0F172A"/>
+        <circle cx="352" cy="120" r="8" fill="#FDE68A"/>
+        <circle cx="105" cy="145" r="22" fill="#0F172A"/>
+        <circle cx="105" cy="145" r="9" fill="#94A3B8"/>
+        <circle cx="300" cy="145" r="22" fill="#0F172A"/>
+        <circle cx="300" cy="145" r="9" fill="#94A3B8"/>
+      </svg>`,
+      callouts:[
+        { top:61, left:26, label:"Tyres", sub:"Check tread & pressure", color:"primary" },
+        { top:35, left:50, label:"Dashboard & Windscreen", sub:"Watch warning lights", color:"warning" },
+        { top:41, left:38, label:"Mirrors", sub:"Check before moving off", color:"success" },
+        { top:52, left:88, label:"Headlights", sub:"Check both are working", color:"primary" }
+      ]
+    } },
+
+  { id:9, title:"Driving in Special Conditions", frscAlignment:"Special Driving Conditions",
+    videoUrl:"https://www.youtube.com/embed/C6S1oYGu0uo", videoDuration:"9:50",
+    outcomes:["Navigate heavy rain and hydroplaning","Drive safely at night","Handle flooded roads","Navigate construction zones"],
+    topics:["Night Driving","Hydroplaning Avoidance","Flooded Roads","Construction Zones"],
+    content:"Driving in severe weather demands reduced speeds and increased headlight visibility. If encountering flooded roads, do not attempt to cross if water depth is unknown — flowing water can easily sweep away light vehicles.",
+    quiz:{ question:"What is the safest action when encountering a deep, flooded road section with unknown depth?", options:["Drive through fast to maintain momentum","Turn around and seek an alternative route","Follow tailpipes of heavy trucks","Turn on hazard lights and cross"], correct:1 },
+    practice:{ question:"Hydroplaning is best avoided by:", options:["Driving faster through puddles","Reducing speed in wet conditions","Braking hard in standing water","Using cruise control in rain"], correct:1 },
+    scenario:{ situation:"It's raining heavily at night and visibility is poor. What's the safest combination of actions?",
+      choices:[
+        {text:"Use high beams and maintain normal speed", correct:false, outcome:"High beams can worsen glare in rain; normal speed is too fast for reduced visibility."},
+        {text:"Reduce speed, use low beams, increase following distance", correct:true, outcome:"Correct. This combination maximises your visibility and reaction time."},
+        {text:"Turn on hazard lights and speed up to get home faster", correct:false, outcome:"Hazard lights while moving is illegal/confusing to others, and speeding compounds risk."}
+      ] },
+    diagram:{
+      svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="200" fill="#0F172A"/>
+        <circle cx="60" cy="30" r="3" fill="#93C5FD"/><circle cx="120" cy="50" r="3" fill="#93C5FD"/>
+        <circle cx="200" cy="20" r="3" fill="#93C5FD"/><circle cx="260" cy="45" r="3" fill="#93C5FD"/>
+        <circle cx="330" cy="25" r="3" fill="#93C5FD"/><circle cx="30" cy="70" r="3" fill="#93C5FD"/>
+        <rect x="0" y="150" width="400" height="50" fill="#1E293B"/>
+        <line x1="0" y1="170" x2="400" y2="170" stroke="#475569" stroke-width="3" stroke-dasharray="14 10"/>
+        <rect x="60" y="150" width="150" height="16" fill="#2563EB" opacity="0.45"/>
+        <rect x="60" y="150" width="150" height="16" fill="none" stroke="#60A5FA" stroke-width="2" stroke-dasharray="5 5"/>
+        <rect x="130" y="118" width="70" height="30" rx="8" fill="#334155"/>
+        <rect x="145" y="105" width="40" height="20" rx="6" fill="#334155"/>
+        <circle cx="148" cy="150" r="8" fill="#0F172A"/>
+        <circle cx="182" cy="150" r="8" fill="#0F172A"/>
+        <circle cx="160" cy="120" r="4" fill="#FDE68A"/>
+        <circle cx="172" cy="120" r="4" fill="#FDE68A"/>
+        <path d="M160,120 L120,90 M172,120 L212,88" stroke="#FDE68A" stroke-width="2" opacity="0.5"/>
+      </svg>`,
+      callouts:[
+        { top:9, left:50, label:"Reduced Visibility", sub:"Slow down at night/in rain", color:"primary" },
+        { top:75, left:33, label:"Flooded Road", sub:"Never cross unknown depths", color:"danger" },
+        { top:52, left:65, label:"Increase Following Distance", sub:"More time to react", color:"warning" }
+      ]
+    } },
+
+  { id:10, title:"Alcohol, Drugs, Fatigue & Driver Distraction", frscAlignment:"Alcohol & Drug Awareness",
+    videoUrl:"https://www.youtube.com/embed/5WJ_CCQY-9s", videoDuration:"7:20",
+    outcomes:["Understand effects of alcohol and drugs","Recognise fatigue warning signs","Eliminate mobile phone distraction","Manage emotional state while driving"],
+    topics:["Alcohol Effects","Drug Effects","Fatigue","Mobile Phone Use","Emotional State"],
+    content:"Alcohol and drugs slow reaction times and impair spatial judgment. Driving while fatigued is equally dangerous; if experiencing micro-sleeps or heavy eyelids, pull over in a safe area and rest immediately.",
+    quiz:{ question:"What is the effect of using a mobile phone on a hands-free device while driving?", options:["Eliminates all cognitive distraction","Presents cognitive distraction that impairs reaction time","Improves driving focus","Has zero impact on safety"], correct:1 },
+    practice:{ question:"If you notice micro-sleeps or heavy eyelids while driving, you should:", options:["Open the window and continue","Pull over safely and rest","Increase speed to arrive sooner","Play loud music"], correct:1 },
+    scenario:{ situation:"You've had one alcoholic drink at a friend's event and need to drive home. What's the responsible choice?",
+      choices:[
+        {text:"Drive carefully since it was 'only one drink'", correct:false, outcome:"Any amount of alcohol impairs judgement and reaction time — a zero-tolerance principle applies."},
+        {text:"Arrange alternative transport or wait until fully sober", correct:true, outcome:"Correct. The safest, most responsible choice is to not drive at all after drinking."},
+        {text:"Drink coffee first, then drive", correct:false, outcome:"Coffee does not reverse alcohol's effect on reaction time or judgement."}
+      ] },
+    diagram:{
+      svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="200" fill="#F8FAFC"/>
+        <rect x="130" y="60" width="140" height="110" rx="16" fill="#334155"/>
+        <circle cx="200" cy="95" r="26" fill="#E2E8F0"/>
+        <path d="M182,90 Q200,78 218,90" stroke="#0F172A" stroke-width="2" fill="none"/>
+        <line x1="150" y1="150" x2="250" y2="150" stroke="#64748B" stroke-width="6"/>
+        <circle cx="290" cy="55" r="20" fill="#FFFFFF" stroke="#DC2626" stroke-width="4"/>
+        <rect x="275" y="45" width="12" height="20" rx="2" fill="#0F172A" transform="rotate(30 290 55)"/>
+        <line x1="277" y1="42" x2="303" y2="68" stroke="#DC2626" stroke-width="4"/>
+        <text x="110" y="45" font-size="16" font-weight="700" fill="#94A3B8">Z z z</text>
+        <path d="M95,50 Q105,40 100,30" stroke="#94A3B8" stroke-width="2" fill="none"/>
+        <rect x="55" y="150" width="26" height="34" rx="4" fill="#FCA5A5"/>
+        <path d="M60,150 L60,140 Q68,132 76,140 L76,150" fill="none" stroke="#0F172A" stroke-width="3"/>
+        <line x1="50" y1="185" x2="86" y2="140" stroke="#DC2626" stroke-width="4"/>
+      </svg>`,
+      callouts:[
+        { top:22, left:73, label:"Mobile Phone", sub:"Keep it away while driving", color:"danger" },
+        { top:15, left:26, label:"Fatigue", sub:"Pull over & rest if drowsy", color:"warning" },
+        { top:75, left:17, label:"Alcohol", sub:"Zero tolerance behind the wheel", color:"danger" }
+      ]
+    } },
+
+  { id:11, title:"Emergency Response, First Aid & Fire Safety", frscAlignment:"First Aid & Fire Prevention",
+    videoUrl:"https://www.youtube.com/embed/Rd1EEAGBdnQ", videoDuration:"12:40",
+    outcomes:["Respond to crash scenes safely","Contact emergency services (FRSC 122)","Administer basic first aid","Handle vehicle fires"],
+    topics:["Emergency Contact (122)","Crash Scene Safety","Basic First Aid","Fire Prevention"],
+    content:"In a crash emergency, first secure the scene with warning triangles to prevent secondary collisions. Call the national emergency toll-free number 122 to alert FRSC rescue teams.",
+    quiz:{ question:"What is the official nationwide toll-free emergency call number for the FRSC in Nigeria?", options:["112","122","199","911"], correct:1 },
+    practice:{ question:"At a crash scene, your first priority before first aid is:", options:["Moving the vehicles immediately","Securing the scene to prevent secondary collisions","Filming the scene","Leaving quickly"], correct:1 },
+    diagram:{
+      svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="200" fill="#EFF6FF"/>
+        <rect x="0" y="120" width="400" height="80" fill="#94A3B8"/>
+        <line x1="0" y1="160" x2="400" y2="160" stroke="#FACC15" stroke-width="3" stroke-dasharray="14 10"/>
+        <rect x="260" y="115" width="90" height="35" rx="8" fill="#DC2626"/>
+        <rect x="275" y="100" width="50" height="20" rx="6" fill="#DC2626"/>
+        <circle cx="278" cy="152" r="9" fill="#0F172A"/>
+        <circle cx="335" cy="152" r="9" fill="#0F172A"/>
+        <circle cx="262" cy="122" r="4" fill="#FDE68A"/>
+        <circle cx="352" cy="122" r="4" fill="#FDE68A"/>
+        <polygon points="120,150 100,182 140,182" fill="#FEF3C7" stroke="#D97706" stroke-width="4" stroke-linejoin="round"/>
+        <line x1="140" y1="192" x2="258" y2="192" stroke="#0F172A" stroke-width="2" stroke-dasharray="4 4"/>
+        <circle cx="45" cy="45" r="20" fill="#DC2626"/>
+        <rect x="37" y="35" width="16" height="20" rx="4" fill="#FFFFFF"/>
+      </svg>`,
+      callouts:[
+        { top:70, left:30, label:"Warning Triangle", sub:"Place well behind the vehicle", color:"warning" },
+        { top:44, left:75, label:"Hazard Lights", sub:"Switch on immediately", color:"danger" },
+        { top:12, left:11, label:"Emergency Contact", sub:"Dial 122 for FRSC rescue", color:"danger" }
+      ]
+    } },
+
+  { id:12, title:"Driver Licensing & Legal Responsibilities", frscAlignment:"Licensing & Driver Responsibilities",
+    videoUrl:"https://www.youtube.com/embed/Y2gX6pzG6Iw", videoDuration:"6:55",
+    outcomes:["Understand driver licensing and learner permits","Manage vehicle documentation","Understand insurance fundamentals","Maintain legal driver obligations"],
+    topics:["Driver Licensing","Learner Permits","Vehicle Documentation","Insurance Fundamentals"],
+    content:"A valid Learner's Permit requires driving under the supervision of a licensed instructor or driver. Drivers must carry valid insurance, vehicle inspection certificates, and proof of registration at all times.",
+    quiz:{ question:"A holder of a valid Learner's Permit is legally required to:", options:["Drive only at night","Drive under supervision of a fully licensed driver","Carry commercial passengers","Drive without speed limits"], correct:1 },
+    practice:{ question:"Third-party insurance primarily protects against:", options:["Your own vehicle's cosmetic damage only","Liability for injury/damage caused to others","Fuel costs","Parking tickets"], correct:1 },
+    diagram:{
+      svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="200" fill="#F8FAFC"/>
+        <rect x="40" y="55" width="170" height="105" rx="12" fill="#2563EB"/>
+        <circle cx="80" cy="95" r="20" fill="#DBEAFE"/>
+        <rect x="60" y="122" width="40" height="8" rx="3" fill="#DBEAFE"/>
+        <rect x="115" y="75" width="75" height="8" rx="3" fill="#93C5FD"/>
+        <rect x="115" y="90" width="75" height="8" rx="3" fill="#93C5FD"/>
+        <rect x="115" y="105" width="55" height="8" rx="3" fill="#93C5FD"/>
+        <rect x="60" y="140" width="130" height="10" rx="4" fill="#1D4ED8"/>
+        <rect x="230" y="70" width="130" height="90" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2"/>
+        <rect x="245" y="85" width="100" height="10" rx="3" fill="#94A3B8"/>
+        <rect x="245" y="102" width="100" height="10" rx="3" fill="#E2E8F0"/>
+        <rect x="245" y="119" width="70" height="10" rx="3" fill="#E2E8F0"/>
+        <circle cx="325" cy="140" r="14" fill="#16A34A"/>
+        <path d="M319,140 L324,145 L332,134" stroke="#FFFFFF" stroke-width="2.5" fill="none"/>
+      </svg>`,
+      callouts:[
+        { top:19, left:34, label:"Learner Permit", sub:"Drive only under supervision", color:"primary" },
+        { top:28, left:79, label:"Vehicle Documents", sub:"Always carry & keep valid", color:"warning" },
+        { top:57, left:81, label:"Insurance", sub:"Third-party cover required", color:"success" }
+      ]
+    } },
+
+  { id:13, title:"Digital Navigation & Responsible Mobility", frscAlignment:"",
+    videoUrl:"https://www.youtube.com/embed/h_bHlIqRRW4", videoDuration:"5:30",
+    outcomes:["Use navigation apps safely","Plan safe routes","Maintain location awareness","Adopt sustainable, eco-friendly mobility habits"],
+    topics:["GPS Route Planning","Mounting Safety","Sustainable Mobility"],
+    content:"Digital navigation tools enhance journey efficiency. Set your destination in mapping apps prior to setting off and mount mobile devices securely on dashboard holders to avoid handheld distractions.",
+    quiz:{ question:"When should trip destinations be entered into a mobile GPS navigation system?", options:["While driving at high speed","Before starting the trip while safely stationary","At every traffic stop light","While steering around turns"], correct:1 },
+    practice:{ question:"A responsible, sustainable mobility habit includes:", options:["Idling the engine unnecessarily","Carpooling and planning efficient routes","Speeding to reduce trip time","Ignoring vehicle servicing"], correct:1 },
+    diagram:{
+      svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="200" fill="#F8FAFC"/>
+        <path d="M0,180 Q200,150 400,180 L400,200 L0,200 Z" fill="#334155"/>
+        <rect x="150" y="20" width="100" height="60" rx="14" fill="#0F172A"/>
+        <rect x="158" y="28" width="84" height="44" rx="6" fill="#DBEAFE"/>
+        <path d="M168,58 Q190,35 205,50 Q218,62 232,42" stroke="#2563EB" stroke-width="3" fill="none"/>
+        <circle cx="168" cy="58" r="4" fill="#16A34A"/>
+        <circle cx="232" cy="42" r="4" fill="#DC2626"/>
+        <rect x="185" y="72" width="30" height="10" rx="3" fill="#334155"/>
+        <circle cx="120" cy="150" r="46" fill="none" stroke="#475569" stroke-width="10"/>
+        <circle cx="280" cy="150" r="46" fill="none" stroke="#475569" stroke-width="10"/>
+      </svg>`,
+      callouts:[
+        { top:10, left:50, label:"Mount Your Phone", sub:"Secure holder, not handheld", color:"primary" },
+        { top:22, left:84, label:"Set Destination First", sub:"Before you start driving", color:"warning" },
+        { top:29, left:42, label:"Plan an Efficient Route", sub:"Supports sustainable mobility", color:"success" }
+      ]
+    } },
+
+  { id:14, title:"Simulation Readiness & Hazard Perception", frscAlignment:"",
+    videoUrl:"https://www.youtube.com/embed/z_p01TLuUMc", videoDuration:"10:15",
+    outcomes:["Prepare for simulator-based learning","Develop hazard reaction speed","Master situational awareness","Demonstrate decision-making readiness"],
+    topics:["Reaction Time","Hazard Scanning","Situational Awareness","Decision-Making"],
+    content:"Module 14 bridges theoretical learning and physical simulation. Students undergo hazard perception exercises to build reaction-time awareness before booking Phase 2 simulator sessions.",
+    quiz:{ question:"What is the core objective of the Phase 2 Simulator training module?", options:["To replace real driving entirely","To safely develop hazard perception & steering judgment in controlled environments","To test top vehicle speed","To practice mechanical engine repairs"], correct:1 },
+    practice:{ question:"Hazard perception exercises mainly train a driver's:", options:["Vehicle horsepower knowledge","Speed of recognising and reacting to danger","Parallel parking skill","Fuel efficiency habits"], correct:1 },
+    hazardGame:true,
+    diagram:{
+      svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="200" fill="#EFF6FF"/>
+        <rect x="0" y="120" width="400" height="80" fill="#94A3B8"/>
+        <polygon points="200,120 40,200 360,200" fill="#FEF3C7" opacity="0.5"/>
+        <line x1="200" y1="120" x2="200" y2="200" stroke="#FACC15" stroke-width="3" stroke-dasharray="14 10"/>
+        <circle cx="120" cy="150" r="9" fill="#DC2626"/>
+        <circle cx="120" cy="150" r="16" fill="none" stroke="#DC2626" stroke-width="2" opacity="0.5"/>
+        <rect x="270" y="128" width="60" height="26" rx="6" fill="#2563EB"/>
+        <circle cx="282" cy="156" r="7" fill="#0F172A"/>
+        <circle cx="316" cy="156" r="7" fill="#0F172A"/>
+        <rect x="30" y="55" width="60" height="16" rx="4" fill="#334155"/>
+        <text x="60" y="67" text-anchor="middle" font-size="10" font-weight="700" fill="#FFFFFF">0.6s</text>
+      </svg>`,
+      callouts:[
+        { top:60, left:75, label:"Scan Continuously", sub:"Left, right, and ahead", color:"primary" },
+        { top:44, left:30, label:"React to Hazards Quickly", sub:"Every second counts", color:"danger" },
+        { top:22, left:15, label:"Reaction Time", sub:"Measured in the simulator", color:"warning" }
+      ]
+    } },
+
+  { id:15, title:"Final Assessment & Certification", frscAlignment:"Programme Completion", finalExam:true,
+    outcomes:["Complete a 20-question comprehensive knowledge assessment","Demonstrate scenario-based decision-making","Earn the Cubbes Certified Road Safety & Responsible Mobility Certificate"],
+    topics:["Final Examination","Certification"] }
+];
+
+const futureModule = { title:"Insurance & Risk Awareness", note:"Optional future module — coming soon", topics:["Policy Basics","Claims Process","Risk Awareness"] };
+
+// ---------------------------------------------------------------------
+// PERSISTENCE — central state, localStorage-backed
+// ---------------------------------------------------------------------
+const STORAGE_KEY = 'cubbes_frsc_state_v2';
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+
+function getDefaultState(){
+  const moduleStatus = {};
+  modulesData.forEach(m => { moduleStatus[m.id] = (m.id === 1 || m.id === 2) ? 'completed' : (m.id === 3 ? 'active' : 'unlocked'); });
+  return {
+    studentName: '',
+    institution: '',
+    xp: 240,
+    streak: { count: 1, lastActiveDate: todayStr() },
+    badges: [],
+    moduleStatus,
+    moduleAttempts: {},
+    notifications: [
+      { id:'seed1', type:'announcement', title:'Welcome to the FRSC Mobility Course', message:'Complete Phase 1 modules to unlock simulator booking.', time:new Date().toLocaleString(), read:false },
+      { id:'seed2', type:'announcement', title:'Programme Update', message:'The DSSP-aligned curriculum has been refreshed for this academic session.', time:new Date().toLocaleString(), read:false }
+    ],
+    simulator: { hub:'', slot:'', booked:false, readinessScore:null, readinessPassed:false, hazardBestReaction:null },
+    drivingSchool: { selected:null, attendance:[], hoursCompleted:0, signOff:false },
+    licensing: { checklist:{}, applicationStatus:'not_started' },
+    certificate: { issued:false, verificationRef:'', dateIssued:'' },
+    milestonesShown: [],
+    module3DragComplete: false
+  };
+}
+
+let state = loadState();
+
+function loadState(){
+  const def = getDefaultState();
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return def;
+    const saved = JSON.parse(raw);
+    const merged = Object.assign({}, def, saved);
+    merged.streak = Object.assign({}, def.streak, saved.streak);
+    merged.simulator = Object.assign({}, def.simulator, saved.simulator);
+    merged.drivingSchool = Object.assign({}, def.drivingSchool, saved.drivingSchool);
+    merged.licensing = Object.assign({}, def.licensing, saved.licensing);
+    merged.certificate = Object.assign({}, def.certificate, saved.certificate);
+    merged.moduleStatus = Object.assign({}, def.moduleStatus, saved.moduleStatus);
+    merged.moduleAttempts = Object.assign({}, def.moduleAttempts, saved.moduleAttempts);
+    merged.badges = saved.badges || [];
+    merged.notifications = saved.notifications || def.notifications;
+    merged.milestonesShown = saved.milestonesShown || [];
+    return merged;
+  } catch(e) { return def; }
+}
+
+function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+function resetProgress(){
+  if(confirm('Reset all progress? This clears your saved state on this device.')){
+    localStorage.removeItem(STORAGE_KEY);
+    state = getDefaultState();
+    saveState();
+    renderAll();
+    showToast('Progress reset.');
+  }
+}
+
+function completedCount(){ return Object.values(state.moduleStatus).filter(v => v === 'completed').length; }
+
+// ---------------------------------------------------------------------
+// NOTIFICATIONS + TOASTS
+// ---------------------------------------------------------------------
+function addNotification(type, title, message){
+  state.notifications.unshift({ id: Date.now()+'_'+Math.random().toString(36).slice(2), type, title, message, time:new Date().toLocaleString(), read:false });
+  saveState();
+  renderNotifications();
+}
+
+function renderNotifications(){
+  const unread = state.notifications.filter(n => !n.read).length;
+  const countEl = document.getElementById('notif-count');
+  countEl.style.display = unread > 0 ? 'flex' : 'none';
+  countEl.innerText = unread;
+  const list = document.getElementById('notif-list');
+  if(state.notifications.length === 0){
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px;">No notifications yet</div>';
+    return;
+  }
+  list.innerHTML = state.notifications.map(n => `
+    <div class="notif-item ${n.read ? '' : 'unread'}" onclick="markNotifRead('${n.id}')">
+      <div class="notif-title">${n.title}</div>
+      <div class="notif-message">${n.message}</div>
+      <div class="notif-time">${n.time}</div>
+    </div>`).join('');
+}
+
+function markNotifRead(id){
+  const n = state.notifications.find(x => String(x.id) === String(id));
+  if(n){ n.read = true; saveState(); renderNotifications(); }
+}
+function markAllNotifsRead(){ state.notifications.forEach(n => n.read = true); saveState(); renderNotifications(); }
+function toggleNotifPanel(){
+  const panel = document.getElementById('notif-panel');
+  panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+}
+document.addEventListener('click', function(e){
+  const panel = document.getElementById('notif-panel');
+  const bell = document.querySelector('.notif-bell');
+  if(panel && panel.style.display === 'block' && !panel.contains(e.target) && !bell.contains(e.target)) panel.style.display = 'none';
+});
+
+function showToast(msg){
+  const toast = document.createElement('div');
+  toast.className = 'cubbes-toast';
+  toast.innerText = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.classList.add('show'), 10);
+  setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3200);
+}
+
+// ---------------------------------------------------------------------
+// ACCORDION HELPER
+// ---------------------------------------------------------------------
+function toggleAccordion(id){
+  document.getElementById(id + '-body').classList.toggle('open');
+  document.getElementById(id + '-chevron').classList.toggle('open');
+}
+
+// ---------------------------------------------------------------------
+// GAMIFICATION — streaks, badges, milestones, leaderboard (with universities)
+// ---------------------------------------------------------------------
+function updateStreak(){
+  const today = todayStr();
+  const last = state.streak.lastActiveDate;
+  if(last !== today){
+    const y = new Date(); y.setDate(y.getDate() - 1);
+    const yesterday = y.toISOString().slice(0,10);
+    state.streak.count = (last === yesterday) ? state.streak.count + 1 : 1;
+    state.streak.lastActiveDate = today;
+    saveState();
+  }
+  document.getElementById('streak-pill').innerText = `${state.streak.count} day${state.streak.count === 1 ? '' : 's'}`;
+}
+
+const BADGES = [
+  { id:'first_module', icon:'🎯', name:'First Steps', desc:'Completed your first module', check: s => completedCount() >= 1 },
+  { id:'halfway', icon:'🏅', name:'Halfway Hero', desc:'Completed 50% of Phase 1', check: s => completedCount() >= 8 },
+  { id:'graduate15', icon:'🎓', name:'Road Scholar', desc:'Completed all 15 modules', check: s => completedCount() >= 15 },
+  { id:'streak3', icon:'🔥', name:'3-Day Streak', desc:'Learned 3 days in a row', check: s => s.streak.count >= 3 },
+  { id:'streak7', icon:'🔥', name:'7-Day Streak', desc:'Learned 7 days in a row', check: s => s.streak.count >= 7 },
+  { id:'sign_spotter', icon:'🚦', name:'Sign Spotter', desc:'Mastered the traffic sign sorting activity', check: s => s.module3DragComplete },
+  { id:'sim_ready', icon:'🎮', name:'Simulator Ready', desc:'Passed the Driving Readiness Assessment', check: s => s.simulator.readinessPassed },
+  { id:'road_ready', icon:'🚗', name:'Road Ready', desc:'Completed practical driving training', check: s => s.drivingSchool.signOff },
+  { id:'certified', icon:'📜', name:'Certified', desc:'Earned your Cubbes Certificate', check: s => s.certificate.issued }
+];
+
+function checkBadges(){
+  BADGES.forEach(b => {
+    if(b.check(state) && !state.badges.includes(b.id)){
+      state.badges.push(b.id);
+      saveState();
+      addNotification('badge', `${b.icon} Badge Earned: ${b.name}`, b.desc);
+      showToast(`${b.icon} Badge earned: ${b.name}`);
+    }
+  });
+  renderBadges();
+}
+
+function renderBadges(){
+  const grid = document.getElementById('badges-grid');
+  if(!grid) return;
+  grid.innerHTML = BADGES.map(b => {
+    const earned = state.badges.includes(b.id);
+    return `<div class="badge-tile ${earned ? 'earned' : ''}">
+      <div class="badge-icon">${b.icon}</div>
+      <div class="badge-name">${b.name}</div>
+      <div class="badge-desc">${b.desc}</div>
+    </div>`;
+  }).join('');
+}
+
+function checkMilestones(){
+  const pct = Math.round((completedCount() / 15) * 100);
+  [25,50,75,100].forEach(m => {
+    if(pct >= m && !state.milestonesShown.includes(m)){
+      state.milestonesShown.push(m);
+      saveState();
+      addNotification('milestone', `${m}% Milestone Reached!`, `You've completed ${m}% of Phase 1 modules.`);
+      showToast(`${m}% Phase 1 milestone reached!`);
+    }
+  });
+}
+
+// Mock institution leaderboard — no backend/multi-user exists yet, so this blends
+// static demo peers (each with a university) with the real logged-in user's live XP.
+const MOCK_LEADERBOARD = [
+  { name:'Amaka O.', xp:420, uni:'University of Lagos' },
+  { name:'Tunde A.', xp:380, uni:'Obafemi Awolowo University' },
+  { name:'Chiamaka N.', xp:310, uni:'University of Nigeria, Nsukka' },
+  { name:'Bello I.', xp:260, uni:'Ahmadu Bello University' },
+  { name:'Ngozi E.', xp:190, uni:'University of Ibadan' },
+  { name:'Femi K.', xp:150, uni:'Lagos State University' }
+];
+
+function renderLeaderboard(){
+  const card = document.getElementById('leaderboard-card');
+  if(!card) return;
+  const me = { name: state.studentName || 'You', xp: state.xp, uni: state.institution || 'Your Institution', isMe:true };
+  const rows = MOCK_LEADERBOARD.concat([me]).sort((a,b) => b.xp - a.xp);
+  card.innerHTML = `<div style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">Demo leaderboard (same-device) — real multi-user ranking requires backend accounts.</div>` +
+    rows.map((r, i) => `
+      <div class="leaderboard-row ${r.isMe ? 'you' : ''}">
+        <div class="lb-rank">#${i+1}</div>
+        <div style="flex:1;">
+          <div class="lb-name">${r.name}${r.isMe ? ' (You)' : ''}</div>
+          <div style="font-size:11px; color:var(--text-muted);">${r.uni}</div>
+        </div>
+        <div class="lb-xp">${r.xp} XP</div>
+      </div>`).join('');
+}
+
+// ---------------------------------------------------------------------
+// MODULE LIST RENDERING (numbering shown only via the circular avatar,
+// not duplicated in the title text)
+// ---------------------------------------------------------------------
+function renderModulesList(){
+  const container = document.getElementById('modules-container');
+  container.innerHTML = '';
+
+  modulesData.forEach((mod) => {
+    const status = state.moduleStatus[mod.id];
+    let badgeStyle = "background: var(--primary-bg); color: var(--primary);";
+    let statusText = "Unlocked";
+    if(status === 'completed'){ badgeStyle = "background: var(--success-bg); color: var(--success);"; statusText = "Completed ✓"; }
+    else if(status === 'active'){ badgeStyle = "background: var(--primary); color: white;"; statusText = "In Progress"; }
+
+    const videoIndicator = mod.videoUrl ? `<div class="module-video-indicator">▶</div>` : '';
+    const icon = `<svg class="icon-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
+
+    container.innerHTML += `
+      <div class="module-item" onclick="loadModuleDetail(${mod.id})" style="position:relative;">
+        <div class="module-info">
+          <div class="module-number" style="${badgeStyle}">${mod.id}</div>
+          <div>
+            <div class="module-title">${mod.title}</div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">${statusText}${mod.frscAlignment ? ' • ' + mod.frscAlignment : ''}</div>
+          </div>
+        </div>
+        ${videoIndicator}${icon}
+      </div>`;
+  });
+
+  container.innerHTML += `
+    <div class="module-item future-module">
+      <div class="module-info">
+        <div class="module-number" style="background:var(--warning-bg); color:var(--warning);">16</div>
+        <div>
+          <div class="module-title">${futureModule.title}</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">${futureModule.note}</div>
+        </div>
+      </div>
+      <span class="future-tag">Future</span>
+    </div>`;
+}
+
+// ---------------------------------------------------------------------
+// MODULE DETAIL RENDERING
+// ---------------------------------------------------------------------
+let signActivityCorrect = 0;
+let hazardResults = [];
+let hazardStartTime = null;
+
+// Annotated diagram — a hand-drawn SVG scene with floating labeled callouts,
+// piloted on modules where a visual anchor genuinely helps (signs, following
+// distance, vehicle parts, crash-scene safety). Returns '' when a module has
+// no diagram defined, so it's safe to call unconditionally.
+function renderDiagram(mod){
+  if(!mod.diagram) return '';
+  const calloutsHtml = mod.diagram.callouts.map(c => `
+    <div class="callout-wrap" style="left:${c.left}%; top:${c.top}%;">
+      <div class="callout-chip">
+        <div class="callout-label">${c.label}</div>
+        <div class="callout-sub">${c.sub}</div>
+      </div>
+      <div class="callout-connector"></div>
+      <div class="callout-dot dot-${c.color || 'primary'}"></div>
+    </div>`).join('');
+  return `<div class="diagram-frame">
+    <div class="diagram-illustration">${mod.diagram.svg}</div>
+    ${calloutsHtml}
+  </div>`;
+}
+
+function loadModuleDetail(moduleId){
+  const mod = modulesData.find(m => m.id === moduleId);
+  if(!mod) return;
+  signActivityCorrect = 0;
+  hazardResults = [];
+
+  const container = document.getElementById('module-detail-container');
+  const topicsPills = mod.topics.map(t => `<span class="topic-pill">${t}</span>`).join('');
+  const outcomesList = mod.outcomes.map(o => `<li style="margin-bottom:4px;">${o}</li>`).join('');
+
+  // Module 15 has no video/reading/quiz — it's the 20-question final exam.
+  if(mod.finalExam){
+    container.innerHTML = `
+      <span class="outcome-badge">${mod.frscAlignment}</span>
+      <h2 style="font-size:20px; margin-bottom:8px;">Module ${mod.id}: ${mod.title}</h2>
+      <div class="topic-pill-list">${topicsPills}</div>
+      <div class="card"><h4 style="font-size:15px; margin-bottom:8px; color:var(--primary);">Learning Outcomes</h4>
+        <ul style="font-size:13px; padding-left:18px;">${outcomesList}</ul></div>
+      <div id="final-assessment-root"></div>`;
+    switchView('view-module-detail');
+    renderFinalAssessment();
+    return;
+  }
+
+  const lessonTabsHtml = `
+    <div class="lesson-sections">
+      <button class="lesson-tab active" onclick="switchLessonTab('video-${moduleId}', this)">Video Lesson</button>
+      <button class="lesson-tab" onclick="switchLessonTab('text-${moduleId}', this)">Reading Material</button>
+    </div>
+    <div id="video-${moduleId}" class="lesson-content active">
+      <div class="video-container"><iframe src="${mod.videoUrl}" title="${mod.title}" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe></div>
+      <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Video Lesson ${mod.videoDuration ? '(' + mod.videoDuration + ')' : ''}</p>
+    </div>
+    <div id="text-${moduleId}" class="lesson-content">
+      <div class="card"><h4 style="font-size:15px; margin-bottom:8px;">Core Curriculum Content</h4>
+      <p style="font-size:14px; color:var(--text-main); line-height:1.6;">${mod.content}</p></div>
+    </div>`;
+
+  let interactiveHtml = '';
+  if(mod.dragDrop){
+    interactiveHtml = `
+      <div class="card">
+        <h4 style="font-size:14px; font-weight:700; margin-bottom:10px;">Interactive: Sort the Traffic Signs</h4>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Drag each sign into its correct category.</p>
+        <div class="drag-tray" id="signs-tray">
+          <div class="sign-chip" draggable="true" data-category="regulatory" ondragstart="dragStart(event)">STOP</div>
+          <div class="sign-chip" draggable="true" data-category="regulatory" ondragstart="dragStart(event)">Speed Limit 50</div>
+          <div class="sign-chip" draggable="true" data-category="warning" ondragstart="dragStart(event)">Falling Rocks Ahead</div>
+          <div class="sign-chip" draggable="true" data-category="warning" ondragstart="dragStart(event)">Pedestrian Crossing Ahead</div>
+          <div class="sign-chip" draggable="true" data-category="informational" ondragstart="dragStart(event)">Hospital</div>
+          <div class="sign-chip" draggable="true" data-category="informational" ondragstart="dragStart(event)">Parking Available</div>
+        </div>
+        <div class="drop-zones">
+          <div class="drop-zone regulatory" data-category="regulatory" ondragover="allowDrop(event)" ondrop="dropSign(event)">🔴 Regulatory</div>
+          <div class="drop-zone warning" data-category="warning" ondragover="allowDrop(event)" ondrop="dropSign(event)">🟠 Warning</div>
+          <div class="drop-zone informational" data-category="informational" ondragover="allowDrop(event)" ondrop="dropSign(event)">🔵 Informational</div>
+        </div>
+      </div>`;
+  }
+  if(mod.hazardGame){
+    interactiveHtml = `
+      <div class="card">
+        <h4 style="font-size:14px; font-weight:700; margin-bottom:10px;">Interactive: Spot the Hazard</h4>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Click "HAZARD!" the instant it appears. 5 rounds, timed reactions.</p>
+        <div class="hazard-stage" id="hazard-status">Press Start to begin the round.</div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-secondary" style="flex:1;" onclick="startHazardRound(1)">Start</button>
+          <button class="btn btn-primary" style="flex:1;" id="hazard-btn" disabled onclick="clickHazard()">HAZARD!</button>
+        </div>
+      </div>`;
+  }
+
+  const scenarioBtn = mod.scenario ? `<button class="ai-tab-btn" onclick="aiMode(${mod.id},'scenario')">Scenario</button>` : '';
+  const aiHtml = `
+    <div class="ai-prompt-box">
+      <div class="ai-header">Ask Cubbes AI Assistant</div>
+      <div class="ai-tabs">
+        <button class="ai-tab-btn active" onclick="aiMode(${mod.id},'clarify')">Ask a Question</button>
+        <button class="ai-tab-btn" onclick="aiMode(${mod.id},'practice')">Practice Exam</button>
+        ${scenarioBtn}
+      </div>
+      <div id="ai-body-${mod.id}"></div>
+    </div>`;
+
+  container.innerHTML = `
+    <span class="outcome-badge">${mod.frscAlignment || 'Cubbes Original Content'}</span>
+    <h2 style="font-size:20px; margin-bottom:8px;">Module ${mod.id}: ${mod.title}</h2>
+    <div class="topic-pill-list">${topicsPills}</div>
+    <div class="card"><h4 style="font-size:15px; margin-bottom:8px; color:var(--primary);">Learning Outcomes</h4>
+      <ul style="font-size:13px; padding-left:18px;">${outcomesList}</ul></div>
+    ${renderDiagram(mod)}
+    ${lessonTabsHtml}
+    ${interactiveHtml}
+    <div class="card" style="border-color:var(--primary-light);">
+      <span style="font-size:11px; font-weight:700; color:var(--primary-light); text-transform:uppercase;">Knowledge Check</span>
+      <h4 style="font-size:15px; margin-top:4px; margin-bottom:8px;">${mod.quiz.question}</h4>
+      ${mod.quiz.options.map((opt, idx) => `<div class="quiz-option" onclick="checkAnswer(${moduleId}, ${idx}, ${mod.quiz.correct}, this)">${opt}</div>`).join('')}
+      <div id="quiz-feedback-${moduleId}" style="margin-top:10px; font-weight:600; font-size:13px;"></div>
+    </div>
+    ${aiHtml}
+    <button class="btn btn-primary" style="margin-top:16px;" onclick="markDoneAndContinue(${mod.id})">✓ Mark as Done & Continue</button>`;
+
+  switchView('view-module-detail');
+  aiMode(mod.id, 'clarify');
+}
+
+function switchLessonTab(tabId, element){
+  document.querySelectorAll('.lesson-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.lesson-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  element.classList.add('active');
+}
+
+function markDoneAndContinue(modId){
+  if(state.moduleStatus[modId] !== 'completed'){
+    state.moduleStatus[modId] = 'completed';
+    state.xp += 20;
+    addNotification('module', `Module ${modId} Completed`, modulesData.find(m => m.id === modId).title);
+    saveState();
+    checkBadges();
+    checkMilestones();
+    renderModulesList();
+  }
+  renderHome();
+  const next = modId + 1;
+  if(next <= 15) loadModuleDetail(next);
+  else switchView('view-modules');
+}
+
+// ---------------------------------------------------------------------
+// DRAG & DROP (Module 3) + HAZARD GAME (Module 14)
+// ---------------------------------------------------------------------
+function dragStart(e){ window.__dragEl = e.target; }
+function allowDrop(e){ e.preventDefault(); }
+function dropSign(e){
+  e.preventDefault();
+  const chip = window.__dragEl;
+  if(!chip) return;
+  const zoneCategory = e.currentTarget.dataset.category;
+  if(chip.dataset.category === zoneCategory){
+    e.currentTarget.appendChild(chip);
+    chip.draggable = false;
+    chip.style.background = 'var(--success-bg)';
+    chip.style.borderColor = 'var(--success)';
+    chip.style.cursor = 'default';
+    signActivityCorrect++;
+    if(signActivityCorrect === 6){
+      state.module3DragComplete = true;
+      saveState();
+      checkBadges();
+      showToast('All signs sorted correctly!');
+    }
+  } else {
+    chip.style.background = 'var(--danger-bg)';
+    setTimeout(() => { chip.style.background = 'white'; }, 500);
+  }
+}
+
+function startHazardRound(round){
+  const statusEl = document.getElementById('hazard-status');
+  const btn = document.getElementById('hazard-btn');
+  statusEl.innerText = `Round ${round}/5 — watch the road... stay alert...`;
+  statusEl.style.color = 'white';
+  btn.disabled = true;
+  const delay = 1000 + Math.random() * 3000;
+  setTimeout(() => {
+    hazardStartTime = performance.now();
+    statusEl.innerText = 'HAZARD! Click now!';
+    statusEl.style.color = '#F87171';
+    btn.disabled = false;
+  }, delay);
+}
+
+function clickHazard(){
+  if(!hazardStartTime) return;
+  const reaction = (performance.now() - hazardStartTime) / 1000;
+  hazardResults.push(reaction);
+  hazardStartTime = null;
+  document.getElementById('hazard-btn').disabled = true;
+  if(hazardResults.length < 5){
+    document.getElementById('hazard-status').innerText = `Reaction: ${reaction.toFixed(2)}s. Get ready for round ${hazardResults.length + 1}...`;
+    setTimeout(() => startHazardRound(hazardResults.length + 1), 1200);
+  } else {
+    const avg = hazardResults.reduce((a,b) => a+b, 0) / hazardResults.length;
+    state.simulator.hazardBestReaction = state.simulator.hazardBestReaction ? Math.min(state.simulator.hazardBestReaction, avg) : avg;
+    saveState();
+    const rating = avg < 0.6 ? 'Excellent' : avg < 1.0 ? 'Good' : 'Needs Practice';
+    document.getElementById('hazard-status').innerText = `Average reaction: ${avg.toFixed(2)}s — ${rating}`;
+    document.getElementById('hazard-status').style.color = '#4ADE80';
+  }
+}
+
+// ---------------------------------------------------------------------
+// KNOWLEDGE CHECK QUIZ
+// ---------------------------------------------------------------------
+function checkAnswer(modId, selectedIdx, correctIdx, element){
+  const feedbackEl = document.getElementById(`quiz-feedback-${modId}`);
+  const attempt = state.moduleAttempts[modId] || { bestScore:0, attempts:0 };
+  attempt.attempts++;
+
+  if(selectedIdx === correctIdx){
+    element.style.background = "var(--success-bg)";
+    element.style.borderColor = "var(--success)";
+    feedbackEl.style.color = "var(--success)";
+    feedbackEl.innerText = "Correct! +20 XP earned. Scroll down to mark this module done.";
+    attempt.bestScore = 100;
+    state.moduleAttempts[modId] = attempt;
+
+    if(state.moduleStatus[modId] !== 'completed'){
+      state.moduleStatus[modId] = 'completed';
+      state.xp += 20;
+      document.getElementById('user-xp').innerText = state.xp + ' XP';
+      addNotification('module', `Module ${modId} Completed`, modulesData.find(m => m.id === modId).title);
+      renderModulesList();
+    }
+    saveState();
+    checkBadges();
+    checkMilestones();
+    renderHome();
+  } else {
+    element.style.background = "var(--danger-bg)";
+    element.style.borderColor = "#EF4444";
+    feedbackEl.style.color = "#EF4444";
+    feedbackEl.innerText = "Incorrect. Review the lesson material above and try again.";
+    attempt.bestScore = Math.max(attempt.bestScore, 0);
+    state.moduleAttempts[modId] = attempt;
+    saveState();
+  }
+}
+
+// ---------------------------------------------------------------------
+// ASK CUBBES AI — clarify / practice / scenario / performance review
+// (rule-based over real module + quiz-history data; no external API key
+// is available in a static client-only file, so this is a genuine
+// data-driven engine rather than a live LLM call.)
+// ---------------------------------------------------------------------
+function aiMode(modId, mode){
+  document.querySelectorAll(`.ai-tab-btn`).forEach(b => b.classList.remove('active'));
+  const evt = window.event;
+  if(evt && evt.target) evt.target.classList.add('active');
+
+  const mod = modulesData.find(m => m.id === modId);
+  const body = document.getElementById(`ai-body-${modId}`);
+
+  if(mode === 'clarify'){
+    body.innerHTML = `
+      <p style="font-size:13px; margin-bottom:8px;">Have a question about ${mod.title}?</p>
+      <input type="text" id="ai-input-${modId}" placeholder="e.g. what is the speed limit on expressways?" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); font-size:13px; margin-bottom:8px;">
+      <button class="btn btn-primary" style="padding:8px 12px; font-size:13px;" onclick="askAI(${modId})">Ask Cubbes AI</button>
+      <div id="ai-response-${modId}" style="margin-top:10px; font-size:13px; color:var(--primary); font-style:italic;"></div>`;
+  } else if(mode === 'practice'){
+    const q = mod.practice;
+    body.innerHTML = `
+      <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Practice examination question (does not affect your module completion status):</p>
+      <div class="card" style="background:white; margin-bottom:0;">
+        <h4 style="font-size:14px; margin-bottom:8px;">${q.question}</h4>
+        ${q.options.map((opt, idx) => `<div class="quiz-option" onclick="checkPractice(${modId}, ${idx}, this)">${opt}</div>`).join('')}
+        <div id="practice-feedback-${modId}" style="margin-top:8px; font-weight:600; font-size:13px;"></div>
+      </div>`;
+  } else if(mode === 'scenario' && mod.scenario){
+    const sc = mod.scenario;
+    body.innerHTML = `
+      <p style="font-size:13px; font-weight:600; margin-bottom:10px;">${sc.situation}</p>
+      ${sc.choices.map((c, idx) => `<div class="quiz-option" onclick="pickScenario(${modId}, ${idx}, this)">${c.text}</div>`).join('')}
+      <div id="scenario-feedback-${modId}" style="margin-top:8px; font-size:13px;"></div>`;
+  }
+}
+
+function checkPractice(modId, idx, el){
+  const mod = modulesData.find(m => m.id === modId);
+  const feedback = document.getElementById(`practice-feedback-${modId}`);
+  if(idx === mod.practice.correct){
+    el.style.background = 'var(--success-bg)'; el.style.borderColor = 'var(--success)';
+    feedback.style.color = 'var(--success)';
+    feedback.innerText = 'Correct! Ready for another? Click "Practice Exam" again.';
+  } else {
+    el.style.background = 'var(--danger-bg)';
+    feedback.style.color = '#EF4444';
+    feedback.innerText = 'Not quite — review the module content and try the practice question again.';
+  }
+}
+
+function pickScenario(modId, idx, el){
+  const mod = modulesData.find(m => m.id === modId);
+  const choice = mod.scenario.choices[idx];
+  const feedback = document.getElementById(`scenario-feedback-${modId}`);
+  el.style.background = choice.correct ? 'var(--success-bg)' : 'var(--danger-bg)';
+  feedback.style.color = choice.correct ? 'var(--success)' : '#EF4444';
+  feedback.innerText = (choice.correct ? '✓ ' : '✗ ') + choice.outcome;
+}
+
+function askAI(modId){
+  const mod = modulesData.find(m => m.id === modId);
+  const inputEl = document.getElementById(`ai-input-${modId}`);
+  const responseEl = document.getElementById(`ai-response-${modId}`);
+  const question = inputEl.value.trim();
+  if(!question) return;
+  responseEl.innerText = 'Cubbes AI is thinking...';
+  setTimeout(() => { responseEl.innerText = clarifyAnswer(mod, question); }, 500);
+}
+
+const SIGN_GLOSSARY = {
+  'stop': 'A STOP sign is octagonal and regulatory — you must come to a complete halt before proceeding.',
+  'speed limit': 'Speed limit signs are circular regulatory signs showing the maximum legal speed for that road.',
+  'yield': 'A yield/give-way sign means you must slow down and let other traffic or pedestrians go first.',
+  'pedestrian': 'A triangular pedestrian crossing sign warns that people may be crossing the road ahead.',
+  'no overtaking': 'Solid double yellow lines or a circular "no overtaking" sign mean overtaking is prohibited on that stretch.',
+  'roundabout': 'A roundabout warning sign (triangular) alerts you to give way to traffic already circulating.'
+};
+
+function clarifyAnswer(mod, question){
+  const q = question.toLowerCase();
+  const signHit = Object.keys(SIGN_GLOSSARY).find(k => q.includes(k));
+  if(signHit) return `Cubbes AI: ${SIGN_GLOSSARY[signHit]}`;
+
+  const attempt = state.moduleAttempts[mod.id];
+  if(q.includes('how am i doing') || q.includes('my score') || q.includes('my progress')){
+    if(!attempt) return `Cubbes AI: You haven't attempted Module ${mod.id}'s knowledge check yet — try it below, then ask me again.`;
+    return `Cubbes AI: On Module ${mod.id} you've made ${attempt.attempts} attempt(s), best score ${attempt.bestScore}%. ${attempt.bestScore < 100 ? 'Consider reviewing the reading material above before retrying.' : 'Great work — fully mastered!'}`;
+  }
+
+  const topicHit = mod.topics.find(t => q.includes(t.toLowerCase().split(' ')[0]));
+  if(topicHit) return `Cubbes AI: On "${topicHit}" — ${mod.content}`;
+
+  return `Cubbes AI: Module ${mod.id} (${mod.title}) covers: ${mod.topics.join(', ')}. Here's the core idea — ${mod.content} If this didn't answer your question, try asking about one of those specific topics.`;
+}
+
+function reviewPerformanceText(){
+  const attemptedIds = Object.keys(state.moduleAttempts).map(Number);
+  if(attemptedIds.length === 0) return "Cubbes AI: You haven't attempted any module knowledge checks yet. Start with Module 1!";
+  const weak = attemptedIds.filter(id => state.moduleAttempts[id].bestScore < 100).map(id => modulesData.find(m => m.id === id)?.title).filter(Boolean);
+  const strong = attemptedIds.filter(id => state.moduleAttempts[id].bestScore === 100).map(id => modulesData.find(m => m.id === id)?.title).filter(Boolean);
+  let msg = `Cubbes AI: You've attempted ${attemptedIds.length}/15 modules. `;
+  if(strong.length) msg += `Strong areas: ${strong.join(', ')}. `;
+  if(weak.length) msg += `Recommended review: ${weak.join(', ')}.`;
+  else msg += `Perfect scores across every attempted module — excellent!`;
+  return msg;
+}
+
+function renderPerformanceReview(){
+  document.getElementById('performance-review-output').innerText = reviewPerformanceText();
+}
+
+// ---------------------------------------------------------------------
+// MODULE 15: FINAL ASSESSMENT — 20 mixed-format questions
+// (10 MCQ, 5 True/False, 3 Theory/short-answer, 2 Interactive scenarios).
+// Theory answers are auto-graded by lenient keyword match — a transparent
+// limitation of grading free text without a backend/AI grader.
+// ---------------------------------------------------------------------
+const finalAssessmentQuestions = [
+  { type:'mcq', q:"What is the primary operational role of the FRSC in Nigeria?", options:["Vehicle sales tax collection","Enforcing traffic laws & crash prevention","Constructing federal highways","Issuing commercial shipping permits"], correct:1 },
+  { type:'mcq', q:"What is the standard national speed limit for private cars on Nigerian expressways?", options:["80 km/h","100 km/h","120 km/h","60 km/h"], correct:1 },
+  { type:'mcq', q:"What is the recommended minimum following distance under ideal road conditions?", options:["1 Second","3 Seconds","5 Seconds","10 Seconds"], correct:1 },
+  { type:'mcq', q:"What is the official nationwide toll-free emergency number for the FRSC?", options:["112","122","199","911"], correct:1 },
+  { type:'mcq', q:"What is the minimum legal tyre tread depth referenced in this course?", options:["0.5mm","1.6mm","5mm","No minimum"], correct:1 },
+  { type:'mcq', q:"What shape are regulatory traffic signs that give mandatory commands?", options:["Triangular","Circular","Rectangular","Diamond-shaped"], correct:1 },
+  { type:'mcq', q:"What is the official name of the certificate awarded on completing Phase 1?", options:["Cubbes Digital Safety Certificate","Cubbes Certified Road Safety & Responsible Mobility Certificate","FRSC Driver's Licence","Learner Permit Certificate"], correct:1 },
+  { type:'mcq', q:"Which factor contributes to the vast majority of recorded traffic crashes?", options:["Severe weather conditions","Human error & driver behavior","Unmapped roads","Daylight glare"], correct:1 },
+  { type:'mcq', q:"What do 'No-Zones' refer to?", options:["Areas where parking is free","Blind spots around large commercial vehicles","Speed-limit-free zones","Pedestrian-only streets"], correct:1 },
+  { type:'mcq', q:"A holder of a valid Learner's Permit is legally required to:", options:["Drive only at night","Drive under supervision of a fully licensed driver","Carry commercial passengers","Drive without speed limits"], correct:1 },
+
+  { type:'tf', q:"Using a hands-free device eliminates all cognitive distraction while driving.", correct:false },
+  { type:'tf', q:"You should reduce speed and increase following distance in wet or night conditions.", correct:true },
+  { type:'tf', q:"A triangular sign on Nigerian roads typically warns of a hazard ahead.", correct:true },
+  { type:'tf', q:"It is safe to drive fast through a flooded road if you are in a hurry.", correct:false },
+  { type:'tf', q:"Defensive driving means driving to save lives, time, and money regardless of others' actions.", correct:true },
+
+  { type:'theory', q:"Name one action to take immediately at a crash scene to prevent secondary collisions.", keywords:['triangle','warning triangle','hazard light','secure the scene','warn other'] },
+  { type:'theory', q:"Give one reason human error is considered the leading cause of road crashes.", keywords:['speed','distract','fatigue','alcohol','drug','judgement','judgment','reckless','phone'] },
+  { type:'theory', q:"What is the purpose of the daily 'FORCES' vehicle check?", keywords:['safety','inspect','check','tyre','fluid','maintenance','roadworthy','before driving'] },
+
+  { type:'interactive', q:"An emergency vehicle with sirens active approaches from behind. What's the safe response?", options:["Accelerate to stay ahead","Safely pull over to yield space","Honk horn to clear front traffic","Maintain speed and lane"], correct:1 },
+  { type:'interactive', q:"The driver ahead of you is braking erratically in traffic. What's the responsible response?", options:["Overtake quickly to get away from them","Increase your following distance and stay alert","Flash your headlights repeatedly","Tailgate closer to see what's wrong"], correct:1 }
+];
+
+function renderFinalAssessment(){
+  const root = document.getElementById('final-assessment-root');
+  const already = state.moduleStatus[15] === 'completed' && state.certificate.issued;
+  if(already){
+    const score = state.moduleAttempts[15]?.bestScore ?? 100;
+    root.innerHTML = `
+      <div class="card" style="text-align:center; border-color:var(--success);">
+        <h3 style="margin-top:6px;">Final Assessment Passed</h3>
+        <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">Best score: ${score}%</div>
+        <button class="btn btn-primary" style="margin-top:12px;" onclick="switchView('view-certificate')">View Certificate</button>
+        <button class="btn btn-outline" style="margin-top:8px;" onclick="startFinalAssessment()">Retake for Practice</button>
+      </div>
+      <div id="final-assessment-body"></div>`;
+    return;
+  }
+  root.innerHTML = `
+    <div class="card" style="background:linear-gradient(135deg,var(--primary-bg),rgba(37,99,235,.05)); border-color:var(--primary-light);">
+      <h3 style="font-size:16px;">Final Assessment</h3>
+      <p style="font-size:13px; margin-top:6px;">20 questions — a mix of multiple choice, true/false, short theory, and interactive scenarios. Score 80% (16/20) or higher to earn your certificate.</p>
+      <button class="btn btn-primary" style="margin-top:12px;" onclick="startFinalAssessment()">Start Final Assessment</button>
+    </div>
+    <div id="final-assessment-body"></div>`;
+}
+
+function startFinalAssessment(){
+  const body = document.getElementById('final-assessment-body');
+  body.innerHTML = finalAssessmentQuestions.map((q,i) => renderFinalQuestion(q,i)).join('') +
+    `<button class="btn btn-primary" style="margin-top:10px;" onclick="submitFinalAssessment()">Submit Final Assessment</button>`;
+}
+
+function renderFinalQuestion(q, i){
+  const num = i + 1;
+  if(q.type === 'mcq' || q.type === 'interactive'){
+    const tag = q.type === 'interactive' ? 'Interactive Scenario' : 'Multiple Choice';
+    return `<div class="card">
+      <div style="font-size:10px; font-weight:700; color:var(--primary-light); text-transform:uppercase;">${tag} — Q${num}</div>
+      <div style="font-size:13px; font-weight:600; margin:6px 0;">${q.q}</div>
+      ${q.options.map((opt, idx) => `<label style="display:flex; gap:8px; align-items:center; font-size:12px; padding:5px 0; cursor:pointer;">
+        <input type="radio" name="final-q${i}" value="${idx}"> ${opt}
+      </label>`).join('')}
+    </div>`;
+  }
+  if(q.type === 'tf'){
+    return `<div class="card">
+      <div style="font-size:10px; font-weight:700; color:var(--warning); text-transform:uppercase;">True or False — Q${num}</div>
+      <div style="font-size:13px; font-weight:600; margin:6px 0;">${q.q}</div>
+      <div class="tf-btns">
+        <label><input type="radio" name="final-q${i}" value="true"> True</label>
+        <label><input type="radio" name="final-q${i}" value="false"> False</label>
+      </div>
+    </div>`;
+  }
+  if(q.type === 'theory'){
+    return `<div class="card">
+      <div style="font-size:10px; font-weight:700; color:var(--accent); text-transform:uppercase;">Short Theory — Q${num}</div>
+      <div style="font-size:13px; font-weight:600; margin:6px 0;">${q.q}</div>
+      <textarea id="final-q${i}-theory" rows="2" placeholder="Type your answer..." style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--border); font-size:12px;"></textarea>
+    </div>`;
+  }
+}
+
+function submitFinalAssessment(){
+  let correct = 0;
+  finalAssessmentQuestions.forEach((q, i) => {
+    if(q.type === 'mcq' || q.type === 'interactive'){
+      const sel = document.querySelector(`input[name="final-q${i}"]:checked`);
+      if(sel && Number(sel.value) === q.correct) correct++;
+    } else if(q.type === 'tf'){
+      const sel = document.querySelector(`input[name="final-q${i}"]:checked`);
+      if(sel && (sel.value === 'true') === q.correct) correct++;
+    } else if(q.type === 'theory'){
+      const val = (document.getElementById(`final-q${i}-theory`).value || '').toLowerCase();
+      if(q.keywords.some(k => val.includes(k))) correct++;
+    }
+  });
+  const pct = Math.round((correct / finalAssessmentQuestions.length) * 100);
+  const attempt = state.moduleAttempts[15] || { bestScore:0, attempts:0 };
+  attempt.attempts++;
+  attempt.bestScore = Math.max(attempt.bestScore, pct);
+  state.moduleAttempts[15] = attempt;
+  saveState();
+
+  const body = document.getElementById('final-assessment-body');
+  if(pct >= 80){
+    state.moduleStatus[15] = 'completed';
+    state.xp += 50;
+    saveState();
+    renderModulesList();
+    renderHome();
+    addNotification('module', 'Final Assessment Passed', `Score: ${pct}%`);
+    showToast(`Passed with ${pct}%!`);
+    checkBadges();
+    checkMilestones();
+    checkCertificateEligibility();
+    body.innerHTML = `<div class="card" style="text-align:center; border-color:var(--success);">
+      <div style="font-size:15px; font-weight:700;">Passed! Score: ${pct}%</div>
+      <button class="btn btn-primary" style="margin-top:10px;" onclick="switchView('view-certificate')">View Certificate</button>
+    </div>`;
+  } else {
+    body.innerHTML = `<div class="card" style="text-align:center; border-color:#EF4444;">
+      <div style="font-size:15px; font-weight:700; color:#EF4444;">Score: ${pct}% — 80% needed</div>
+      <p style="font-size:12px; color:var(--text-muted); margin-top:6px;">Review the module content across Modules 1–14 and retry when ready.</p>
+      <button class="btn btn-secondary" style="margin-top:10px;" onclick="startFinalAssessment()">Retake Assessment</button>
+    </div>`;
+  }
+}
+
+// ---------------------------------------------------------------------
+// BOOKINGS HUB (compact summary cards)
+// ---------------------------------------------------------------------
+function renderBookingHub(){
+  const simEl = document.getElementById('sim-summary-status');
+  const pracEl = document.getElementById('practical-summary-status');
+  if(!simEl || !pracEl) return;
+  simEl.innerText = state.simulator.readinessPassed ? `Passed (${state.simulator.readinessScore}%)`
+    : state.simulator.booked ? 'Booked — assessment pending'
+    : completedCount() >= 5 ? 'Ready to book' : `Locked — complete 5+ modules first`;
+  pracEl.innerText = state.drivingSchool.signOff ? 'Completed'
+    : state.drivingSchool.selected ? `${state.drivingSchool.hoursCompleted.toFixed(1)}/10 hrs logged`
+    : state.simulator.readinessPassed ? 'Ready to enroll' : 'Locked — pass Phase 2 first';
+}
+
+// ---------------------------------------------------------------------
+// PHASE 2: SIMULATOR BOOKING + DRIVING READINESS ASSESSMENT
+// ---------------------------------------------------------------------
+const SIM_HUBS = ["UNILAG Campus Hub, Lagos (4.8 rating)","FRSC Certified Center, Ikeja (4.9 rating)","ABU Zaria Innovation Hub, Kaduna (4.7 rating)","UNN Mobility Center, Nsukka (4.6 rating)","OAU Advanced Training Center, Ile-Ife (4.8 rating)"];
+const SIM_SLOTS = ["Morning (9:00 AM - 12:00 PM)","Afternoon (1:00 PM - 4:00 PM)","Evening (4:00 PM - 7:00 PM)","Weekend (Saturday 10:00 AM - 4:00 PM)"];
+
+function renderSimulatorCard(){
+  const card = document.getElementById('simulator-booking-card');
+  if(!card) return;
+  if(state.simulator.booked){
+    card.innerHTML = `
+      <h4 style="font-size:14px; font-weight:700; margin-bottom:8px;">Simulator Session Booked ✓</h4>
+      <div style="font-size:13px; color:var(--text-main); line-height:1.6;">
+        <div><strong>Hub:</strong> ${state.simulator.hub}</div>
+        <div><strong>Slot:</strong> ${state.simulator.slot}</div>
+        <div><strong>Cost:</strong> ₦5,000 • <strong>Duration:</strong> 2 hours</div>
+      </div>`;
+  } else {
+    card.innerHTML = `
+      <h4 style="font-size:14px; font-weight:700; margin-bottom:12px;">Book Your Simulator Session</h4>
+      <label style="font-size:12px; font-weight:600; display:block; margin-bottom:6px;">Simulation Hub Location</label>
+      <select id="sim-hub-select" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); margin-bottom:12px; font-size:13px;">
+        ${SIM_HUBS.map(h => `<option>${h}</option>`).join('')}
+      </select>
+      <label style="font-size:12px; font-weight:600; display:block; margin-bottom:6px;">Preferred Time Slot</label>
+      <select id="sim-slot-select" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); margin-bottom:12px; font-size:13px;">
+        ${SIM_SLOTS.map(s => `<option>${s}</option>`).join('')}
+      </select>
+      <div style="background:var(--success-bg); border:1px solid var(--success); border-radius:8px; padding:10px; margin-bottom:12px; font-size:12px; color:var(--success); font-weight:600;">
+        ✓ Duration: 2 hours • Cost: ₦5,000 — includes Driving Readiness Assessment
+      </div>
+      <button class="btn btn-primary" onclick="bookSimulator()">Book Simulator Slot</button>`;
+  }
+}
+
+function bookSimulator(){
+  if(completedCount() < 5){
+    alert(`You need to complete at least 5 modules before booking a simulator session.\n\nCurrent progress: ${completedCount()}/15 modules completed.`);
+    return;
+  }
+  state.simulator.hub = document.getElementById('sim-hub-select').value;
+  state.simulator.slot = document.getElementById('sim-slot-select').value;
+  state.simulator.booked = true;
+  saveState();
+  addNotification('booking', 'Simulator Session Booked', `${state.simulator.hub} — ${state.simulator.slot}`);
+  showToast('✓ Simulator session booked!');
+  renderSimulatorCard();
+  renderReadinessCard();
+  renderBookingHub();
+  renderHome();
+}
+
+const readinessQuestions = [
+  { q:"You're approaching a junction and a pedestrian is halfway across. What do you do?", options:["Speed up to pass before they finish crossing","Slow down and allow them to cross safely","Honk to make them hurry","Swerve around them"], correct:1 },
+  { q:"Your vehicle begins to skid on a wet surface. What is the correct response?", options:["Brake hard immediately","Ease off the accelerator and steer gently in the direction of the skid","Accelerate to regain control","Turn the wheel sharply opposite the skid"], correct:1 },
+  { q:"You notice a hazard warning triangle sign ahead. What should you do?", options:["Ignore it if no hazard is visible yet","Reduce speed and increase alertness for a potential hazard","Overtake immediately","Stop completely"], correct:1 },
+  { q:"At night with reduced visibility, the safest practice is to:", options:["Use high beams constantly regardless of oncoming traffic","Increase following distance and reduce speed","Drive at the same speed as during the day","Follow closely behind another vehicle's taillights"], correct:1 },
+  { q:"While driving, you feel your attention drifting and your eyelids getting heavy. You should:", options:["Continue driving to reach your destination faster","Open the windows and keep driving","Pull over safely and rest before continuing","Turn up the music volume"], correct:2 }
+];
+
+function renderReadinessCard(){
+  const card = document.getElementById('readiness-assessment-card');
+  if(!card) return;
+  if(!state.simulator.booked){
+    card.innerHTML = `<div style="font-size:12px; color:var(--text-muted);">Book a simulator session above to unlock your Driving Readiness Assessment.</div>`;
+    return;
+  }
+  if(state.simulator.readinessPassed){
+    card.innerHTML = `<h4 style="font-size:14px; font-weight:700; margin-bottom:6px;">Driving Readiness Assessment: Passed</h4>
+      <div style="font-size:13px; color:var(--text-main);">Score: ${state.simulator.readinessScore}% — you're cleared to proceed to Phase 3.</div>`;
+    return;
+  }
+  card.innerHTML = `
+    <h4 style="font-size:14px; font-weight:700; margin-bottom:8px;">Driving Readiness Assessment</h4>
+    <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">5 hazard-judgement questions. 70%+ required to pass and unlock Phase 3.</p>
+    <div id="readiness-quiz-body"></div>
+    <button class="btn btn-secondary" onclick="showReadinessQuiz()">Take Assessment</button>`;
+}
+
+function showReadinessQuiz(){
+  const body = document.getElementById('readiness-quiz-body');
+  body.innerHTML = readinessQuestions.map((q, i) => `
+    <div style="margin-bottom:14px;">
+      <div style="font-size:13px; font-weight:600; margin-bottom:6px;">${i+1}. ${q.q}</div>
+      ${q.options.map((opt, idx) => `
+        <label style="display:flex; align-items:center; gap:8px; font-size:12px; padding:4px 0; cursor:pointer;">
+          <input type="radio" name="readiness-q${i}" value="${idx}"> ${opt}
+        </label>`).join('')}
+    </div>`).join('') + `<button class="btn btn-primary" onclick="submitReadiness()">Submit Assessment</button>`;
+  document.querySelector('#readiness-assessment-card .btn-secondary').style.display = 'none';
+}
+
+function submitReadiness(){
+  let correct = 0;
+  readinessQuestions.forEach((q, i) => {
+    const sel = document.querySelector(`input[name="readiness-q${i}"]:checked`);
+    if(sel && Number(sel.value) === q.correct) correct++;
+  });
+  const pct = Math.round((correct / readinessQuestions.length) * 100);
+  state.simulator.readinessScore = pct;
+  state.simulator.readinessPassed = pct >= 70;
+  saveState();
+  checkBadges();
+  addNotification('assessment', state.simulator.readinessPassed ? 'Readiness Assessment Passed' : 'Readiness Assessment: Retry Needed', `Score: ${pct}%`);
+  showToast(state.simulator.readinessPassed ? `Passed with ${pct}%!` : `Score: ${pct}% — 70%+ needed, try again.`);
+  renderReadinessCard();
+  renderBookingHub();
+  renderTracker();
+  renderHome();
+}
+
+// ---------------------------------------------------------------------
+// PHASE 3: DRIVING SCHOOL SELECTION + ATTENDANCE TRACKING
+// ---------------------------------------------------------------------
+const DRIVING_SCHOOLS = [
+  { name:"SafetyFirst Driving Academy", loc:"Yaba, Lagos", rating:"4.9/5 • 250+ certified" },
+  { name:"Excellence Driving School", loc:"Ikoyi, Lagos", rating:"4.8/5 • 180+ certified" },
+  { name:"ProDrive Automotive Academy", loc:"V.I., Lagos / Kaduna", rating:"4.7/5 • 320+ certified" }
+];
+
+function renderDrivingSchoolCard(){
+  const card = document.getElementById('driving-school-card');
+  if(!card) return;
+  if(!state.simulator.readinessPassed){
+    card.innerHTML = `<div style="font-size:12px; color:var(--text-muted);">Pass your Driving Readiness Assessment in Phase 2 to unlock driving school selection.</div>`;
+    document.getElementById('attendance-card').style.display = 'none';
+    return;
+  }
+  if(state.drivingSchool.selected){
+    card.innerHTML = `<h4 style="font-size:14px; font-weight:700; margin-bottom:6px;">Enrolled: ${state.drivingSchool.selected}</h4>
+      <div style="font-size:12px; color:var(--text-muted);">Log your practical training hours below.</div>`;
+    renderAttendanceCard();
+  } else {
+    card.innerHTML = `<h4 style="font-size:14px; font-weight:700; margin-bottom:12px;">Select Your Accredited Driving School</h4>` +
+      DRIVING_SCHOOLS.map(s => `
+        <div style="border:1px solid var(--border); border-radius:8px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-size:14px; font-weight:600;">${s.name}</div>
+            <div style="font-size:12px; color:var(--text-muted);">${s.loc}</div>
+            <div style="font-size:12px; color:var(--text-muted);">${s.rating}</div>
+          </div>
+          <button class="btn btn-secondary" style="width:auto; padding:6px 12px; font-size:12px;" onclick="selectDrivingSchool('${s.name}')">Select</button>
+        </div>`).join('');
+  }
+}
+
+function selectDrivingSchool(name){
+  state.drivingSchool.selected = name;
+  saveState();
+  addNotification('training', 'Driving School Selected', name);
+  showToast(`✓ Enrolled at ${name}`);
+  renderDrivingSchoolCard();
+  renderBookingHub();
+  renderHome();
+}
+
+function renderAttendanceCard(){
+  const card = document.getElementById('attendance-card');
+  card.style.display = 'block';
+  const rows = state.drivingSchool.attendance.map(a => `<tr><td>${a.date}</td><td>${a.hours}h</td><td>${a.topic}</td><td>${a.signOff ? '✓' : '—'}</td></tr>`).join('');
+  const progressPct = Math.min(100, Math.round((state.drivingSchool.hoursCompleted / 10) * 100));
+  card.innerHTML = `
+    <h4 style="font-size:14px; font-weight:700; margin-bottom:8px;">Practical Training Attendance Log</h4>
+    <div class="progress-bar light" style="margin-bottom:6px;"><div class="progress-fill colored" style="width:${progressPct}%;"></div></div>
+    <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">${state.drivingSchool.hoursCompleted.toFixed(1)} / 10 hours minimum ${state.drivingSchool.signOff ? '— Instructor Sign-Off ✓' : ''}</div>
+    <div style="display:flex; gap:6px; margin-bottom:6px;">
+      <input type="date" id="att-date" style="flex:1; padding:8px; border-radius:6px; border:1px solid var(--border); font-size:12px;">
+      <input type="number" id="att-hours" placeholder="Hours" min="0.5" step="0.5" style="width:70px; padding:8px; border-radius:6px; border:1px solid var(--border); font-size:12px;">
+    </div>
+    <input type="text" id="att-topic" placeholder="Topic covered (e.g. Urban Driving)" style="width:100%; padding:8px; border-radius:6px; border:1px solid var(--border); font-size:12px; margin-bottom:6px;">
+    <label style="display:flex; align-items:center; gap:6px; font-size:12px; margin-bottom:10px;">
+      <input type="checkbox" id="att-signoff"> Instructor signed off this session
+    </label>
+    <button class="btn btn-secondary" onclick="addAttendanceEntry()">Log Session</button>
+    ${state.drivingSchool.attendance.length ? `<table class="att-table"><tr><th>Date</th><th>Hrs</th><th>Topic</th><th>Sign-off</th></tr>${rows}</table>` : ''}`;
+}
+
+function addAttendanceEntry(){
+  const date = document.getElementById('att-date').value;
+  const hours = parseFloat(document.getElementById('att-hours').value);
+  const topic = document.getElementById('att-topic').value || 'General Practice';
+  const signOff = document.getElementById('att-signoff').checked;
+  if(!date || !hours || hours <= 0){ alert('Please enter a valid date and number of hours.'); return; }
+
+  state.drivingSchool.attendance.push({ date, hours, topic, signOff });
+  state.drivingSchool.hoursCompleted += hours;
+  if(state.drivingSchool.hoursCompleted >= 10 && signOff) state.drivingSchool.signOff = true;
+  saveState();
+  checkBadges();
+  addNotification('training', 'Training Session Logged', `${hours}h on ${date} — total ${state.drivingSchool.hoursCompleted.toFixed(1)}h`);
+  showToast(`✓ Logged ${hours}h of practical training`);
+  renderAttendanceCard();
+  renderBookingHub();
+  renderTracker();
+  renderHome();
+}
+
+// ---------------------------------------------------------------------
+// CERTIFICATE — real object with verification reference
+// ---------------------------------------------------------------------
+function checkCertificateEligibility(){
+  if(completedCount() >= 15 && state.moduleStatus[15] === 'completed' && !state.certificate.issued) issueCertificate();
+}
+
+function issueCertificate(){
+  if(!state.studentName) state.studentName = prompt('Enter your full name for your certificate:') || 'Cubbes Student';
+  if(!state.institution) state.institution = prompt('Enter your institution:') || 'Independent Learner';
+  state.certificate.issued = true;
+  state.certificate.dateIssued = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+  state.certificate.verificationRef = 'CUBBES-' + new Date().getFullYear() + '-' + Math.random().toString(36).substring(2,8).toUpperCase();
+  saveState();
+  checkBadges();
+  addNotification('certificate', 'Certificate Available!', 'Your Cubbes Certified Road Safety & Responsible Mobility Certificate is ready.');
+  showToast('Certificate unlocked! View it from the Tracker tab.');
+  renderCertificate();
+  renderTracker();
+  renderHome();
+}
+
+function renderCertificate(){
+  const container = document.getElementById('certificate-container');
+  if(!container) return;
+  if(!state.certificate.issued){
+    container.innerHTML = `<div class="card" style="text-align:center; padding:40px 20px;">
+      
+      <p style="font-size:13px; color:var(--text-muted); margin-top:10px;">Pass the Module 15 Final Assessment (80%+) to unlock your certificate.</p>
+      <div style="font-size:12px; color:var(--text-main); margin-top:6px;">Progress: ${completedCount()}/15 modules completed.</div>
+    </div>`;
+    return;
+  }
+  container.innerHTML = `
+    <div class="certificate-frame">
+      <div style="font-size:11px; letter-spacing:1px; color:var(--text-muted); text-transform:uppercase;">National Student Road Safety & Responsible Mobility Framework</div>
+      <div style="font-size:22px; font-weight:800; color:var(--primary); margin-top:10px;">Certificate of Completion</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-top:14px;">This certifies that</div>
+      <div style="font-size:20px; font-weight:700; margin-top:4px;">${state.studentName}</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-top:6px;">of ${state.institution}</div>
+      <div style="font-size:13px; margin-top:14px; line-height:1.6;">has successfully completed Phase 1 of the FRSC Mobility Course and is hereby awarded the</div>
+      <div style="font-size:16px; font-weight:800; color:var(--accent); margin-top:8px;">Cubbes Certified Road Safety & Responsible Mobility Certificate</div>
+      <div class="cert-qr"></div>
+      <div style="font-size:10px; color:var(--text-muted);">Verification QR (preview placeholder)</div>
+      <div style="font-size:12px; margin-top:14px;"><strong>Date of Completion:</strong> ${state.certificate.dateIssued}</div>
+      <div style="font-size:12px; margin-top:2px;"><strong>Verification Reference:</strong> ${state.certificate.verificationRef}</div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:14px;" onclick="window.print()">Print / Save as PDF</button>`;
+}
+
+// ---------------------------------------------------------------------
+// TRACKER — hero CTA, stepper, outstanding/checklist accordions, licensing stage
+// ---------------------------------------------------------------------
+const CHECKLIST_ITEMS = [
+  { key:'modules', label:'Complete all 15 digital modules' },
+  { key:'finalAssessment', label:"Pass Module 15 Final Assessment (80%+)" },
+  { key:'simulatorBooked', label:'Complete 2-hour simulator session' },
+  { key:'readiness', label:'Pass Driving Readiness Assessment' },
+  { key:'practicalHours', label:'Complete 10+ hours practical driving training' },
+  { key:'signOff', label:'Receive driving school sign-off' },
+  { key:'documents', label:'Gather required documentation' },
+  { key:'appointment', label:'Schedule FRSC licensing appointment' }
+];
+
+const LICENSING_STAGES = ['not_started','documents_submitted','appointment_booked','interview_complete','licensed'];
+const LICENSING_LABELS = { not_started:'Not Started', documents_submitted:'Documents Submitted', appointment_booked:'Appointment Booked', interview_complete:'Interview Complete', licensed:'Licensed ✓' };
+
+function isLicensed(){ return state.licensing.applicationStatus === 'licensed'; }
+
+function computeAutoChecklist(){
+  return {
+    modules: completedCount() >= 15,
+    finalAssessment: state.moduleStatus[15] === 'completed',
+    simulatorBooked: state.simulator.booked,
+    readiness: state.simulator.readinessPassed,
+    practicalHours: state.drivingSchool.hoursCompleted >= 10,
+    signOff: state.drivingSchool.signOff
+  };
+}
+
+function getPrimaryCTA(){
+  if(completedCount() < 15) return { label:'Continue Learning →', action:"switchView('view-modules')" };
+  if(!state.certificate.issued) return { label:'Finish Final Assessment →', action:"loadModuleDetail(15)" };
+  if(!state.simulator.booked) return { label:'Book Simulator Session →', action:"switchView('view-simulation')" };
+  if(!state.simulator.readinessPassed) return { label:'Take Readiness Assessment →', action:"switchView('view-simulation')" };
+  if(!state.drivingSchool.selected) return { label:'Enroll in Driving School →', action:"switchView('view-practical')" };
+  if(!state.drivingSchool.signOff) return { label:'Log Training Hours →', action:"switchView('view-practical')" };
+  if(!isLicensed()) return { label:'Advance Licensing Application →', action:"document.getElementById('licensing-stage-card').scrollIntoView({behavior:'smooth'})" };
+  return { label:'View Certificate', action:"switchView('view-certificate')" };
+}
+
+function renderTrackerHero(){
+  const hero = document.getElementById('tracker-hero');
+  if(!hero) return;
+  const pct = Math.round((completedCount() / 15) * 100);
+  const eligible = completedCount() >= 15 && state.simulator.readinessPassed && state.drivingSchool.signOff;
+  const cta = getPrimaryCTA();
+  hero.innerHTML = `
+    <div style="font-size:12px; font-weight:700; color:var(--primary); text-transform:uppercase;">Overall Progress</div>
+    <div style="font-size:28px; font-weight:800; margin-top:4px;">${pct}%</div>
+    <div class="progress-bar light" style="margin-top:8px;"><div class="progress-fill colored" style="width:${pct}%;"></div></div>
+    <div style="font-size:13px; margin-top:12px;">${isLicensed() ? 'Licensed' : eligible ? 'Eligible for FRSC Licensing' : 'Not Yet Eligible'}</div>
+    <button class="btn btn-primary" style="margin-top:12px;" onclick="${cta.action}">${cta.label}</button>`;
+}
+
+function renderStepper(){
+  const stepper = document.getElementById('tracker-stepper');
+  if(!stepper) return;
+  const rows = [
+    { icon: completedCount() >= 15 ? '✓' : '1', label:'Phase 1: Digital Education', status:`${completedCount()}/15 modules`, done:completedCount() >= 15, action:"switchView('view-modules')" },
+    { icon: state.simulator.readinessPassed ? '✓' : '2', label:'Phase 2: Simulation Assessment', status: state.simulator.readinessPassed ? `Passed (${state.simulator.readinessScore}%)` : 'Not yet passed', done:state.simulator.readinessPassed, action:"switchView('view-simulation')" },
+    { icon: state.drivingSchool.signOff ? '✓' : '3', label:'Phase 3: Driving School', status: state.drivingSchool.signOff ? 'Sign-off received' : `${state.drivingSchool.hoursCompleted.toFixed(1)}/10 hrs`, done:state.drivingSchool.signOff, action:"switchView('view-practical')" },
+    { icon: isLicensed() ? '✓' : '4', label:"Phase 4: FRSC Licence", status: LICENSING_LABELS[state.licensing.applicationStatus], done:isLicensed(), action:"document.getElementById('licensing-stage-card').scrollIntoView({behavior:'smooth'})" },
+    { icon: isLicensed() ? '✓' : '5', label:'Phase 5: Continuous Development', status: isLicensed() ? 'Unlocked' : 'Preview available', done:isLicensed(), action:"switchView('view-profile')" }
+  ];
+  stepper.innerHTML = rows.map(r => `
+    <div class="stepper-row" onclick="${r.action}">
+      <div class="stepper-icon ${r.done ? 'done' : ''}">${r.icon}</div>
+      <div style="flex:1;">
+        <div style="font-size:13px; font-weight:700;">${r.label}</div>
+        <div style="font-size:12px; color:var(--text-muted);">${r.status}</div>
+      </div>
+      <svg class="icon-svg" viewBox="0 0 24 24" style="width:16px;height:16px; color:var(--text-muted);"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </div>`).join('');
+}
+
+function renderLicensingStageCard(){
+  const card = document.getElementById('licensing-stage-card');
+  if(!card) return;
+  const eligible = completedCount() >= 15 && state.simulator.readinessPassed && state.drivingSchool.signOff;
+  const currentIdx = LICENSING_STAGES.indexOf(state.licensing.applicationStatus);
+  const nextStage = LICENSING_STAGES[currentIdx + 1];
+  card.innerHTML = `
+    <div style="font-size:13px; font-weight:700;">Phase 4: FRSC Licensing Application</div>
+    <div style="font-size:13px; margin-top:4px;">Current stage: <strong>${LICENSING_LABELS[state.licensing.applicationStatus]}</strong></div>
+    ${eligible && nextStage ? `<button class="btn btn-secondary" style="margin-top:10px;" onclick="advanceLicensingStage()">Mark stage complete: "${LICENSING_LABELS[nextStage]}"</button>` : (!eligible ? `<div style="font-size:12px; color:var(--text-muted); margin-top:6px;">Complete Phases 1–3 to begin your licensing application.</div>` : '')}
+    ${state.certificate.issued ? `<button class="btn btn-primary" style="margin-top:10px;" onclick="switchView('view-certificate')">View Certificate</button>` : ''}`;
+}
+
+function advanceLicensingStage(){
+  const currentIdx = LICENSING_STAGES.indexOf(state.licensing.applicationStatus);
+  const nextStage = LICENSING_STAGES[currentIdx + 1];
+  if(!nextStage) return;
+  state.licensing.applicationStatus = nextStage;
+  saveState();
+  addNotification('licensing', 'Licensing Stage Updated', LICENSING_LABELS[nextStage]);
+  showToast(`Stage updated: ${LICENSING_LABELS[nextStage]}`);
+  if(nextStage === 'licensed') checkBadges();
+  renderTracker();
+  renderHome();
+  renderGraduateHub();
+}
+
+function toggleChecklist(key, checked){ state.licensing.checklist[key] = checked; saveState(); renderTracker(); }
+
+function renderTracker(){
+  const auto = computeAutoChecklist();
+  Object.keys(auto).forEach(k => { state.licensing.checklist[k] = auto[k]; });
+  saveState();
+
+  renderTrackerHero();
+  renderStepper();
+
+  const outstanding = CHECKLIST_ITEMS.filter(item => !state.licensing.checklist[item.key]).map(item => item.label);
+  const outstandingCard = document.getElementById('outstanding-card');
+  if(outstandingCard){
+    outstandingCard.innerHTML = outstanding.length ?
+      `<ul style="font-size:13px; padding-left:18px;">${outstanding.map(o => `<li style="margin-bottom:6px;">${o}</li>`).join('')}</ul>` :
+      `<div style="font-size:13px; color:var(--success); font-weight:600;">✓ Everything is complete — you're ready for FRSC licensing!</div>`;
+  }
+
+  const checklistCard = document.getElementById('checklist-card');
+  if(checklistCard){
+    checklistCard.innerHTML = CHECKLIST_ITEMS.map(item => {
+      const isAuto = ['modules','finalAssessment','simulatorBooked','readiness','practicalHours','signOff'].includes(item.key);
+      const checked = !!state.licensing.checklist[item.key];
+      return `<label class="checklist-row">
+        <input type="checkbox" ${checked ? 'checked' : ''} ${isAuto ? 'disabled' : ''} onchange="toggleChecklist('${item.key}', this.checked)">
+        <span style="${checked ? 'color:var(--success);' : ''}">${item.label}${isAuto ? ' <span style=\"color:var(--text-muted); font-size:10px;\">(auto-tracked)</span>' : ''}</span>
+      </label>`;
+    }).join('');
+  }
+
+  renderLicensingStageCard();
+}
+
+// ---------------------------------------------------------------------
+// PROFILE — identity, leaderboard, badges, performance review, Phase 5 preview
+// ---------------------------------------------------------------------
+function renderProfileHeader(editing){
+  const card = document.getElementById('profile-header-card');
+  if(!card) return;
+  const initials = (state.studentName || 'You').trim().split(/\s+/).map(w => w[0]).slice(0,2).join('').toUpperCase();
+  if(editing){
+    card.innerHTML = `
+      <div style="display:flex; gap:12px; align-items:center; margin-bottom:12px;">
+        <div class="avatar-circle">${initials}</div>
+        <div style="flex:1;">
+          <input type="text" id="profile-name-input" placeholder="Full name" value="${state.studentName || ''}" style="width:100%; padding:8px; margin-bottom:6px; border-radius:8px; border:1px solid var(--border); font-size:13px;">
+          <input type="text" id="profile-inst-input" placeholder="Institution" value="${state.institution || ''}" style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--border); font-size:13px;">
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="saveProfileInfo()">Save</button>`;
+  } else {
+    card.innerHTML = `
+      <div style="display:flex; gap:12px; align-items:center;">
+        <div class="avatar-circle">${initials}</div>
+        <div style="flex:1;">
+          <div style="font-size:16px; font-weight:700;">${state.studentName || 'Add your name'}</div>
+          <div style="font-size:12px; color:var(--text-muted);">${state.institution || 'Add your institution'}</div>
+        </div>
+        <button class="btn btn-outline" style="width:auto; padding:6px 10px; font-size:12px;" onclick="renderProfileHeader(true)">Edit</button>
+      </div>`;
+  }
+}
+
+function saveProfileInfo(){
+  const nameVal = document.getElementById('profile-name-input').value.trim();
+  const instVal = document.getElementById('profile-inst-input').value.trim();
+  if(nameVal) state.studentName = nameVal;
+  if(instVal) state.institution = instVal;
+  saveState();
+  renderProfileHeader(false);
+  renderLeaderboard();
+  showToast('Profile updated');
+}
+
+const PHASE5_CATEGORIES = [
+  { icon:'🔄', title:'Refresher Learning', desc:'Revisit key road safety concepts anytime to stay sharp long after licensing.' },
+  { icon:'📢', title:'Road Safety Campaigns', desc:'Join national road safety campaigns and share safety messages in your community.' },
+  { icon:'🚀', title:'Advanced Driving Modules', desc:'Deepen your skills with highway mastery, eco-driving, and advanced hazard handling.' },
+  { icon:'⚡', title:'Electric Vehicle Awareness', desc:'Learn the essentials of EV charging etiquette, safety, and maintenance basics.' },
+  { icon:'🔧', title:'Vehicle Maintenance Education', desc:'Understand routine maintenance schedules to keep your vehicle roadworthy.' },
+  { icon:'🩹', title:'First Aid Refresher', desc:'Keep your emergency response and basic first-aid knowledge current.' },
+  { icon:'🛡️', title:'Insurance Literacy', desc:'Understand your policy, the claims process, and coverage options in depth.' },
+  { icon:'📰', title:'Safe Mobility Updates', desc:'Stay informed on the latest Nigerian road safety news and regulation changes.' }
+];
+
+// Phase 5 is always browsable — a ribbon distinguishes preview vs full access,
+// but nothing is hard-locked behind a wall.
+function renderGraduateHub(){
+  const container = document.getElementById('graduate-container');
+  if(!container) return;
+  const licensed = isLicensed();
+  container.innerHTML = `
+    <div class="card" style="background:${licensed ? 'linear-gradient(135deg, var(--success-bg), rgba(22,163,74,.05))' : 'linear-gradient(135deg, var(--bg-canvas), rgba(100,116,139,.05))'}; border-color:${licensed ? 'var(--success)' : 'var(--border)'};">
+      <div style="font-size:12px; font-weight:700; color:${licensed ? 'var(--success)' : 'var(--text-muted)'};">${licensed ? 'Unlocked — Full Access' : 'Preview — full lessons unlock after Phase 4 licensing'}</div>
+      <div style="font-size:12px; color:var(--text-main); margin-top:4px;">"Road safety education should not end when a driver's licence is issued." — Framework §7.1</div>
+    </div>
+    <div class="grad-grid">` +
+    PHASE5_CATEGORIES.map((c, i) => `
+      <div class="grad-card" id="grad-card-${i}" onclick="toggleGradCard(${i})">
+        <div class="grad-icon">${c.icon}</div>
+        <div class="grad-title">${c.title}</div>
+        <div class="grad-desc">${c.desc}</div>
+      </div>`).join('') + `</div>`;
+}
+
+function toggleGradCard(i){ document.getElementById(`grad-card-${i}`).classList.toggle('open'); }
+
+// ---------------------------------------------------------------------
+// HOME — phase tags reflect real unlock state
+// ---------------------------------------------------------------------
+function renderHome(){
+  const done = completedCount();
+  const pct = Math.round((done / 15) * 100);
+  const fillEl = document.getElementById('home-progress-fill');
+  if(!fillEl) return;
+  fillEl.style.width = pct + '%';
+  document.getElementById('home-progress-text').innerText = `Progress: ${done} / 15 Modules Completed`;
+  document.getElementById('home-progress-pct').innerText = pct + '%';
+
+  setTag('phase1-tag', done >= 15 ? 'Phase 1 • Complete ✓' : 'Phase 1 • Active', done >= 15 ? 'var(--success)' : 'var(--primary-light)');
+  setTag('phase2-tag', state.simulator.readinessPassed ? 'Phase 2 • Complete ✓' : done >= 5 ? 'Phase 2 • Unlocked' : 'Phase 2 • Locked', state.simulator.readinessPassed ? 'var(--success)' : done >= 5 ? 'var(--accent)' : 'var(--text-muted)');
+  setTag('phase3-tag', state.drivingSchool.signOff ? 'Phase 3 • Complete ✓' : state.simulator.readinessPassed ? 'Phase 3 • Unlocked' : 'Phase 3 • Locked', state.drivingSchool.signOff ? 'var(--success)' : state.simulator.readinessPassed ? 'var(--warning)' : 'var(--text-muted)');
+  setTag('phase4-tag', isLicensed() ? 'Phase 4 • Complete ✓' : state.drivingSchool.signOff ? 'Phase 4 • Unlocked' : 'Phase 4 • Locked', isLicensed() ? 'var(--success)' : state.drivingSchool.signOff ? 'var(--primary-light)' : 'var(--text-muted)');
+  setTag('phase5-tag', isLicensed() ? 'Phase 5 • Unlocked' : 'Phase 5 • Preview', isLicensed() ? 'var(--success)' : 'var(--text-muted)');
+
+  document.getElementById('user-xp').innerText = state.xp + ' XP';
+}
+
+function setTag(id, text, color){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.innerText = text;
+  el.style.color = color;
+}
+
+// ---------------------------------------------------------------------
+// NAV / VIEW SWITCHING
+// ---------------------------------------------------------------------
+function switchView(viewId){
+  document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+  document.getElementById(viewId).classList.add('active');
+
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const map = { 'view-home':0, 'view-modules':1, 'view-module-detail':1, 'view-booking':2, 'view-simulation':2, 'view-practical':2, 'view-tracker':3, 'view-certificate':3, 'view-profile':4 };
+  const idx = map[viewId];
+  if(idx !== undefined) document.querySelector(`.nav-item[data-idx="${idx}"]`).classList.add('active');
+
+  if(viewId === 'view-booking') renderBookingHub();
+  if(viewId === 'view-simulation'){ renderSimulatorCard(); renderReadinessCard(); }
+  if(viewId === 'view-practical') renderDrivingSchoolCard();
+  if(viewId === 'view-tracker') renderTracker();
+  if(viewId === 'view-certificate') renderCertificate();
+  if(viewId === 'view-profile'){ renderProfileHeader(false); renderLeaderboard(); renderBadges(); renderGraduateHub(); }
+  if(viewId === 'view-home') renderHome();
+}
+
+// ---------------------------------------------------------------------
+// BOOT SEQUENCE
+// ---------------------------------------------------------------------
+function renderAll(){
+  updateStreak();
+  renderModulesList();
+  renderHome();
+  renderNotifications();
+  checkMilestones();
+  checkBadges();
+}
+
+window.onload = function(){
+  renderAll();
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('service-worker.js').catch(() => {});
+  }
+};
+</script>
+</body>
+</html>

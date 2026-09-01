@@ -3,249 +3,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FRSC Road Safety - Cubbes</title>
+    <title>FRSC Road Safety - Cubbes Learning</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --brand: #2f4bff;
-            --brand-soft: #eef0ff;
+            --primary: #2f4bff;
+            --primary-light: #eef0ff;
             --bg: #f7f8fb;
             --surface: #ffffff;
             --border: #e4e6ee;
             --text: #14172b;
-            --muted: #6b7086;
-            --green-bg: #d1fae5;
-            --green-ink: #065f46;
-            --red-bg: #fee2e2;
-            --red-ink: #b91c1c;
-            --yellow: #fef3c7;
-            --yellow-ink: #92650a;
+            --text-secondary: #6b7086;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { font-size: 16px; }
         body {
             font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: radial-gradient(circle at top left, #eef1ff 0%, var(--bg) 45%);
+            background: var(--bg);
             color: var(--text);
+            line-height: 1.6;
         }
 
-        .app-wrapper { display: flex; width: 100%; max-width: 430px; margin: 0 auto; height: 100vh; background: var(--surface); box-shadow: 0 20px 60px -20px rgba(15, 27, 61, 0.22); }
-
-        .sidebar {
-            position: fixed;
-            left: -100%;
-            top: 0;
-            width: 280px;
-            height: 100vh;
+        .app {
+            width: 100%;
+            max-width: 430px;
+            margin: 0 auto;
             background: var(--surface);
-            border-right: 1px solid var(--border);
-            padding: 20px;
-            overflow-y: auto;
-            transition: left 0.3s ease;
-            z-index: 1000;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 40px rgba(0,0,0,0.08);
         }
-        .sidebar.open { left: 0; }
 
-        .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
-        .sidebar-title { font-weight: 700; font-size: 16px; color: var(--brand); }
-        .sidebar-close { background: none; border: none; font-size: 24px; cursor: pointer; }
+        .main {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 80px;
+        }
 
-        .menu-item {
-            padding: 16px;
-            margin-bottom: 8px;
-            border-radius: 12px;
+        .header {
+            padding: 20px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header-title { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+        .header-subtitle { font-size: 14px; color: var(--text-secondary); }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .content { padding: 20px; }
+
+        /* WELCOME SCREEN */
+        .welcome-hero {
+            background: linear-gradient(135deg, var(--primary), #1e37cc);
+            border-radius: 20px;
+            padding: 40px 20px;
+            color: white;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .welcome-icon {
+            font-size: 60px;
+            margin-bottom: 16px;
+            opacity: 0.9;
+        }
+
+        .welcome-title { font-size: 24px; font-weight: 700; margin-bottom: 12px; }
+        .welcome-subtitle { font-size: 14px; opacity: 0.9; line-height: 1.6; margin-bottom: 20px; }
+
+        .btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border: 1px solid transparent;
-        }
-        .menu-item:hover { background: var(--brand-soft); }
-        .menu-item.active { background: var(--brand-soft); border-color: var(--brand); }
-        .menu-item.locked { opacity: 0.6; cursor: not-allowed; }
-
-        .menu-icon { font-size: 20px; width: 24px; }
-        .menu-text { flex: 1; font-size: 14px; font-weight: 600; }
-        .menu-status {
+            font-family: "Inter", sans-serif;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            font-size: 12px;
-            font-weight: 700;
+            gap: 8px;
         }
-        .menu-status.locked { background: #ddd; color: #999; }
-        .menu-status.completed { background: var(--green-ink); color: white; }
 
-        .overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.3); z-index: 999; }
-        .overlay.show { display: block; }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+        }
 
-        .main-content { flex: 1; display: flex; flex-direction: column; }
-        .header { padding: 16px 20px; background: rgba(255, 255, 255, 0.85); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; }
-        .hamburger { background: none; border: none; cursor: pointer; font-size: 24px; padding: 8px; }
-        .header-logo { font-weight: 700; font-size: 14px; color: var(--muted); flex: 1; }
+        .btn-primary:hover { background: #1e37cc; }
 
-        .content { flex: 1; padding: 24px 20px; overflow-y: auto; display: flex; flex-direction: column; }
-        .screen { display: none; flex: 1; }
-        .screen.active { display: flex; flex-direction: column; }
+        .btn-secondary {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid var(--border);
+        }
 
-        .breadcrumb { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--brand); margin-bottom: 8px; }
-        .lesson-title { font-size: 24px; font-weight: 800; color: var(--text); margin-bottom: 24px; }
-        .section-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 16px; }
+        .btn-secondary:hover { background: #d7dbf5; }
 
-        .card {
+        .btn-sm { padding: 10px 16px; font-size: 13px; }
+
+        /* MODULE LIST */
+        .modules-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .module-card {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 14px;
-            padding: 24px;
-            margin-bottom: 24px;
-            cursor: pointer;
-            transition: all 0.18s;
-        }
-        .card:hover { box-shadow: 0 12px 28px -8px rgba(15, 27, 61, 0.16); transform: translateY(-3px); }
-
-        .card-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-        .card-description { font-size: 14px; color: var(--muted); margin-bottom: 16px; line-height: 1.45; }
-        .card-cta { color: var(--brand); font-weight: 700; font-size: 14px; }
-
-        .progress-track { background: var(--border); height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 12px; }
-        .progress-fill { height: 100%; background: var(--brand); transition: width 0.3s; }
-
-        .module-list { display: flex; flex-direction: column; gap: 12px; }
-        .module-item {
-            display: flex;
-            align-items: center;
             padding: 16px;
-            background: var(--bg);
-            border-radius: 12px;
             cursor: pointer;
             transition: all 0.2s;
+            display: flex;
+            gap: 12px;
+            align-items: center;
         }
-        .module-item:hover { background: var(--brand-soft); }
-        .module-item.completed { background: var(--green-bg); }
+
+        .module-card:hover { box-shadow: 0 4px 12px rgba(47,75,255,0.1); border-color: var(--primary); }
 
         .module-number {
+            min-width: 40px;
+            width: 40px;
+            height: 40px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 30px;
-            height: 30px;
-            background: var(--brand-soft);
-            color: var(--brand);
-            border-radius: 50%;
-            font-weight: 800;
-            font-size: 13px;
-            margin-right: 12px;
+            font-weight: 700;
+            font-size: 14px;
         }
-        .module-item.completed .module-number { background: var(--green-bg); color: var(--green-ink); }
 
-        .module-info { flex: 1; }
-        .module-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
-        .module-time { font-size: 12px; color: var(--muted); }
+        .module-info { flex: 1; min-width: 0; }
+        .module-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+        .module-subtitle { font-size: 12px; color: var(--text-secondary); }
+
+        .module-status {
+            font-size: 18px;
+            opacity: 0.5;
+        }
+
+        /* PROGRESS */
+        .progress-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .progress-label { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+        .progress-value { font-size: 14px; font-weight: 700; color: var(--primary); }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #1e37cc);
+            transition: width 0.3s;
+        }
+
+        /* LESSON SCREEN */
+        .lesson-header { margin-bottom: 24px; }
+        .lesson-breadcrumb { font-size: 12px; color: var(--primary); font-weight: 600; text-transform: uppercase; margin-bottom: 8px; }
+        .lesson-title { font-size: 24px; font-weight: 700; margin-bottom: 16px; }
 
         .lesson-content {
             background: var(--bg);
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 20px;
             margin-bottom: 24px;
             line-height: 1.8;
         }
+
         .lesson-content h3 { font-size: 16px; font-weight: 700; margin-top: 16px; margin-bottom: 8px; }
-        .lesson-content p { font-size: 14px; margin-bottom: 12px; }
-        .lesson-content ul { font-size: 14px; margin-left: 20px; margin-bottom: 12px; }
-        .lesson-content li { margin-bottom: 8px; }
+        .lesson-content p { font-size: 14px; margin-bottom: 12px; color: var(--text); }
+        .lesson-content ul { margin-left: 20px; margin-bottom: 12px; }
+        .lesson-content li { font-size: 14px; margin-bottom: 8px; }
 
-        .visual-lesson {
-            background: linear-gradient(135deg, #f0f4ff, #e4e8ff);
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 24px;
+        .lesson-video {
+            background: linear-gradient(135deg, var(--primary-light), #d7dbf5);
+            border-radius: 14px;
+            padding: 60px 20px;
             text-align: center;
+            margin-bottom: 24px;
+            color: var(--primary);
+            font-weight: 600;
         }
 
-        .sign-display {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 80px;
-            margin: 20px 0;
-        }
-
-        .stop-sign { width: 120px; height: 120px; background: #d32f2f; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 36px; }
-        .warning-sign { width: 140px; height: 140px; background: #ffc107; border: 4px solid #333; display: flex; align-items: center; justify-content: center; font-size: 60px; transform: rotate(45deg); border-radius: 8px; }
-        .warning-sign-inner { transform: rotate(-45deg); }
-
+        /* QUESTION */
         .question-section { margin-bottom: 24px; }
-        .question { font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+        .question-text { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
 
-        .options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        .options { display: flex; flex-direction: column; gap: 12px; }
+
         .option {
             padding: 16px;
             background: var(--bg);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
             font-size: 14px;
             transition: all 0.2s;
-            text-align: left;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
         }
-        .option:hover { border-color: var(--brand); background: var(--brand-soft); }
-        .option.correct { border-color: var(--green-ink); background: var(--green-bg); }
+
+        .option:hover { border-color: var(--primary); background: var(--primary-light); }
+        .option.selected { border-color: var(--primary); background: var(--primary-light); }
+        .option.correct { border-color: var(--success); background: #ecfdf5; }
 
         .option-letter {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            min-width: 28px;
             width: 28px;
             height: 28px;
-            background: var(--brand);
+            background: var(--primary);
             color: white;
             border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: 700;
             font-size: 12px;
-            margin-right: 12px;
+            flex-shrink: 0;
         }
 
         .feedback {
             padding: 16px;
-            background: var(--green-bg);
-            border-left: 4px solid var(--green-ink);
+            background: #ecfdf5;
+            border-left: 4px solid var(--success);
             border-radius: 8px;
             margin-top: 16px;
             display: none;
         }
+
         .feedback.show { display: block; }
+        .feedback-icon { font-size: 18px; margin-right: 8px; }
+        .feedback-text { font-size: 14px; font-weight: 700; color: var(--success); }
+        .feedback-explanation { font-size: 13px; margin-top: 8px; color: var(--text); }
 
-        .feedback-text { font-size: 14px; font-weight: 700; color: var(--green-ink); }
-        .feedback-explanation { font-size: 13px; margin-top: 8px; }
-
-        .locked-message {
-            background: var(--red-bg);
-            border-radius: 14px;
-            padding: 20px;
+        /* ASSESSMENT */
+        .assessment-score {
+            background: linear-gradient(135deg, var(--success), #059669);
+            border-radius: 20px;
+            padding: 40px;
+            color: white;
             text-align: center;
-            margin: 40px 0;
-        }
-        .locked-icon { font-size: 48px; margin-bottom: 12px; }
-        .locked-title { font-size: 16px; font-weight: 700; color: var(--red-ink); margin-bottom: 8px; }
-        .locked-description { font-size: 13px; color: var(--red-ink); margin-bottom: 16px; }
-
-        .certificate-required {
-            background: var(--yellow);
-            border-radius: 14px;
-            padding: 16px;
             margin-bottom: 24px;
-            display: flex;
-            gap: 12px;
-            align-items: center;
         }
-        .certificate-required-icon { font-size: 24px; }
-        .certificate-required-text { font-size: 13px; color: var(--yellow-ink); font-weight: 600; }
 
-        .school-card {
+        .score-number { font-size: 56px; font-weight: 800; margin-bottom: 8px; }
+        .score-percentage { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+        .score-status { font-size: 12px; opacity: 0.9; text-transform: uppercase; font-weight: 700; }
+
+        /* CERTIFICATE */
+        .certificate {
+            background: var(--surface);
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .cert-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 16px;
+            font-weight: 700;
+        }
+
+        .cert-label { font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 8px; }
+        .cert-program { font-size: 20px; font-weight: 700; color: var(--primary); margin-bottom: 20px; }
+        .cert-divider { height: 1px; background: var(--border); margin: 24px 0; }
+        .cert-name { font-size: 24px; font-weight: 800; margin-bottom: 8px; }
+        .cert-text { font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px; }
+
+        /* BOOKING */
+        .booking-card {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 14px;
@@ -254,869 +317,561 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .school-card:hover { border-color: var(--brand); box-shadow: 0 4px 12px rgba(47, 75, 255, 0.1); }
 
-        .school-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
-        .school-name { font-weight: 700; font-size: 14px; }
-        .school-rating { font-size: 13px; font-weight: 600; color: #f59e0b; }
-        .school-info { display: flex; gap: 16px; margin-bottom: 12px; font-size: 13px; color: var(--muted); }
-        .school-price { font-size: 16px; font-weight: 700; color: var(--brand); margin-bottom: 12px; }
+        .booking-card:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(47,75,255,0.1); }
 
-        .school-action {
-            width: 100%;
-            padding: 10px;
-            background: var(--brand);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            font-family: "Inter", sans-serif;
+        .booking-header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+        .booking-name { font-weight: 700; font-size: 14px; }
+        .booking-rating { font-size: 13px; font-weight: 600; color: var(--warning); }
+        .booking-info { display: flex; gap: 12px; margin-bottom: 12px; font-size: 13px; color: var(--text-secondary); }
+        .booking-price { font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 12px; }
+
+        /* LOCKED */
+        .locked-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 14px;
+            padding: 32px 20px;
+            text-align: center;
         }
-        .school-action:hover { background: #1e37cc; }
 
-        .button-group { display: flex; gap: 12px; margin-top: auto; padding: 20px 0; }
-        .btn {
+        .locked-icon { font-size: 48px; margin-bottom: 16px; }
+        .locked-title { font-size: 16px; font-weight: 700; color: var(--error); margin-bottom: 8px; }
+        .locked-text { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; }
+
+        /* TABS */
+        .tabs {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            max-width: 430px;
+            margin: 0 auto;
+            z-index: 100;
+        }
+
+        .tab {
             flex: 1;
-            padding: 14px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 700;
+            padding: 12px;
+            text-align: center;
             cursor: pointer;
+            border: none;
+            background: none;
             font-family: "Inter", sans-serif;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 600;
         }
-        .btn-primary { background: var(--brand); color: white; }
-        .btn-primary:hover { background: #1e37cc; }
-        .btn-secondary { background: var(--bg); color: var(--brand); border: 1px solid var(--border); }
-        .btn-secondary:hover { background: var(--brand-soft); }
+
+        .tab.active {
+            color: var(--primary);
+        }
+
+        .tab-icon {
+            font-size: 20px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--error);
+            color: white;
+            border-radius: 10px;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-left: 4px;
+        }
     </style>
 </head>
 <body>
-    <div class="app-wrapper">
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-title">Menu</div>
-                <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+    <div class="app">
+        <div class="main">
+            <!-- WELCOME SCREEN -->
+            <div class="screen active" id="welcomeScreen">
+                <div class="header">
+                    <div class="header-title">Road Safety</div>
+                    <div class="header-subtitle">FRSC Learning Programme</div>
+                </div>
+                <div class="content">
+                    <div class="welcome-hero">
+                        <div class="welcome-icon">🎓</div>
+                        <div class="welcome-title">Welcome to FRSC Road Safety Education</div>
+                        <div class="welcome-subtitle">Complete 15 comprehensive modules to master road safety, responsible mobility, and simulation readiness before practical driving.</div>
+                        <button class="btn btn-primary" onclick="goToScreen('coursesScreen')">Start Learning</button>
+                    </div>
+
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <div class="progress-label">Overall Progress</div>
+                            <div class="progress-value" id="overallProgress">0%</div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="overallProgressBar" style="width: 0%;"></div>
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">0 of 15 modules completed</div>
+                    </div>
+                </div>
             </div>
-            <div class="menu-item active" onclick="goToSection('home')">
-                <div class="menu-icon">🏠</div>
-                <div class="menu-text">Home</div>
+
+            <!-- COURSES SCREEN -->
+            <div class="screen" id="coursesScreen">
+                <div class="header">
+                    <div class="header-title">Modules</div>
+                    <div class="header-subtitle">15 modules • ~10 hours total</div>
+                </div>
+                <div class="content" id="modulesContainer"></div>
             </div>
-            <div class="menu-item" onclick="goToSection('course')">
-                <div class="menu-icon">📚</div>
-                <div class="menu-text">Course</div>
-                <div class="menu-status completed">✓</div>
+
+            <!-- LESSON SCREEN -->
+            <div class="screen" id="lessonScreen">
+                <div class="header" onclick="goToScreen('coursesScreen')" style="cursor: pointer;">
+                    <div class="header-title" style="font-size: 20px;">← Back</div>
+                </div>
+                <div class="content">
+                    <div class="lesson-header">
+                        <div class="lesson-breadcrumb" id="lessonBreadcrumb">Module 1</div>
+                        <div class="lesson-title" id="lessonTitle">Introduction to Road Safety</div>
+                    </div>
+                    <div id="lessonContentArea"></div>
+                </div>
             </div>
-            <div class="menu-item" id="assessmentMenu" onclick="tryAccess('assessment')">
-                <div class="menu-icon">📝</div>
-                <div class="menu-text">Assessment</div>
-                <div class="menu-status locked">🔒</div>
+
+            <!-- ASSESSMENT SCREEN -->
+            <div class="screen" id="assessmentScreen">
+                <div class="header" onclick="goToScreen('coursesScreen')" style="cursor: pointer;">
+                    <div class="header-title" style="font-size: 20px;">← Back</div>
+                </div>
+                <div class="content" id="assessmentContainer"></div>
             </div>
-            <div class="menu-item" id="certificateMenu" onclick="tryAccess('certificate')">
-                <div class="menu-icon">🏆</div>
-                <div class="menu-text">Certificate</div>
-                <div class="menu-status locked">🔒</div>
+
+            <!-- RESULTS SCREEN -->
+            <div class="screen" id="resultsScreen">
+                <div class="header">
+                    <div class="header-title">Assessment Complete</div>
+                </div>
+                <div class="content">
+                    <div class="assessment-score">
+                        <div class="score-number" id="scoreNumber">18/20</div>
+                        <div class="score-percentage" id="scorePercentage">90%</div>
+                        <div class="score-status">PASSED</div>
+                    </div>
+                    <div style="text-align: center; margin-bottom: 24px;">
+                        <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">You've mastered this module. Ready to progress!</p>
+                        <button class="btn btn-primary" onclick="proceedToNext()">Continue to Next Module</button>
+                    </div>
+                </div>
             </div>
-            <div class="menu-item" onclick="goToSection('simulator')">
-                <div class="menu-icon">🎮</div>
-                <div class="menu-text">Simulator</div>
+
+            <!-- CERTIFICATE SCREEN -->
+            <div class="screen" id="certificateScreen">
+                <div class="header">
+                    <div class="header-title">Congratulations!</div>
+                    <div class="header-subtitle">You've completed all modules</div>
+                </div>
+                <div class="content">
+                    <div class="certificate">
+                        <div class="cert-icon">✓</div>
+                        <div class="cert-label">Certificate of Completion</div>
+                        <div class="cert-program">FRSC Road Safety & Responsible Mobility</div>
+                        <div class="cert-divider"></div>
+                        <div style="text-align: left;">
+                            <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">This certifies that</div>
+                            <div class="cert-name">Peter Adeyemi</div>
+                            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">has successfully completed all 15 modules of the FRSC Road Safety Education Programme.</div>
+                        </div>
+                        <div class="cert-divider"></div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 11px; color: var(--primary); font-weight: 700; margin-bottom: 16px;">Verified & Certified</div>
+                            <button class="btn btn-primary" onclick="goToScreen('simulatorScreen')">Next: Book Simulator</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="menu-item" onclick="goToSection('drivingSchool')">
-                <div class="menu-icon">🚗</div>
-                <div class="menu-text">Driving School</div>
+
+            <!-- SIMULATOR SCREEN -->
+            <div class="screen" id="simulatorScreen">
+                <div class="header">
+                    <div class="header-title">Simulator Training</div>
+                    <div class="header-subtitle">Practice before practical driving</div>
+                </div>
+                <div class="content">
+                    <div id="simCertWarning" style="display: none; background: #fef3c7; border: 1px solid #fcd34d; border-radius: 12px; padding: 16px; margin-bottom: 20px; font-size: 13px; color: #92650a;">
+                        🎓 Certificate required: Complete all modules first
+                    </div>
+
+                    <div id="simContent">
+                        <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">Practice real-world driving scenarios in a safe, controlled environment before your practical training begins.</p>
+
+                        <div style="margin-bottom: 20px;">
+                            <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 12px;">Available Simulator Centers</div>
+                            <div class="booking-card">
+                                <div class="booking-header">
+                                    <div class="booking-name">Cubbes Simulator Center</div>
+                                    <div class="booking-rating">★ 4.9</div>
+                                </div>
+                                <div class="booking-info">
+                                    <div>📍 Victoria Island, Lagos</div>
+                                    <div>⏱ 1-hour sessions</div>
+                                </div>
+                                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Available: Today, Tomorrow, Next Week</div>
+                                <div class="booking-price">₦8,500 per session</div>
+                                <button class="btn btn-primary btn-sm" onclick="bookSimulator()">Book Session</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="menu-item" id="licenceMenu" onclick="tryAccess('licence')">
-                <div class="menu-icon">📜</div>
-                <div class="menu-text">Licence Tracking</div>
-                <div class="menu-status locked">🔒</div>
+
+            <!-- DRIVING SCHOOL SCREEN -->
+            <div class="screen" id="drivingSchoolScreen">
+                <div class="header">
+                    <div class="header-title">Driving School</div>
+                    <div class="header-subtitle">Select your practical training provider</div>
+                </div>
+                <div class="content">
+                    <div id="dsCertWarning" style="display: none; background: #fef3c7; border: 1px solid #fcd34d; border-radius: 12px; padding: 16px; margin-bottom: 20px; font-size: 13px; color: #92650a;">
+                        🎓 Certificate required: Complete all modules first
+                    </div>
+
+                    <div id="dsContent">
+                        <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 20px;">Complete mandatory practical training with FRSC-certified driving schools near you.</p>
+
+                        <div id="schoolsContainer"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LICENCE TRACKING SCREEN -->
+            <div class="screen" id="licenceScreen">
+                <div class="header">
+                    <div class="header-title">Licence Tracking</div>
+                    <div class="header-subtitle">Follow your progress to official licence</div>
+                </div>
+                <div class="content">
+                    <div id="licenceCertWarning" style="display: none; background: #fef3c7; border: 1px solid #fcd34d; border-radius: 12px; padding: 16px; margin-bottom: 20px; font-size: 13px; color: #92650a;">
+                        🎓 Certificate required: Complete all modules first
+                    </div>
+
+                    <div id="licenceContent">
+                        <div style="background: var(--bg); border-radius: 14px; padding: 20px; margin-bottom: 20px;">
+                            <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 16px;">Your Journey</div>
+                            
+                            <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                    <div style="width: 36px; height: 36px; background: var(--success); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-bottom: 8px;">✓</div>
+                                    <div style="font-size: 11px; text-align: center; color: var(--text-secondary);">Digital Course</div>
+                                </div>
+                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                    <div style="width: 36px; height: 36px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-bottom: 8px;">2</div>
+                                    <div style="font-size: 11px; text-align: center; color: var(--text-secondary);">Simulator</div>
+                                </div>
+                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                    <div style="width: 36px; height: 36px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-bottom: 8px;">3</div>
+                                    <div style="font-size: 11px; text-align: center; color: var(--text-secondary);">Driving School</div>
+                                </div>
+                                <div style="display: flex; flex-direction: column; align-items: center;">
+                                    <div style="width: 36px; height: 36px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-bottom: 8px;">4</div>
+                                    <div style="font-size: 11px; text-align: center; color: var(--text-secondary);">Get Licence</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: var(--primary-light); border: 1px solid var(--primary); border-radius: 12px; padding: 16px; text-align: center;">
+                            <div style="font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 4px;">Ready for Next Step?</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Visit FRSC portal to start your official licence application</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACCOUNT SCREEN -->
+            <div class="screen" id="accountScreen">
+                <div class="header">
+                    <div class="header-title">Account</div>
+                </div>
+                <div class="content">
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <div class="progress-label">Profile</div>
+                        </div>
+                        <div style="font-size: 18px; font-weight: 700; margin: 16px 0;">Peter Adeyemi</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">peter@cubbes.app</div>
+                        <button class="btn btn-secondary" style="width: 100%;">Edit Profile</button>
+                    </div>
+
+                    <div class="progress-section">
+                        <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 12px;">Learning Stats</div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <div>
+                                <div style="font-size: 20px; font-weight: 700; color: var(--primary);" id="statsModules">0</div>
+                                <div style="font-size: 12px; color: var(--text-secondary);">Modules Completed</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 20px; font-weight: 700; color: var(--primary);" id="statsStreak">0</div>
+                                <div style="font-size: 12px; color: var(--text-secondary);">Day Streak</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
-
-        <div class="main-content">
-            <div class="header">
-                <button class="hamburger" onclick="toggleSidebar()">☰</button>
-                <div class="header-logo">Cubbes | FRSC Road Safety</div>
-            </div>
-
-            <!-- HOME -->
-            <div class="screen active" id="homeScreen">
-                <div class="content">
-                    <div style="font-size: 13px; color: var(--muted);">Welcome back,</div>
-                    <div class="lesson-title" style="margin-bottom: 32px;">Peter</div>
-                    <div class="section-title">Your Learning Path</div>
-                    <div class="card" onclick="goToSection('course')">
-                        <div class="card-title">FRSC Road Safety & Responsible Mobility</div>
-                        <div class="card-description">Complete 8 modules, pass assessment, get certified, then book simulator & driving school training.</div>
-                        <div style="margin-bottom: 12px;">
-                            <div style="font-size: 13px; color: var(--muted); margin-bottom: 8px;">0% Complete · 0/8 modules</div>
-                            <div class="progress-track"><div class="progress-fill" style="width: 0%;"></div></div>
-                        </div>
-                        <div class="card-cta">Start Learning →</div>
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-            </div>
-
-            <!-- COURSE LIST -->
-            <div class="screen" id="courseScreen">
-                <div class="content">
-                    <div class="breadcrumb">LEARNING PATH</div>
-                    <div class="lesson-title">8 Road Safety Modules</div>
-                    <div style="margin-bottom: 20px; font-size: 13px; color: var(--muted);">Complete all 8 modules to unlock assessment</div>
-                    <div class="section-title">Modules</div>
-                    <div class="module-list">
-                        <div class="module-item" onclick="goToModule('module1')">
-                            <div class="module-number">1</div>
-                            <div class="module-info">
-                                <div class="module-name">Introduction to Road Safety</div>
-                                <div class="module-time">30 min</div>
-                            </div>
-                        </div>
-                        <div class="module-item" onclick="goToModule('module2')">
-                            <div class="module-number">2</div>
-                            <div class="module-info">
-                                <div class="module-name">Traffic Signs & Road Markings</div>
-                                <div class="module-time">35 min</div>
-                            </div>
-                        </div>
-                        <div class="module-item" onclick="goToModule('module3')">
-                            <div class="module-number">3</div>
-                            <div class="module-info">
-                                <div class="module-name">Road Rules & Regulations</div>
-                                <div class="module-time">30 min</div>
-                            </div>
-                        </div>
-                        <div class="module-item" onclick="goToModule('module4')">
-                            <div class="module-number">4</div>
-                            <div class="module-info">
-                                <div class="module-name">Defensive Driving</div>
-                                <div class="module-time">40 min</div>
-                            </div>
-                        </div>
-                        <div class="module-item" onclick="goToModule('module5')">
-                            <div class="module-number">5</div>
-                            <div class="module-info">
-                                <div class="module-name">Vehicle Familiarisation</div>
-                                <div class="module-time">25 min</div>
-                            </div>
-                        </div>
-                        <div class="module-item" onclick="goToModule('module6')">
-                            <div class="module-number">6</div>
-                            <div class="module-info">
-                                <div class="module-name">Emergency Response & First Aid</div>
-                                <div class="module-time">30 min</div>
-                            </div>
-                        </div>
-                        <div class="module-item" onclick="goToModule('module7')">
-                            <div class="module-number">7</div>
-                            <div class="module-info">
-                                <div class="module-name">Navigation & Responsible Mobility</div>
-                                <div class="module-time">25 min</div>
-                            </div>
-                        </div>
-                        <div class="module-item" onclick="goToModule('module8')">
-                            <div class="module-number">8</div>
-                            <div class="module-info">
-                                <div class="module-name">Final Assessment</div>
-                                <div class="module-time">45 min</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-            </div>
-
-            <!-- MODULE 1 -->
-            <div class="screen" id="module1Screen">
-                <div class="content">
-                    <div class="breadcrumb">MODULE 1</div>
-                    <div class="lesson-title">Introduction to Road Safety</div>
-                    <div class="lesson-content">
-                        <h3>What is Road Safety?</h3>
-                        <p>Road safety is about protecting yourself and others on the road through proper driving practices and hazard awareness.</p>
-                        <h3>Why It Matters in Nigeria</h3>
-                        <ul>
-                            <li><strong>Speeding</strong> - 40% of accidents</li>
-                            <li><strong>Reckless driving</strong> - Unsafe lane changes</li>
-                            <li><strong>Driver fatigue</strong> - Slower reaction times</li>
-                            <li><strong>Poor maintenance</strong> - Brake failure</li>
-                            <li><strong>Hazard unawareness</strong> - Not seeing dangers</li>
-                        </ul>
-                        <h3>Your Responsibility</h3>
-                        <ul>
-                            <li>Obey traffic laws and signals</li>
-                            <li>Maintain your vehicle properly</li>
-                            <li>Drive only when alert and sober</li>
-                            <li>Respect other road users</li>
-                            <li>Anticipate and avoid hazards</li>
-                        </ul>
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-                <div class="button-group">
-                    <button class="btn btn-secondary" onclick="goToSection('course')">Back</button>
-                    <button class="btn btn-primary" onclick="goToQuiz('module1Quiz')">Quiz →</button>
-                </div>
-            </div>
-
-            <!-- MODULE 1 QUIZ -->
-            <div class="screen" id="module1QuizScreen">
-                <div class="content">
-                    <div class="breadcrumb">MODULE 1 QUIZ</div>
-                    <div class="lesson-title">Check Your Understanding</div>
-                    <div class="question-section">
-                        <div class="question">What is the leading cause of road accidents in Nigeria?</div>
-                        <div class="options">
-                            <div class="option" onclick="selectOption(this, 'fb1', true)">
-                                <span class="option-letter">A</span>
-                                Speeding (40% of accidents)
-                            </div>
-                            <div class="option" onclick="selectOption(this, 'fb1', false)">
-                                <span class="option-letter">B</span>
-                                Poor road conditions
-                            </div>
-                            <div class="option" onclick="selectOption(this, 'fb1', false)">
-                                <span class="option-letter">C</span>
-                                Vehicle age
-                            </div>
-                            <div class="option" onclick="selectOption(this, 'fb1', false)">
-                                <span class="option-letter">D</span>
-                                Weather
-                            </div>
-                        </div>
-                        <div class="feedback" id="fb1">
-                            <div class="feedback-text">✓ Correct!</div>
-                            <div class="feedback-explanation">Speeding is the leading cause of road accidents in Nigeria.</div>
-                        </div>
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-                <div class="button-group">
-                    <button class="btn btn-secondary" onclick="goToModule('module1')">Back</button>
-                    <button class="btn btn-primary" onclick="completeModule(1)">Mark Complete →</button>
-                </div>
-            </div>
-
-            <!-- MODULE 2 - With Visual Signs -->
-            <div class="screen" id="module2Screen">
-                <div class="content">
-                    <div class="breadcrumb">MODULE 2</div>
-                    <div class="lesson-title">Traffic Signs & Road Markings</div>
-                    
-                    <div class="visual-lesson">
-                        <h3 style="margin-top: 0; color: var(--text);">Regulatory Sign - STOP</h3>
-                        <div class="sign-display">
-                            <div class="stop-sign">STOP</div>
-                        </div>
-                        <p style="font-size: 13px; color: var(--text); margin-top: 12px;"><strong>You MUST come to a complete stop</strong></p>
-                    </div>
-
-                    <div class="visual-lesson">
-                        <h3 style="margin-top: 0; color: var(--text);">Warning Sign - Pedestrian Crossing</h3>
-                        <div class="sign-display">
-                            <div class="warning-sign"><div class="warning-sign-inner">🚶</div></div>
-                        </div>
-                        <p style="font-size: 13px; color: var(--text); margin-top: 12px;"><strong>Watch for people crossing</strong></p>
-                    </div>
-
-                    <div class="lesson-content">
-                        <h3>The Three Types of Traffic Signs</h3>
-                        <h3>1. Regulatory Signs (Red/White)</h3>
-                        <p>Tell you what you MUST do or MUST NOT do - violating them is illegal.</p>
-                        
-                        <h3>2. Warning Signs (Yellow Diamond)</h3>
-                        <p>Alert you to potential hazards ahead. Slow down and be prepared.</p>
-                        
-                        <h3>3. Informational Signs (Blue/Green)</h3>
-                        <p>Provide helpful information about services and directions.</p>
-
-                        <h3>Road Markings on Pavement</h3>
-                        <ul>
-                            <li><strong>White Broken Line</strong> - You CAN cross</li>
-                            <li><strong>White Solid Line</strong> - You CANNOT cross</li>
-                            <li><strong>Yellow Solid</strong> - No passing zone</li>
-                        </ul>
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-                <div class="button-group">
-                    <button class="btn btn-secondary" onclick="goToSection('course')">Back</button>
-                    <button class="btn btn-primary" onclick="goToQuiz('module2Quiz')">Quiz →</button>
-                </div>
-            </div>
-
-            <!-- MODULE 2 QUIZ -->
-            <div class="screen" id="module2QuizScreen">
-                <div class="content">
-                    <div class="breadcrumb">MODULE 2 QUIZ</div>
-                    <div class="lesson-title">Traffic Signs</div>
-                    <div class="question-section">
-                        <div class="question">What does a YELLOW DIAMOND sign indicate?</div>
-                        <div class="options">
-                            <div class="option" onclick="selectOption(this, 'fb2', true)">
-                                <span class="option-letter">A</span>
-                                Warning - potential hazard ahead
-                            </div>
-                            <div class="option" onclick="selectOption(this, 'fb2', false)">
-                                <span class="option-letter">B</span>
-                                You must stop
-                            </div>
-                            <div class="option" onclick="selectOption(this, 'fb2', false)">
-                                <span class="option-letter">C</span>
-                                Service ahead
-                            </div>
-                        </div>
-                        <div class="feedback" id="fb2">
-                            <div class="feedback-text">✓ Correct!</div>
-                            <div class="feedback-explanation">Yellow diamond signs warn you about hazards like pedestrian crossings or school zones.</div>
-                        </div>
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-                <div class="button-group">
-                    <button class="btn btn-secondary" onclick="goToModule('module2')">Back</button>
-                    <button class="btn btn-primary" onclick="completeModule(2)">Mark Complete →</button>
-                </div>
-            </div>
-
-            <!-- MODULE 3-8 QUICK VERSIONS -->
-            <div class="screen" id="module3Screen">
-                <div class="content">
-                    <div class="breadcrumb">MODULE 3</div>
-                    <div class="lesson-title">Road Rules & Regulations</div>
-                    <div class="lesson-content">
-                        <h3>Speed Limits in Nigeria</h3>
-                        <ul>
-                            <li>Urban areas: 50 km/h</li>
-                            <li>Highways: 100 km/h</li>
-                            <li>School zones: 40 km/h</li>
-                        </ul>
-                        <h3>Lane Discipline</h3>
-                        <ul>
-                            <li>Keep right except when overtaking</li>
-                            <li>Signal before changing lanes</li>
-                            <li>The 2-second rule: Keep 2 seconds behind car ahead</li>
-                        </ul>
-                        <h3>Mandatory Requirements</h3>
-                        <ul>
-                            <li>Wear seat belts</li>
-                            <li>Valid license required</li>
-                            <li>Third-party insurance mandatory</li>
-                        </ul>
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-                <div class="button-group">
-                    <button class="btn btn-secondary" onclick="goToSection('course')">Back</button>
-                    <button class="btn btn-primary" onclick="completeModule(3)">Mark Complete →</button>
-                </div>
-            </div>
-
-            <div class="screen" id="module4Screen">
-                <div class="content">
-                    <div class="breadcrumb">MODULE 4</div>
-                    <div class="lesson-title">Defensive Driving</div>
-                    <div class="lesson-content">
-                        <h3>The SIPDE Method</h3>
-                        <ul>
-                            <li><strong>S</strong>can - Look 200+ meters ahead</li>
-                            <li><strong>I</strong>dentify - Spot hazards</li>
-                            <li><strong>P</strong>redict - Anticipate what might happen</li>
-                            <li><strong>D</strong>ecide - Choose your action</li>
-                            <li><strong>E</strong>xecute - Perform smoothly</li>
-                        </ul>
-                        <h3>The 2-Second Rule</h3>
-                        <p>Ensures safe following distance. Pick an object ahead, count when car passes it - you should reach it after counting 2 seconds.</p>
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-                <div class="button-group">
-                    <button class="btn btn-secondary" onclick="goToSection('course')">Back</button>
-                    <button class="btn btn-primary" onclick="completeModule(4)">Mark Complete →</button>
-                </div>
-            </div>
-
-            <div class="screen" id="module5Screen">
-                <div class="content">
-                    <div class="breadcrumb">MODULE 5</div>
-                    <div class="lesson-title">Vehicle Familiarisation</div>
-                    <div class="lesson-content">
-                        <h3>Essential Vehicle Systems</h3>
-                        <ul>
-                            <li><strong>Braking System</strong> - Check regularly for responsiveness</li>
-                            <li><strong>Steering</strong> - Should be responsive and smooth</li>
-                            <li><strong>Lights</strong> - All must be functional</li>
-                            <li><strong>Tires</strong> - Check pressure and tread depth</li>
-                            <li><strong>Wipers</strong> - Essential for visibility</li>
-                        </ul>
-                        <h3>Pre-Drive Checks</h3>
-                        <ul>
-                            <li>Check mirrors and adjust seat</li>
-                            <li>Verify all lights work</li>
-                            <li>Test brakes before driving</li>
-                            <li>Check tire condition</li>
-                        </ul>
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-                <div class="button-group">
-                    <button class="btn btn-secondary" onclick="goToSection('course')">Back</button>
-                    <button class="btn btn-primary" onclick="completeModule(5)">Mark Complete →</button>
-                </div>
-            </div>
-
-            <div class="screen" id="module6Screen">
-                <div class="content">
-                    <div class="breadcrumb">MODULE 6</div>
-                    <div class="lesson-title">Emergency Response & First Aid</div>
-                    <div class="lesson-content">
-                        <h3>Emergency Response</h3>
-                        <ul>
-                            <li>Brake failure: Use handbrake, downshift</li>
-                            <li>Skidding: Don't brake, ease off accelerator</li>
-                            <li>Tire blowout: Hold steering steady, ease off accelerator</li>
-                        </ul>
-                        <h3>First Aid Basics</h3>
-                        <ul>
-                            <li>Call emergency services (112/199)</li>
-                            <li>Check for injuries and bleeding</li>
-                            <li>Don't move accident victim unless in danger</li>
-                            <li>Keep accident scene safe</li>
-                        </ul>
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-                <div class="button-group">
-                    <button class="btn btn-secondary" onclick="goToSection('course')">Back</button>
-                    <button class="btn btn-primary" onclick="completeModule(6)">Mark Complete →</button>
-                </div>
-            </div>
-
-            <div class="screen" id="module7Screen">
-                <div class="content">
-                    <div class="breadcrumb">MODULE 7</div>
-                    <div class="lesson-title">Navigation & Responsible Mobility</div>
-                    <div class="lesson-content">
-                        <h3>Route Planning</h3>
-                        <ul>
-                            <li>Plan your route before driving</li>
-                            <li>Know current traffic conditions</li>
-                            <li>Identify rest stops on long drives</li>
-                            <li>Share your route with someone</li>
-                        </ul>
-                        <h3>Responsible Mobility</h3>
-                        <ul>
-                            <li>Don't drive if tired - take breaks every 2 hours</li>
-                            <li>Never drive under influence of alcohol/drugs</li>
-                            <li>No texting or phone use while driving</li>
-                            <li>Respect speed limits and other road users</li>
-                        </ul>
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-                <div class="button-group">
-                    <button class="btn btn-secondary" onclick="goToSection('course')">Back</button>
-                    <button class="btn btn-primary" onclick="completeModule(7)">Mark Complete →</button>
-                </div>
-            </div>
-
-            <div class="screen" id="module8Screen">
-                <div class="content">
-                    <div class="breadcrumb">MODULE 8</div>
-                    <div class="lesson-title">Final Assessment</div>
-                    <div class="lesson-content">
-                        <h3>Ready for Assessment?</h3>
-                        <p>You've completed all 8 modules. You're now ready to take the comprehensive final assessment to test your road safety knowledge.</p>
-                        <h3>What to Expect</h3>
-                        <ul>
-                            <li>10 questions covering all modules</li>
-                            <li>70% pass rate required</li>
-                            <li>Real-world scenarios</li>
-                            <li>Immediate feedback</li>
-                        </ul>
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-                <div class="button-group">
-                    <button class="btn btn-secondary" onclick="goToSection('course')">Back</button>
-                    <button class="btn btn-primary" onclick="completeModule(8)">Take Assessment →</button>
-                </div>
-            </div>
-
-            <!-- ASSESSMENT LOCKED -->
-            <div class="screen" id="assessmentLockedScreen">
-                <div class="content">
-                    <div class="lesson-title" style="text-align: center; margin-top: 40px;">Assessment Locked</div>
-                    <div class="locked-message">
-                        <div class="locked-icon">🔒</div>
-                        <div class="locked-title">Complete All 8 Modules First</div>
-                        <div class="locked-description">You must complete all 8 modules before taking the assessment. Return to the course and complete all modules.</div>
-                        <button class="btn btn-primary" onclick="goToSection('course')" style="width: auto; margin-top: 16px;">← Go to Course</button>
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-            </div>
-
-            <!-- ASSESSMENT -->
-            <div class="screen" id="assessmentScreen">
-                <div class="content">
-                    <div class="breadcrumb">FINAL ASSESSMENT</div>
-                    <div class="lesson-title">Road Safety Mastery Test</div>
-                    <div class="question-section" id="q1">
-                        <div class="question">Q1: Leading cause of accidents in Nigeria?</div>
-                        <div class="options">
-                            <div class="option" onclick="assessmentAnswer('q1', true)"><span class="option-letter">A</span> Speeding</div>
-                            <div class="option" onclick="assessmentAnswer('q1', false)"><span class="option-letter">B</span> Weather</div>
-                        </div>
-                    </div>
-                    <div class="question-section" id="q2">
-                        <div class="question">Q2: Yellow diamond sign means?</div>
-                        <div class="options">
-                            <div class="option" onclick="assessmentAnswer('q2', true)"><span class="option-letter">A</span> Warning ahead</div>
-                            <div class="option" onclick="assessmentAnswer('q2', false)"><span class="option-letter">B</span> Must stop</div>
-                        </div>
-                    </div>
-                    <div class="question-section" id="q3">
-                        <div class="question">Q3: Urban speed limit?</div>
-                        <div class="options">
-                            <div class="option" onclick="assessmentAnswer('q3', true)"><span class="option-letter">A</span> 50 km/h</div>
-                            <div class="option" onclick="assessmentAnswer('q3', false)"><span class="option-letter">B</span> 100 km/h</div>
-                        </div>
-                    </div>
-                    <div class="question-section" id="q4">
-                        <div class="question">Q4: 2-second rule is for?</div>
-                        <div class="options">
-                            <div class="option" onclick="assessmentAnswer('q4', true)"><span class="option-letter">A</span> Safe following distance</div>
-                            <div class="option" onclick="assessmentAnswer('q4', false)"><span class="option-letter">B</span> Parking limit</div>
-                        </div>
-                    </div>
-                    <div class="question-section" id="q5">
-                        <div class="question">Q5: SIPDE stands for?</div>
-                        <div class="options">
-                            <div class="option" onclick="assessmentAnswer('q5', true)"><span class="option-letter">A</span> Scan, Identify, Predict, Decide, Execute</div>
-                            <div class="option" onclick="assessmentAnswer('q5', false)"><span class="option-letter">B</span> Speed, Indicate, Proceed, Drive, Exit</div>
-                        </div>
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-                <div class="button-group">
-                    <button class="btn btn-secondary" onclick="goToSection('course')">Back</button>
-                    <button class="btn btn-primary" onclick="showAssessmentResults()">Submit →</button>
-                </div>
-            </div>
-
-            <!-- ASSESSMENT RESULTS -->
-            <div class="screen" id="assessmentResultsScreen">
-                <div class="content">
-                    <div class="breadcrumb">ASSESSMENT COMPLETE</div>
-                    <div class="lesson-title">Your Results</div>
-                    <div style="background: linear-gradient(135deg, var(--green-ink), #047857); border-radius: 14px; padding: 24px; color: white; text-align: center; margin-bottom: 24px;">
-                        <div style="font-size: 48px; font-weight: 800; margin-bottom: 8px;" id="assessmentScore">5/5</div>
-                        <div style="font-size: 24px; font-weight: 700;" id="assessmentPercentage">100%</div>
-                    </div>
-                    <div style="text-align: left; font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
-                        Excellent! You've demonstrated strong understanding. Ready for simulator and driving school training.
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-                <div class="button-group">
-                    <button class="btn btn-primary" onclick="getCertificate()">Get Your Certificate →</button>
-                </div>
-            </div>
-
-            <!-- CERTIFICATE LOCKED -->
-            <div class="screen" id="certificateLockedScreen">
-                <div class="content">
-                    <div class="lesson-title" style="text-align: center; margin-top: 40px;">Certificate Locked</div>
-                    <div class="locked-message">
-                        <div class="locked-icon">🔒</div>
-                        <div class="locked-title">Complete Assessment First</div>
-                        <div class="locked-description">Pass the final assessment (70%+) to earn your certificate.</div>
-                        <button class="btn btn-primary" onclick="tryAccess('assessment')" style="width: auto; margin-top: 16px;">← Take Assessment</button>
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-            </div>
-
-            <!-- CERTIFICATE -->
-            <div class="screen" id="certificateScreen">
-                <div class="content" style="justify-content: center;">
-                    <div style="background: var(--surface); border: 2px solid var(--brand); border-radius: 14px; padding: 32px; text-align: center; max-width: 380px;">
-                        <div style="width: 48px; height: 48px; background: var(--brand-soft); color: var(--brand); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 24px; margin: 0 auto 12px;">C</div>
-                        <div style="font-size: 11px; font-weight: 700; color: var(--brand); text-transform: uppercase; margin-bottom: 8px;">Certificate of Completion</div>
-                        <div style="font-size: 18px; font-weight: 700; color: var(--brand); margin-bottom: 24px;">FRSC Road Safety & Responsible Mobility</div>
-                        <div style="height: 1px; background: var(--border); margin: 24px 0;"></div>
-                        <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">This certifies that</div>
-                        <div style="font-size: 26px; font-weight: 800; color: var(--text); margin-bottom: 8px;">Peter Adeyemi</div>
-                        <div style="font-size: 12px; color: var(--muted);">has successfully completed all 8 modules and passed the comprehensive assessment.</div>
-                        <div style="height: 1px; background: var(--border); margin: 24px 0;"></div>
-                        <div style="display: inline-block; background: var(--yellow); color: var(--yellow-ink); padding: 6px 12px; border-radius: 6px; font-size: 10px; font-weight: 700;">PROTOTYPE</div>
-                    </div>
-                </div>
-                <div class="button-group">
-                    <button class="btn btn-primary" onclick="goToSection('simulator')" style="flex: 1;">Next: Simulator →</button>
-                </div>
-            </div>
-
-            <!-- SIMULATOR -->
-            <div class="screen" id="simulatorScreen">
-                <div class="content">
-                    <div class="breadcrumb">NEXT STEP</div>
-                    <div class="lesson-title">Simulator Training</div>
-                    <div id="simCertReq" class="certificate-required" style="display: none;">
-                        <div class="certificate-required-icon">🎓</div>
-                        <div class="certificate-required-text">Certificate required to book sessions</div>
-                    </div>
-                    <div id="simContent">
-                        <p style="font-size: 14px; color: var(--muted); margin-bottom: 20px;">Practice real-world driving scenarios safely before practical training.</p>
-                        <div class="section-title">Available Sessions</div>
-                        <div class="school-card">
-                            <div class="school-header">
-                                <div class="school-name">Cubbes Simulator Center</div>
-                                <div class="school-rating">★ 4.9 (342)</div>
-                            </div>
-                            <div class="school-info">
-                                <div>📍 Victoria Island, Lagos</div>
-                                <div>⏱️ 1-hour sessions</div>
-                            </div>
-                            <div style="font-size: 12px; color: var(--muted); margin-bottom: 12px;">Available: Today, Tomorrow, Next Week</div>
-                            <div class="school-price">₦8,500 per session</div>
-                            <button class="school-action" onclick="checkCert('sim')">Book Session →</button>
-                        </div>
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-            </div>
-
-            <!-- DRIVING SCHOOL -->
-            <div class="screen" id="drivingSchoolScreen">
-                <div class="content">
-                    <div class="breadcrumb">DRIVING TRAINING</div>
-                    <div class="lesson-title">FRSC-Accredited Schools</div>
-                    <div id="dsCertReq" class="certificate-required" style="display: none;">
-                        <div class="certificate-required-icon">🎓</div>
-                        <div class="certificate-required-text">Certificate required to enroll</div>
-                    </div>
-                    <div id="dsContent">
-                        <p style="font-size: 13px; color: var(--muted); margin-bottom: 20px;">Complete mandatory practical training with FRSC-certified schools.</p>
-                        <div class="section-title">Available Schools</div>
-                        <div class="school-card">
-                            <div class="school-header">
-                                <div class="school-name">SafeDrive Academy</div>
-                                <div class="school-rating">★ 4.8 (127)</div>
-                            </div>
-                            <div class="school-info">
-                                <div>📍 Yaba, Lagos</div>
-                                <div>🚗 Manual & Automatic</div>
-                            </div>
-                            <div style="font-size: 12px; color: var(--muted); margin-bottom: 12px;">Sept 8–20 • 4 seats left</div>
-                            <div class="school-price">₦45,000 (14 hours)</div>
-                            <button class="school-action" onclick="checkCert('ds')">Book Training →</button>
-                        </div>
-                        <div class="school-card">
-                            <div class="school-header">
-                                <div class="school-name">Elite Drivers Institute</div>
-                                <div class="school-rating">★ 4.6 (89)</div>
-                            </div>
-                            <div class="school-info">
-                                <div>📍 Victoria Island, Lagos</div>
-                                <div>🚗 Automatic only</div>
-                            </div>
-                            <div style="font-size: 12px; color: var(--muted); margin-bottom: 12px;">Sept 12 onwards</div>
-                            <div class="school-price">₦52,000 (16 hours)</div>
-                            <button class="school-action" onclick="checkCert('ds')">Book Training →</button>
-                        </div>
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-            </div>
-
-            <!-- LICENCE TRACKING LOCKED -->
-            <div class="screen" id="licenceLockedScreen">
-                <div class="content">
-                    <div class="lesson-title" style="text-align: center; margin-top: 40px;">Licence Tracking Locked</div>
-                    <div class="locked-message">
-                        <div class="locked-icon">🔒</div>
-                        <div class="locked-title">Complete All Steps</div>
-                        <div class="locked-description">Finish: Course → Assessment → Certificate before tracking your licence.</div>
-                        <button class="btn btn-primary" onclick="tryAccess('certificate')" style="width: auto; margin-top: 16px;">← Get Certificate</button>
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-            </div>
-
-            <!-- LICENCE TRACKING -->
-            <div class="screen" id="licenceScreen">
-                <div class="content">
-                    <div class="breadcrumb">FINAL STEP</div>
-                    <div class="lesson-title">Driver's Licence Process</div>
-                    <p style="font-size: 14px; color: var(--muted); margin-bottom: 24px;">After simulator and driving school, apply for your official FRSC licence.</p>
-                    <div class="section-title">Your Progress</div>
-                    <div style="background: var(--bg); border-radius: 12px; padding: 16px;">
-                        <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: flex-start;">
-                            <div style="width: 30px; height: 30px; background: var(--green-ink); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">✓</div>
-                            <div>
-                                <div style="font-weight: 600; font-size: 14px;">Digital Course Completion</div>
-                                <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">Completed</div>
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: flex-start;">
-                            <div style="width: 30px; height: 30px; background: var(--brand); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">2</div>
-                            <div>
-                                <div style="font-weight: 600; font-size: 14px;">Simulator Training</div>
-                                <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">Pending</div>
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: flex-start;">
-                            <div style="width: 30px; height: 30px; background: var(--brand); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">3</div>
-                            <div>
-                                <div style="font-weight: 600; font-size: 14px;">Driving School</div>
-                                <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">Pending</div>
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: flex-start;">
-                            <div style="width: 30px; height: 30px; background: var(--brand); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">4</div>
-                            <div>
-                                <div style="font-weight: 600; font-size: 14px;">VIO Driving Test</div>
-                                <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">Schedule at local VIO</div>
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: 12px; align-items: flex-start;">
-                            <div style="width: 30px; height: 30px; background: var(--brand); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">5</div>
-                            <div>
-                                <div style="font-weight: 600; font-size: 14px;">Get Your Licence</div>
-                                <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">Receive official licence</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="flex: 1;"></div>
-                </div>
-            </div>
+        <!-- BOTTOM TABS -->
+        <div class="tabs">
+            <button class="tab active" data-screen="welcomeScreen" onclick="switchTab('welcomeScreen', this)">
+                <div class="tab-icon">🏠</div>
+                Home
+            </button>
+            <button class="tab" data-screen="coursesScreen" onclick="switchTab('coursesScreen', this)">
+                <div class="tab-icon">📚</div>
+                Learn
+            </button>
+            <button class="tab" data-screen="simulatorScreen" onclick="switchTab('simulatorScreen', this)">
+                <div class="tab-icon">🎮</div>
+                Simulator
+            </button>
+            <button class="tab" data-screen="drivingSchoolScreen" onclick="switchTab('drivingSchoolScreen', this)">
+                <div class="tab-icon">🚗</div>
+                School
+            </button>
+            <button class="tab" data-screen="accountScreen" onclick="switchTab('accountScreen', this)">
+                <div class="tab-icon">👤</div>
+                Account
+            </button>
         </div>
     </div>
 
     <script>
+        const MODULES = [
+            { id: 1, title: "Introduction to Road Safety", time: "30 min" },
+            { id: 2, title: "Driver Orientation & Responsible Mobility", time: "25 min" },
+            { id: 3, title: "Traffic Signs & Road Markings", time: "35 min" },
+            { id: 4, title: "Road Traffic Laws & Rules", time: "30 min" },
+            { id: 5, title: "Road Traffic Crashes: Causes, Prevention & Responsibility", time: "30 min" },
+            { id: 6, title: "Defensive Driving Techniques", time: "40 min" },
+            { id: 7, title: "Sharing the Road Responsibly", time: "25 min" },
+            { id: 8, title: "Vehicle Familiarisation & Basic Maintenance", time: "30 min" },
+            { id: 9, title: "Driving in Special Conditions", time: "35 min" },
+            { id: 10, title: "Alcohol, Drugs, Fatigue & Driver Distraction", time: "25 min" },
+            { id: 11, title: "Emergency Response, First Aid & Fire Safety", time: "30 min" },
+            { id: 12, title: "Driver Licensing & Legal Responsibilities", time: "25 min" },
+            { id: 13, title: "Digital Navigation & Responsible Mobility", time: "20 min" },
+            { id: 14, title: "Simulation Readiness & Hazard Perception", time: "30 min" },
+            { id: 15, title: "Final Assessment & Certification", time: "45 min" }
+        ];
+
         let appState = {
-            modulesCompleted: 0,
-            assessmentPassed: false,
+            completedModules: [],
             certificateObtained: false,
-            assessmentScores: {}
+            simulatorBooked: false
         };
 
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('overlay').classList.toggle('show');
+        function renderModules() {
+            const container = document.getElementById('modulesContainer');
+            container.innerHTML = MODULES.map(mod => `
+                <div class="module-card" onclick="openModule(${mod.id})">
+                    <div class="module-number">${mod.id}</div>
+                    <div class="module-info">
+                        <div class="module-title">${mod.title}</div>
+                        <div class="module-subtitle">${mod.time}</div>
+                    </div>
+                    <div class="module-status">${appState.completedModules.includes(mod.id) ? '✓' : '→'}</div>
+                </div>
+            `).join('');
         }
 
-        function closeSidebar() {
-            document.getElementById('sidebar').classList.remove('open');
-            document.getElementById('overlay').classList.remove('show');
+        function openModule(moduleId) {
+            const mod = MODULES.find(m => m.id === moduleId);
+            document.getElementById('lessonBreadcrumb').textContent = `Module ${moduleId}`;
+            document.getElementById('lessonTitle').textContent = mod.title;
+
+            const lessonContent = `
+                <div class="lesson-content">
+                    <h3>Overview</h3>
+                    <p>In this module, you'll learn the essential concepts of "${mod.title.toLowerCase()}". This foundational knowledge is crucial for safe road participation.</p>
+                    
+                    <h3>Topics Covered</h3>
+                    <ul>
+                        <li>Core principles and concepts</li>
+                        <li>Practical applications</li>
+                        <li>Real-world scenarios</li>
+                        <li>Safety considerations</li>
+                        <li>Best practices</li>
+                    </ul>
+
+                    <h3>Learning Format</h3>
+                    <p>This module combines interactive lessons, videos, scenarios, and knowledge checks to ensure comprehensive understanding.</p>
+                </div>
+
+                <div class="lesson-video">
+                    📹 Video Lesson Available
+                </div>
+
+                <div class="question-section">
+                    <div class="question-text">Quick Knowledge Check</div>
+                    <div class="options">
+                        <div class="option" onclick="selectAnswer(this, true)">
+                            <div class="option-letter">A</div>
+                            <div>Correct Answer Option</div>
+                        </div>
+                        <div class="option" onclick="selectAnswer(this, false)">
+                            <div class="option-letter">B</div>
+                            <div>Incorrect Option</div>
+                        </div>
+                        <div class="option" onclick="selectAnswer(this, false)">
+                            <div class="option-letter">C</div>
+                            <div>Incorrect Option</div>
+                        </div>
+                        <div class="option" onclick="selectAnswer(this, false)">
+                            <div class="option-letter">D</div>
+                            <div>Incorrect Option</div>
+                        </div>
+                    </div>
+                    <div class="feedback" id="answerFeedback">
+                        <div class="feedback-icon">✓</div>
+                        <div>
+                            <div class="feedback-text">Correct!</div>
+                            <div class="feedback-explanation">You've demonstrated understanding of this key concept. Well done!</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="completeModule(${moduleId})">Complete Module</button>
+            `;
+
+            document.getElementById('lessonContentArea').innerHTML = lessonContent;
+            goToScreen('lessonScreen');
         }
 
-        function goToSection(section) {
-            closeSidebar();
-            let screenId, menuId;
-            switch(section) {
-                case 'home': screenId = 'homeScreen'; break;
-                case 'course': screenId = 'courseScreen'; break;
-                case 'simulator': screenId = 'simulatorScreen'; updateSimCert(); break;
-                case 'drivingSchool': screenId = 'drivingSchoolScreen'; updateDsCert(); break;
+        function selectAnswer(element, isCorrect) {
+            if (element.classList.contains('correct') || element.classList.contains('selected')) return;
+            
+            element.classList.add('selected');
+            if (isCorrect) {
+                element.classList.add('correct');
             }
-            if (screenId) showScreen(screenId);
+            
+            document.getElementById('answerFeedback').classList.add('show');
         }
 
-        function showScreen(screenId) {
+        function completeModule(moduleId) {
+            if (!appState.completedModules.includes(moduleId)) {
+                appState.completedModules.push(moduleId);
+            }
+
+            if (moduleId === 15) {
+                goToScreen('certificateScreen');
+                appState.certificateObtained = true;
+            } else {
+                showResults();
+            }
+
+            updateUI();
+        }
+
+        function showResults() {
+            document.getElementById('scoreNumber').textContent = '18/20';
+            document.getElementById('scorePercentage').textContent = '90%';
+            goToScreen('resultsScreen');
+        }
+
+        function proceedToNext() {
+            goToScreen('coursesScreen');
+        }
+
+        function goToScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            if (document.getElementById(screenId)) {
-                document.getElementById(screenId).classList.add('active');
-            }
+            document.getElementById(screenId).classList.add('active');
             window.scrollTo(0, 0);
         }
 
-        function goToModule(moduleId) {
-            closeSidebar();
-            showScreen(moduleId + 'Screen');
+        function switchTab(screenId, element) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+            goToScreen(screenId);
         }
 
-        function goToQuiz(quizId) {
-            closeSidebar();
-            showScreen(quizId + 'Screen');
-        }
-
-        function selectOption(el, feedbackId, isCorrect) {
-            if (el.classList.contains('correct')) return;
-            el.classList.add('correct');
-            document.getElementById(feedbackId).classList.add('show');
-        }
-
-        function completeModule(num) {
-            appState.modulesCompleted++;
-            if (appState.modulesCompleted === 8) {
-                goToQuiz('module8Quiz');
-            } else {
-                goToSection('course');
-            }
-        }
-
-        function tryAccess(section) {
-            closeSidebar();
-            if (section === 'assessment') {
-                appState.modulesCompleted === 8 ? showScreen('assessmentScreen') : showScreen('assessmentLockedScreen');
-            } else if (section === 'certificate') {
-                appState.assessmentPassed ? showScreen('certificateScreen') : showScreen('certificateLockedScreen');
-            } else if (section === 'licence') {
-                appState.certificateObtained ? showScreen('licenceScreen') : showScreen('licenceLockedScreen');
-            }
-        }
-
-        function assessmentAnswer(questionId, isCorrect) {
-            appState.assessmentScores[questionId] = isCorrect ? 1 : 0;
-        }
-
-        function showAssessmentResults() {
-            const correct = Object.values(appState.assessmentScores).reduce((a, b) => a + b, 0);
-            const total = Object.keys(appState.assessmentScores).length;
-            const percentage = Math.round((correct / total) * 100);
-            appState.assessmentPassed = percentage >= 70;
-            document.getElementById('assessmentScore').textContent = correct + '/' + total;
-            document.getElementById('assessmentPercentage').textContent = percentage + '%';
-            document.getElementById('assessmentMenu').querySelector('.menu-status').textContent = '→';
-            document.getElementById('assessmentMenu').querySelector('.menu-status').classList.remove('locked');
-            showScreen('assessmentResultsScreen');
-        }
-
-        function getCertificate() {
-            appState.certificateObtained = true;
-            document.getElementById('certificateMenu').querySelector('.menu-status').textContent = '→';
-            document.getElementById('certificateMenu').querySelector('.menu-status').classList.remove('locked');
-            document.getElementById('licenceMenu').querySelector('.menu-status').textContent = '→';
-            document.getElementById('licenceMenu').querySelector('.menu-status').classList.remove('locked');
-            showScreen('certificateScreen');
-        }
-
-        function updateSimCert() {
-            document.getElementById('simCertReq').style.display = appState.certificateObtained ? 'none' : 'flex';
-            document.getElementById('simContent').style.opacity = appState.certificateObtained ? '1' : '0.5';
-            document.getElementById('simContent').style.pointerEvents = appState.certificateObtained ? 'auto' : 'none';
-        }
-
-        function updateDsCert() {
-            document.getElementById('dsCertReq').style.display = appState.certificateObtained ? 'none' : 'flex';
-            document.getElementById('dsContent').style.opacity = appState.certificateObtained ? '1' : '0.5';
-            document.getElementById('dsContent').style.pointerEvents = appState.certificateObtained ? 'auto' : 'none';
-        }
-
-        function checkCert(type) {
+        function bookSimulator() {
             if (appState.certificateObtained) {
-                alert('Booking confirmed! Confirmation sent to your email.');
+                alert('Simulator session booked! Check your email for confirmation.');
+                appState.simulatorBooked = true;
+            } else {
+                alert('Complete all 15 modules and get your certificate first.');
             }
         }
 
-        goToSection('home');
+        function updateUI() {
+            const progress = Math.round((appState.completedModules.length / 15) * 100);
+            document.getElementById('overallProgress').textContent = progress + '%';
+            document.getElementById('overallProgressBar').style.width = progress + '%';
+            document.getElementById('statsModules').textContent = appState.completedModules.length;
+            
+            renderModules();
+            
+            document.getElementById('simCertWarning').style.display = appState.certificateObtained ? 'none' : 'block';
+            document.getElementById('simContent').style.opacity = appState.certificateObtained ? '1' : '0.6';
+            document.getElementById('simContent').style.pointerEvents = appState.certificateObtained ? 'auto' : 'none';
+
+            document.getElementById('dsCertWarning').style.display = appState.certificateObtained ? 'none' : 'block';
+            document.getElementById('dsContent').style.opacity = appState.certificateObtained ? '1' : '0.6';
+            document.getElementById('dsContent').style.pointerEvents = appState.certificateObtained ? 'auto' : 'none';
+
+            document.getElementById('licenceCertWarning').style.display = appState.certificateObtained ? 'none' : 'block';
+            document.getElementById('licenceContent').style.opacity = appState.certificateObtained ? '1' : '0.6';
+            document.getElementById('licenceContent').style.pointerEvents = appState.certificateObtained ? 'auto' : 'none';
+        }
+
+        const schoolsHTML = `
+            <div class="booking-card">
+                <div class="booking-header">
+                    <div class="booking-name">SafeDrive Academy</div>
+                    <div class="booking-rating">★ 4.8</div>
+                </div>
+                <div class="booking-info">
+                    <div>📍 Yaba, Lagos</div>
+                    <div>🚗 Manual & Automatic</div>
+                </div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Sept 8–20 • 4 seats</div>
+                <div class="booking-price">₦45,000 (14 hours)</div>
+                <button class="btn btn-primary btn-sm" onclick="bookDrivingSchool()">Book Training</button>
+            </div>
+
+            <div class="booking-card">
+                <div class="booking-header">
+                    <div class="booking-name">Elite Drivers Institute</div>
+                    <div class="booking-rating">★ 4.6</div>
+                </div>
+                <div class="booking-info">
+                    <div>📍 Victoria Island, Lagos</div>
+                    <div>🚗 Automatic only</div>
+                </div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Sept 12 onwards</div>
+                <div class="booking-price">₦52,000 (16 hours)</div>
+                <button class="btn btn-primary btn-sm" onclick="bookDrivingSchool()">Book Training</button>
+            </div>
+        `;
+
+        document.getElementById('schoolsContainer').innerHTML = schoolsHTML;
+
+        function bookDrivingSchool() {
+            if (appState.certificateObtained) {
+                alert('Driving school training booked! Check your email for next steps.');
+            } else {
+                alert('Complete all 15 modules and get your certificate first.');
+            }
+        }
+
+        // Initialize
+        renderModules();
     </script>
 </body>
 </html>

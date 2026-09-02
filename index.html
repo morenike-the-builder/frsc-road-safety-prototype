@@ -25,10 +25,25 @@
   --shadow-sm:0 1px 3px rgba(0,0,0,0.05); --shadow-md:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
 }
 * { box-sizing:border-box; margin:0; padding:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
-body { background-color:var(--bg-canvas); color:var(--text-main); display:flex; justify-content:center; min-height:100vh; }
-.app-container { width:100%; max-width:480px; background:var(--surface); min-height:100vh; display:flex; flex-direction:column; position:relative; box-shadow:0 0 20px rgba(0,0,0,0.05); overflow:hidden; }
+/* Lock the shell to exactly the viewport height (not just min-height) so the
+   page itself never scrolls — only .content-viewport does, via its own
+   overflow-y:auto below. Without this, tall pages (e.g. Home's card list)
+   grew the whole document, and the bottom nav — pinned to the bottom of
+   that oversized shell — ended up below the fold, needing a page scroll to
+   reach. 100dvh (dynamic viewport height) accounts for mobile browsers
+   showing/hiding their address bar; 100vh is the fallback where dvh isn't
+   supported. */
+html { height:100%; }
+body { background-color:var(--bg-canvas); color:var(--text-main); display:flex; justify-content:center; height:100vh; overflow:hidden; }
+@supports (height: 100dvh) { body { height:100dvh; } }
+.app-container { width:100%; max-width:480px; background:var(--surface); height:100%; display:flex; flex-direction:column; position:relative; box-shadow:0 0 20px rgba(0,0,0,0.05); overflow:hidden; }
 .app-header { padding:14px 20px; background:var(--surface); border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:20; gap:10px; }
 .brand-logo { font-weight:800; font-size:20px; color:var(--primary); letter-spacing:-0.5px; display:flex; align-items:center; gap:8px; }
+/* The source SVG uses mix-blend-mode tricks to adapt to its background, so
+   a CSS filter (not the SVG's own colors) is what reliably forces it to a
+   flat black regardless of context. brightness(0) crushes every pixel to
+   black while preserving the image's alpha shape. */
+.brand-logo-img { height:22px; width:auto; display:block; filter:brightness(0) saturate(100%); }
 .header-right { display:flex; align-items:center; gap:8px; }
 .streak-pill { display:flex; align-items:center; gap:4px; background:var(--warning-bg); padding:6px 10px; border-radius:20px; font-size:12px; font-weight:700; color:var(--warning); white-space:nowrap; }
 .user-badge { display:flex; align-items:center; gap:6px; background:var(--primary-bg); padding:6px 12px; border-radius:20px; font-size:13px; font-weight:600; color:var(--primary-light); white-space:nowrap; }
@@ -42,7 +57,7 @@ body { background-color:var(--bg-canvas); color:var(--text-main); display:flex; 
 .notif-title { font-size:13px; font-weight:600; }
 .notif-message { font-size:12px; color:var(--text-muted); margin-top:2px; }
 .notif-time { font-size:10px; color:var(--text-muted); margin-top:4px; }
-.content-viewport { flex:1; padding:20px; padding-bottom:90px; overflow-y:auto; }
+.content-viewport { flex:1; padding:20px; padding-bottom:90px; overflow-y:auto; -webkit-overflow-scrolling:touch; }
 .view-section { display:none; }
 .view-section.active { display:block; }
 .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); padding:16px; margin-bottom:16px; box-shadow:var(--shadow-sm); }
@@ -62,7 +77,9 @@ body { background-color:var(--bg-canvas); color:var(--text-main); display:flex; 
 .module-item { display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--surface); cursor:pointer; transition:border-color 0.2s; position:relative; }
 .module-item:hover { border-color:var(--primary-light); }
 .module-info { display:flex; align-items:center; gap:12px; }
-.module-number { width:32px; height:32px; border-radius:50%; background:var(--primary-bg); color:var(--primary); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0; }
+.module-number { width:32px; height:32px; border-radius:50%; background:var(--primary-bg); color:var(--primary); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0; position:relative; }
+.module-check-badge { position:absolute; bottom:-3px; right:-3px; width:15px; height:15px; border-radius:50%; background:var(--success); color:white; display:flex; align-items:center; justify-content:center; border:2px solid var(--surface); }
+.module-check-badge svg { width:9px; height:9px; }
 .module-title { font-size:14px; font-weight:600; }
 .module-item.future-module { opacity:0.65; cursor:not-allowed; border-style:dashed; }
 .future-tag { font-size:10px; font-weight:700; background:var(--warning-bg); color:var(--warning); padding:3px 8px; border-radius:10px; text-transform:uppercase; }
@@ -103,7 +120,6 @@ body { background-color:var(--bg-canvas); color:var(--text-main); display:flex; 
 .icon-svg { display:inline-block; width:20px; height:20px; stroke-width:2; stroke:currentColor; fill:none; stroke-linecap:round; stroke-linejoin:round; }
 .video-container { position:relative; width:100%; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:var(--radius-md); background:#000; margin-bottom:16px; }
 .video-container iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:none; border-radius:var(--radius-md); }
-.module-video-indicator { position:absolute; top:12px; right:12px; width:16px; height:16px; background:white; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--accent); font-size:10px; font-weight:700; }
 .lesson-sections { display:flex; gap:8px; margin-bottom:16px; border-bottom:1px solid var(--border); }
 .lesson-tab { padding:12px 16px; border:none; background:none; color:var(--text-muted); font-size:13px; font-weight:600; cursor:pointer; position:relative; border-bottom:3px solid transparent; transition:all 0.2s; }
 .lesson-tab.active { color:var(--primary-light); border-bottom-color:var(--primary-light); }
@@ -226,8 +242,7 @@ body { background-color:var(--bg-canvas); color:var(--text-main); display:flex; 
 <div class="app-container">
   <header class="app-header">
     <div class="brand-logo">
-      <svg class="icon-svg" viewBox="0 0 24 24" style="color:var(--primary);"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
-      Cubbes
+      <img src="https://cubbes.app/assets/logo.svg" alt="Cubbes" class="brand-logo-img" onerror="handleLogoError(this)">
     </div>
     <div class="header-right">
       <div class="streak-pill" id="streak-pill">1 day</div>
@@ -250,8 +265,7 @@ body { background-color:var(--bg-canvas); color:var(--text-main); display:flex; 
     <!-- HOME -->
     <section id="view-home" class="view-section active">
       <div class="progress-banner">
-        <span style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.9;">National Framework</span>
-        <h2 style="font-size:20px; margin-top:4px;">Road Safety & Responsible Mobility</h2>
+        <h2 style="font-size:20px;">Road Safety & Responsible Mobility for Students</h2>
         <p style="font-size:13px; opacity:0.9; margin-top:6px;">FRSC Standardization Programme (DSSP) Aligned</p>
         <div class="progress-bar"><div class="progress-fill" id="home-progress-fill" style="width:0%;"></div></div>
         <div style="font-size:12px; margin-top:8px; display:flex; justify-content:space-between;">
@@ -280,7 +294,7 @@ body { background-color:var(--bg-canvas); color:var(--text-main); display:flex; 
             <h3 style="font-size:16px; margin-top:2px;">Simulation & Driving Readiness</h3>
             <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">Book a simulator session and pass your readiness assessment.</p>
           </div>
-          <svg class="icon-svg" viewBox="0 0 24 24" style="color:var(--text-muted);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <svg id="phase2-icon" class="icon-svg" viewBox="0 0 24 24" style="color:var(--text-muted);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
         </div>
       </div>
 
@@ -291,7 +305,7 @@ body { background-color:var(--bg-canvas); color:var(--text-main); display:flex; 
             <h3 style="font-size:16px; margin-top:2px;">Accredited Driving School</h3>
             <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">On-road practical lessons with verified partners.</p>
           </div>
-          <svg class="icon-svg" viewBox="0 0 24 24" style="color:var(--text-muted);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <svg id="phase3-icon" class="icon-svg" viewBox="0 0 24 24" style="color:var(--text-muted);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
         </div>
       </div>
 
@@ -302,7 +316,7 @@ body { background-color:var(--bg-canvas); color:var(--text-main); display:flex; 
             <h3 style="font-size:16px; margin-top:2px;">FRSC Licensing Pathway</h3>
             <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">Official licence application, guided end-to-end.</p>
           </div>
-          <svg class="icon-svg" viewBox="0 0 24 24" style="color:var(--text-muted);"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          <svg id="phase4-icon" class="icon-svg" viewBox="0 0 24 24" style="color:var(--text-muted);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
         </div>
       </div>
 
@@ -373,9 +387,6 @@ body { background-color:var(--bg-canvas); color:var(--text-main); display:flex; 
       </div>
       <div class="card" id="simulator-booking-card"></div>
       <div class="card" id="readiness-assessment-card"></div>
-      <div style="text-align:center; margin-top:4px;">
-        <a href="#" onclick="switchView('view-sim-admin'); return false;" style="font-size:11px; color:var(--text-muted);">Simulator staff? Open Instructor Panel →</a>
-      </div>
     </section>
 
     <!-- SIMULATOR INSTRUCTOR PANEL (demo admin side) -->
@@ -1078,7 +1089,7 @@ function getDefaultState(){
       { id:'seed1', type:'announcement', title:'Welcome to the FRSC Mobility Course', message:'Complete Phase 1 modules to unlock simulator booking.', time:new Date().toLocaleString(), read:false },
       { id:'seed2', type:'announcement', title:'Programme Update', message:'The DSSP-aligned curriculum has been refreshed for this academic session.', time:new Date().toLocaleString(), read:false }
     ],
-    simulator: { hub:'', slot:'', booked:false, readinessScore:null, readinessQuizPassed:false, readinessPassed:false, hazardBestReaction:null, approvalStatus:'none', approvedBy:'', approvalDate:'', approvalNote:'' },
+    simulator: { hub:'', slot:'', booked:false, readinessScore:null, readinessQuizPassed:false, readinessPassed:false, hazardBestReaction:null, approvalStatus:'none', approvedBy:'', approvalDate:'', approvalNote:'', submittedAt:null },
     drivingSchool: { selected:null, attendance:[], hoursCompleted:0, signOff:false },
     licensing: { checklist:{}, applicationStatus:'not_started' },
     certificate: { issued:false, verificationRef:'', dateIssued:'', validUntil:'' },
@@ -1175,6 +1186,17 @@ function showToast(msg){
   document.body.appendChild(toast);
   setTimeout(() => toast.classList.add('show'), 10);
   setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3200);
+}
+
+// ---------------------------------------------------------------------
+// LOGO FALLBACK — the header logo loads from cubbes.app; offline or if that
+// fails, fall back to the plain wordmark rather than leaving a broken image.
+// ---------------------------------------------------------------------
+function handleLogoError(img){
+  const span = document.createElement('span');
+  span.textContent = 'Cubbes';
+  span.style.cssText = 'font-weight:800; font-size:20px; color:var(--primary); letter-spacing:-0.5px;';
+  img.replaceWith(span);
 }
 
 // ---------------------------------------------------------------------
@@ -1288,24 +1310,33 @@ function renderModulesList(){
 
   modulesData.forEach((mod) => {
     const status = state.moduleStatus[mod.id];
+    // Keep the module number visible in the badge (liked as-is) — completion
+    // is shown with a small checkmark accent on the badge's corner instead
+    // of repeating the word "Completed" in every row's subtitle.
     let badgeStyle = "background: var(--primary-bg); color: var(--primary);";
-    let statusText = "Unlocked";
-    if(status === 'completed'){ badgeStyle = "background: var(--success-bg); color: var(--success);"; statusText = "Completed ✓"; }
-    else if(status === 'active'){ badgeStyle = "background: var(--primary); color: white;"; statusText = "In Progress"; }
+    let statusText = '';
+    let checkBadge = '';
+    if(status === 'completed'){
+      badgeStyle = "background: var(--success-bg); color: var(--success);";
+      checkBadge = '<span class="module-check-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></span>';
+    } else if(status === 'active'){
+      badgeStyle = "background: var(--primary); color: white;";
+      statusText = 'In Progress';
+    }
 
-    const videoIndicator = mod.videoUrl ? `<div class="module-video-indicator">▶</div>` : '';
     const icon = `<svg class="icon-svg" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
+    const subtitle = [statusText, mod.frscAlignment].filter(Boolean).join(' • ');
 
     container.innerHTML += `
       <div class="module-item" onclick="loadModuleDetail(${mod.id})" style="position:relative;">
         <div class="module-info">
-          <div class="module-number" style="${badgeStyle}">${mod.id}</div>
+          <div class="module-number" style="${badgeStyle}">${mod.id}${checkBadge}</div>
           <div>
             <div class="module-title">${mod.title}</div>
-            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">${statusText}${mod.frscAlignment ? ' • ' + mod.frscAlignment : ''}</div>
+            ${subtitle ? `<div style="font-size:12px; color:var(--text-muted); margin-top:2px;">${subtitle}</div>` : ''}
           </div>
         </div>
-        ${videoIndicator}${icon}
+        ${icon}
       </div>`;
   });
 
@@ -1391,15 +1422,15 @@ function loadModuleDetail(moduleId){
 
   const lessonTabsHtml = `
     <div class="lesson-sections">
-      <button class="lesson-tab active" onclick="switchLessonTab('video-${moduleId}', this)">Video Lesson</button>
-      <button class="lesson-tab" onclick="switchLessonTab('text-${moduleId}', this)">Reading Material</button>
+      <button class="lesson-tab active" onclick="switchLessonTab('text-${moduleId}', this)">Reading Material</button>
+      <button class="lesson-tab" onclick="switchLessonTab('video-${moduleId}', this)">Video Lesson</button>
     </div>
-    <div id="video-${moduleId}" class="lesson-content active">
+    <div id="text-${moduleId}" class="lesson-content active">
+      ${renderReadingMaterial(mod)}
+    </div>
+    <div id="video-${moduleId}" class="lesson-content">
       <div class="video-container"><iframe src="${mod.videoUrl}" title="${mod.title}" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe></div>
       <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Video Lesson ${mod.videoDuration ? '(' + mod.videoDuration + ')' : ''}</p>
-    </div>
-    <div id="text-${moduleId}" class="lesson-content">
-      ${renderReadingMaterial(mod)}
     </div>`;
 
   let interactiveHtml = '';
@@ -1861,9 +1892,9 @@ function renderBookingHub(){
   const simEl = document.getElementById('sim-summary-status');
   const pracEl = document.getElementById('practical-summary-status');
   if(!simEl || !pracEl) return;
-  simEl.innerText = state.simulator.readinessPassed ? `Approved (${state.simulator.readinessScore}%)`
-    : state.simulator.approvalStatus === 'pending' ? 'Awaiting instructor sign-off'
-    : state.simulator.approvalStatus === 'rejected' ? 'Sign-off not approved — retake needed'
+  simEl.innerText = state.simulator.readinessPassed ? `Confirmed (${state.simulator.readinessScore}%)`
+    : state.simulator.approvalStatus === 'pending' ? 'Awaiting confirmation'
+    : state.simulator.approvalStatus === 'rejected' ? 'Not confirmed — retake needed'
     : state.simulator.booked ? 'Booked — take the assessment'
     : completedCount() >= 5 ? 'Ready to book' : `Locked — complete 5+ modules first`;
   pracEl.innerText = state.drivingSchool.signOff ? 'Completed'
@@ -1947,30 +1978,29 @@ function renderReadinessCard(){
   }
   const sim = state.simulator;
   if(sim.approvalStatus === 'approved' && sim.readinessPassed){
-    card.innerHTML = `<h4 style="font-size:14px; font-weight:700; margin-bottom:6px;">Driving Readiness Assessment: Approved</h4>
+    card.innerHTML = `<h4 style="font-size:14px; font-weight:700; margin-bottom:6px;">Session Confirmed</h4>
       <div style="font-size:13px; color:var(--text-main); line-height:1.6;">
         Quiz score: ${sim.readinessScore}%<br>
-        Signed off by: ${sim.approvedBy || 'Simulator Instructor'} on ${sim.approvalDate}<br>
+        Confirmed on ${sim.approvalDate}<br>
         You're cleared to proceed to Phase 3.
       </div>`;
     return;
   }
   if(sim.approvalStatus === 'pending'){
-    card.innerHTML = `<h4 style="font-size:14px; font-weight:700; margin-bottom:6px;">Pending Instructor Sign-Off</h4>
-      <div style="font-size:13px; color:var(--text-main); margin-bottom:8px;">Quiz score: ${sim.readinessScore}% — submitted for review. An FRSC-certified simulator instructor needs to approve your session before Phase 3 unlocks.</div>
-      <div style="font-size:11px; color:var(--text-muted);">Demo: staff approve this in the <a href="#" onclick="switchView('view-sim-admin'); return false;" style="color:var(--primary-light); font-weight:600;">Simulator Instructor Panel</a>.</div>`;
+    card.innerHTML = `<h4 style="font-size:14px; font-weight:700; margin-bottom:6px;">Awaiting Confirmation</h4>
+      <div style="font-size:13px; color:var(--text-main);">Quiz score: ${sim.readinessScore}% — submitted. We're confirming that you completed your simulator session; Phase 3 unlocks as soon as that's done.</div>`;
     return;
   }
   if(sim.approvalStatus === 'rejected'){
-    card.innerHTML = `<h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:#EF4444;">Sign-Off Not Approved</h4>
-      <div style="font-size:13px; color:var(--text-main); margin-bottom:8px;">${sim.approvalNote || 'Your instructor has asked you to retake the assessment.'}</div>
+    card.innerHTML = `<h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:#EF4444;">Session Not Confirmed</h4>
+      <div style="font-size:13px; color:var(--text-main); margin-bottom:8px;">${sim.approvalNote || 'Please retake the assessment.'}</div>
       <div id="readiness-quiz-body"></div>
       <button class="btn btn-secondary" onclick="showReadinessQuiz()">Retake Assessment</button>`;
     return;
   }
   card.innerHTML = `
     <h4 style="font-size:14px; font-weight:700; margin-bottom:8px;">Driving Readiness Assessment</h4>
-    <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">5 hazard-judgement questions. 70%+ submits your session for instructor sign-off before Phase 3 unlocks.</p>
+    <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">5 hazard-judgement questions. 70%+ submits your session for confirmation before Phase 3 unlocks.</p>
     <div id="readiness-quiz-body"></div>
     <button class="btn btn-secondary" onclick="showReadinessQuiz()">Take Assessment</button>`;
 }
@@ -2001,14 +2031,47 @@ function submitReadiness(){
   state.simulator.readinessPassed = false; // only instructor approval sets this true
   state.simulator.approvalStatus = state.simulator.readinessQuizPassed ? 'pending' : 'none';
   state.simulator.approvalNote = '';
+  state.simulator.submittedAt = state.simulator.readinessQuizPassed ? Date.now() : null;
   saveState();
   if(state.simulator.readinessQuizPassed){
-    addNotification('assessment', 'Readiness Quiz Submitted', `Score: ${pct}% — awaiting instructor sign-off before Phase 3 unlocks.`);
-    showToast(`Quiz passed (${pct}%) — awaiting instructor sign-off.`);
+    addNotification('assessment', 'Readiness Quiz Submitted', `Score: ${pct}% — awaiting confirmation before Phase 3 unlocks.`);
+    showToast(`Quiz passed (${pct}%) — awaiting confirmation.`);
+    scheduleAutoConfirm();
   } else {
     addNotification('assessment', 'Readiness Assessment: Retry Needed', `Score: ${pct}% — 70%+ needed to submit for sign-off.`);
     showToast(`Score: ${pct}% — 70%+ needed, try again.`);
   }
+  renderReadinessCard();
+  renderBookingHub();
+  renderTracker();
+  renderHome();
+}
+
+// Auto-confirms a pending simulator session 5s after submission, so Phase 3
+// unlocks without needing a real instructor to act in the demo panel.
+// Timestamp-based (not just a bare setTimeout) so it still resolves
+// correctly even if the app was closed and reopened during that window —
+// scheduleAutoConfirm() is called both right after submission and on every
+// boot, and computes whatever time actually remains.
+const AUTO_CONFIRM_DELAY_MS = 5000;
+
+function scheduleAutoConfirm(){
+  const sim = state.simulator;
+  if(sim.approvalStatus !== 'pending' || !sim.submittedAt) return;
+  const remaining = Math.max(0, AUTO_CONFIRM_DELAY_MS - (Date.now() - sim.submittedAt));
+  setTimeout(autoConfirmReadiness, remaining);
+}
+
+function autoConfirmReadiness(){
+  if(state.simulator.approvalStatus !== 'pending') return; // already resolved manually or already auto-confirmed
+  state.simulator.readinessPassed = true;
+  state.simulator.approvalStatus = 'approved';
+  state.simulator.approvedBy = state.simulator.approvedBy || 'Automated Confirmation';
+  state.simulator.approvalDate = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+  saveState();
+  checkBadges();
+  addNotification('assessment', 'Session Confirmed', 'Your simulator session has been confirmed. Phase 3 is now unlocked.');
+  showToast('Session confirmed — Phase 3 unlocked!');
   renderReadinessCard();
   renderBookingHub();
   renderTracker();
@@ -2657,11 +2720,19 @@ function renderHome(){
   document.getElementById('home-progress-text').innerText = `Progress: ${done} / 15 Modules Completed`;
   document.getElementById('home-progress-pct').innerText = pct + '%';
 
+  const phase2Locked = done < 5;
+  const phase3Locked = !state.simulator.readinessPassed;
+  const phase4Locked = !state.drivingSchool.signOff;
+
   setTag('phase1-tag', done >= 15 ? 'Phase 1 • Complete ✓' : 'Phase 1 • Active', done >= 15 ? 'var(--success)' : 'var(--primary-light)');
   setTag('phase2-tag', state.simulator.readinessPassed ? 'Phase 2 • Complete ✓' : done >= 5 ? 'Phase 2 • Unlocked' : 'Phase 2 • Locked', state.simulator.readinessPassed ? 'var(--success)' : done >= 5 ? 'var(--accent)' : 'var(--text-muted)');
   setTag('phase3-tag', state.drivingSchool.signOff ? 'Phase 3 • Complete ✓' : state.simulator.readinessPassed ? 'Phase 3 • Unlocked' : 'Phase 3 • Locked', state.drivingSchool.signOff ? 'var(--success)' : state.simulator.readinessPassed ? 'var(--warning)' : 'var(--text-muted)');
   setTag('phase4-tag', isLicensed() ? 'Phase 4 • Complete ✓' : state.drivingSchool.signOff ? 'Phase 4 • Unlocked' : 'Phase 4 • Locked', isLicensed() ? 'var(--success)' : state.drivingSchool.signOff ? 'var(--primary-light)' : 'var(--text-muted)');
   setTag('phase5-tag', isLicensed() ? 'Phase 5 • Unlocked' : 'Phase 5 • Preview', isLicensed() ? 'var(--success)' : 'var(--text-muted)');
+
+  setPhaseIcon('phase2-icon', phase2Locked, state.simulator.readinessPassed ? 'var(--success)' : done >= 5 ? 'var(--accent)' : 'var(--text-muted)');
+  setPhaseIcon('phase3-icon', phase3Locked, state.drivingSchool.signOff ? 'var(--success)' : 'var(--warning)');
+  setPhaseIcon('phase4-icon', phase4Locked, isLicensed() ? 'var(--success)' : 'var(--primary-light)');
 
   document.getElementById('user-xp').innerText = state.xp + ' XP';
 }
@@ -2670,6 +2741,19 @@ function setTag(id, text, color){
   const el = document.getElementById(id);
   if(!el) return;
   el.innerText = text;
+  el.style.color = color;
+}
+
+// Locked phases show a padlock; the moment a phase is unlocked or completed,
+// it switches to the same right-facing chevron used on the always-open
+// Phase 1 card, so "tap to open" reads consistently once access is granted.
+const ICON_LOCK_PATHS = '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>';
+const ICON_CHEVRON_PATHS = '<polyline points="9 18 15 12 9 6"></polyline>';
+
+function setPhaseIcon(id, locked, color){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.innerHTML = locked ? ICON_LOCK_PATHS : ICON_CHEVRON_PATHS;
   el.style.color = color;
 }
 
@@ -2706,14 +2790,21 @@ function renderAll(){
   renderNotifications();
   checkMilestones();
   checkBadges();
+  scheduleAutoConfirm(); // resumes a pending simulator confirmation across reloads
 }
 
-window.onload = function(){
-  renderAll();
-  if('serviceWorker' in navigator){
+// Boot immediately rather than waiting for window.onload — this script tag
+// is the last thing in <body>, so the DOM is already parsed by the time it
+// runs. window.onload only fires once every sub-resource (including the
+// Google Fonts stylesheet) finishes loading, which on a slow or restricted
+// connection could leave the whole app blank for seconds. Nothing here
+// depends on external resources, so there's no reason to wait for them.
+renderAll();
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
     navigator.serviceWorker.register('service-worker.js').catch(() => {});
-  }
-};
+  });
+}
 </script>
 </body>
 </html>

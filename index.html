@@ -12,6 +12,9 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
 <style>
 :root {
   --primary:#1E3A8A; --primary-light:#2563EB; --primary-bg:#EFF6FF; --accent:#0D9488;
@@ -131,8 +134,48 @@ body { background-color:var(--bg-canvas); color:var(--text-main); display:flex; 
 .hazard-stage { background:#0F172A; color:white; border-radius:var(--radius-md); padding:30px 16px; text-align:center; margin-bottom:12px; min-height:100px; display:flex; align-items:center; justify-content:center; }
 .att-table { width:100%; font-size:12px; border-collapse:collapse; margin-top:10px; }
 .att-table th, .att-table td { text-align:left; padding:6px 4px; border-bottom:1px solid var(--border); }
-.certificate-frame { border:3px double var(--primary); border-radius:var(--radius-md); padding:26px 20px; text-align:center; background:linear-gradient(180deg, #ffffff, #F8FAFF); }
-.cert-qr { width:90px; height:90px; margin:14px auto 6px; border:1px solid var(--border); background-image:linear-gradient(45deg,#000 25%,transparent 25%),linear-gradient(-45deg,#000 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#000 75%),linear-gradient(-45deg,transparent 75%,#000 75%); background-size:12px 12px; background-position:0 0,0 6px,6px -6px,-6px 0; }
+/* Cubbes Certificate — redesigned to match the official certificate mockup:
+   cream parchment, deep-green ink, corner brackets, script signatures,
+   a 4-badge competence row, and a "prototype" stamp for this build. */
+:root { --cert-green:#1B4332; --cert-cream:#FBF8F1; --cert-amber:#C08A2E; --cert-muted:#6B7280; }
+.cert-v2 { position:relative; background:var(--cert-cream); border:3px solid var(--cert-green); border-radius:6px; padding:34px 20px 26px; text-align:center; overflow:hidden; }
+.cert-corner { position:absolute; width:26px; height:26px; border:3px solid var(--cert-green); }
+.cert-corner.tl { top:8px; left:8px; border-right:none; border-bottom:none; }
+.cert-corner.tr { top:8px; right:8px; border-left:none; border-bottom:none; }
+.cert-corner.bl { bottom:8px; left:8px; border-right:none; border-top:none; }
+.cert-corner.br { bottom:8px; right:8px; border-left:none; border-top:none; }
+.cert-id { position:absolute; top:14px; right:20px; text-align:right; font-size:9px; color:var(--cert-green); font-weight:700; line-height:1.4; }
+.cert-brand-title { font-size:24px; font-weight:900; color:var(--cert-green); letter-spacing:0.5px; margin-top:6px; }
+.cert-subtitle { font-size:13px; font-weight:800; color:var(--cert-green); margin-top:2px; letter-spacing:0.3px; }
+.cert-type-label { font-size:10px; letter-spacing:3px; color:var(--cert-green); margin-top:10px; }
+.cert-divider { width:64px; height:2px; background:var(--cert-amber); margin:10px auto; }
+.cert-intro { font-size:12px; color:var(--cert-muted); margin-top:14px; }
+.cert-name-script { font-family:'Sacramento', cursive; font-size:34px; color:var(--cert-green); margin-top:4px; line-height:1.3; }
+.cert-name-underline { width:220px; height:1px; background:var(--cert-green); margin:2px auto 0; opacity:0.35; }
+.cert-body-text { font-size:12px; color:#374151; line-height:1.6; margin-top:14px; padding:0 6px; }
+.cert-badges { display:flex; margin-top:20px; }
+.cert-badge { flex:1; display:flex; align-items:center; gap:6px; padding:0 5px; border-right:1px solid #E5E0D3; text-align:left; }
+.cert-badge:last-child { border-right:none; }
+.cert-badge-icon { width:24px; height:24px; border-radius:50%; border:2px solid var(--cert-green); display:flex; align-items:center; justify-content:center; color:var(--cert-green); flex-shrink:0; }
+.cert-badge-icon svg { width:12px; height:12px; }
+.cert-badge-label { font-size:7px; font-weight:800; color:var(--cert-green); text-transform:uppercase; line-height:1.2; letter-spacing:0.2px; }
+.cert-badge-value { font-size:8.5px; color:var(--cert-muted); margin-top:1px; }
+.cert-sign-row { display:flex; justify-content:space-between; margin-top:26px; text-align:left; gap:18px; }
+.cert-sign-col { flex:1; }
+.cert-sign-org { font-size:8.5px; font-weight:800; color:var(--cert-green); letter-spacing:0.3px; }
+.cert-sign-name { font-family:'Sacramento', cursive; font-size:20px; color:var(--cert-green); margin-top:6px; }
+.cert-sign-line { width:100%; height:1px; background:var(--cert-green); opacity:0.35; margin-top:2px; }
+.cert-sign-title { font-size:8.5px; color:var(--cert-muted); margin-top:4px; line-height:1.3; }
+.cert-stamp { position:absolute; bottom:16px; right:16px; border:2px solid #B91C1C; color:#B91C1C; padding:5px 9px; font-weight:800; font-size:10px; text-align:center; border-radius:4px; transform:rotate(-8deg); opacity:0.85; line-height:1.25; }
+.cert-stamp small { display:block; font-size:7px; font-weight:700; margin-top:1px; }
+.cert-footer-note { font-size:8.5px; color:#9CA3AF; margin-top:16px; font-style:italic; }
+.cert-preview-mini { transform:scale(0.9); transform-origin:top center; margin-bottom:-8%; }
+
+/* FRSC Driver's Licence — deliberately styled like an ID card, distinct
+   from the certificate's parchment look, so the two are never mistaken. */
+.license-card { border-radius:var(--radius-lg); overflow:hidden; margin-bottom:16px; box-shadow:var(--shadow-md); background:var(--surface); border:1px solid var(--border); }
+.license-card-header { background:linear-gradient(135deg, var(--success), #15803D); color:white; padding:14px 18px; display:flex; justify-content:space-between; align-items:flex-start; }
+.license-card-body { padding:18px; color:var(--text-main); }
 .grad-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .grad-card { border:1px solid var(--border); border-radius:var(--radius-md); padding:12px; cursor:pointer; background:var(--surface); }
 .grad-card .grad-icon { font-size:22px; }
@@ -171,7 +214,12 @@ body { background-color:var(--bg-canvas); color:var(--text-main); display:flex; 
 .callout-dot.dot-danger { background:#DC2626; }
 .callout-dot.dot-success { background:var(--success); }
 @media (max-width:380px){ .callout-sub { display:none; } }
-@media print { body * { visibility:hidden; } #view-certificate, #view-certificate * { visibility:visible; } #view-certificate { position:absolute; top:0; left:0; width:100%; } }
+@media print {
+  body * { visibility:hidden; }
+  #view-certificate, #view-certificate *, #profile-certificate-container, #profile-certificate-container * { visibility:visible; }
+  #view-certificate, #profile-certificate-container { position:absolute; top:0; left:0; width:100%; }
+  .cert-preview-mini { transform:none; margin-bottom:0; }
+}
 </style>
 </head>
 <body>
@@ -325,6 +373,21 @@ body { background-color:var(--bg-canvas); color:var(--text-main); display:flex; 
       </div>
       <div class="card" id="simulator-booking-card"></div>
       <div class="card" id="readiness-assessment-card"></div>
+      <div style="text-align:center; margin-top:4px;">
+        <a href="#" onclick="switchView('view-sim-admin'); return false;" style="font-size:11px; color:var(--text-muted);">Simulator staff? Open Instructor Panel →</a>
+      </div>
+    </section>
+
+    <!-- SIMULATOR INSTRUCTOR PANEL (demo admin side) -->
+    <section id="view-sim-admin" class="view-section">
+      <button class="btn btn-secondary back-btn" onclick="switchView('view-simulation')">
+        <svg class="icon-svg" viewBox="0 0 24 24" style="width:16px;height:16px;"><polyline points="15 18 9 12 15 6"></polyline></svg> Back
+      </button>
+      <div class="section-title">Simulator Instructor Panel</div>
+      <div class="card" style="background:var(--bg-canvas); border-style:dashed;">
+        <div style="font-size:11px; color:var(--text-muted); line-height:1.6;">Demo only — this simulates the staff-side sign-off step on the same device/browser. In production this would be a separate authenticated dashboard on a backend, reviewing submissions from many students.</div>
+      </div>
+      <div id="sim-admin-container"></div>
     </section>
 
     <!-- PHASE 3 DETAIL -->
@@ -353,13 +416,11 @@ body { background-color:var(--bg-canvas); color:var(--text-main); display:flex; 
       <div class="card" id="tracker-hero"></div>
       <div class="card"><div id="tracker-stepper"></div></div>
 
-      <div class="card">
-        <div class="accordion-header" onclick="toggleAccordion('outstanding')">
-          <span style="font-size:13px; font-weight:700;">Outstanding Requirements</span>
-          <span class="chevron open" id="outstanding-chevron">▾</span>
-        </div>
-        <div class="accordion-body open" id="outstanding-body"><div id="outstanding-card" style="margin-top:8px;"></div></div>
-      </div>
+      <div class="section-title">Cubbes Road Safety &amp; Responsible Mobility Certificate</div>
+      <div class="card" id="cubbes-certificate-status-card"></div>
+
+      <div class="section-title">FRSC Driver's Licence</div>
+      <div class="card" id="licensing-stage-card"></div>
 
       <div class="card">
         <div class="accordion-header" onclick="toggleAccordion('checklist')">
@@ -368,8 +429,6 @@ body { background-color:var(--bg-canvas); color:var(--text-main); display:flex; 
         </div>
         <div class="accordion-body" id="checklist-body"><div id="checklist-card" style="margin-top:8px;"></div></div>
       </div>
-
-      <div class="card" id="licensing-stage-card"></div>
     </section>
 
     <!-- CERTIFICATE -->
@@ -380,10 +439,21 @@ body { background-color:var(--bg-canvas); color:var(--text-main); display:flex; 
       <div id="certificate-container"></div>
     </section>
 
+    <!-- FRSC DRIVER'S LICENCE (distinct from the Cubbes Certificate above) -->
+    <section id="view-license" class="view-section">
+      <button class="btn btn-secondary back-btn" onclick="switchView('view-tracker')">
+        <svg class="icon-svg" viewBox="0 0 24 24" style="width:16px;height:16px;"><polyline points="15 18 9 12 15 6"></polyline></svg> Back to Tracker
+      </button>
+      <div id="license-container"></div>
+    </section>
+
     <!-- PROFILE -->
     <section id="view-profile" class="view-section">
       <div class="section-title">Your Profile</div>
       <div class="card" id="profile-header-card"></div>
+
+      <div class="section-title">My Cubbes Certificate</div>
+      <div id="profile-certificate-container"></div>
 
       <div class="section-title">Institution Leaderboard</div>
       <div class="card" id="leaderboard-card"></div>
@@ -443,6 +513,12 @@ const modulesData = [
     content:"Road safety is a shared responsibility among all road users, including drivers, pedestrians, cyclists, and motorcyclists. The Federal Road Safety Corps (FRSC) acts as the primary regulatory body in Nigeria, enforcing traffic laws and establishing safety standards to prevent crashes.",
     quiz:{ question:"What is the primary operational role of the Federal Road Safety Corps (FRSC) in Nigeria?", options:["Vehicle sales tax collection","Enforcing traffic laws & crash prevention","Constructing federal highways","Issuing commercial shipping permits"], correct:1 },
     practice:{ question:"Which group is considered a 'vulnerable road user'?", options:["Truck drivers","Pedestrians, cyclists and motorcyclists","Bus companies","Toll booth operators"], correct:1 },
+    contentSections:[
+      { h:"Why Road Safety Is Everyone's Business", p:"Every time you step onto a road — as a driver, passenger, pedestrian, or cyclist — you become part of a shared system that only works when everyone plays by the same rules. Road crashes are not random bad luck; they are the predictable result of specific decisions and conditions, which means they are also preventable. Road safety education exists to interrupt the chain of small mistakes — a rushed overtake, an unchecked mirror, a missed sign — before they become a crash. This course treats safety as a skill you build deliberately, not a matter of chance." },
+      { h:"Understanding Vulnerable Road Users", p:"Pedestrians, cyclists, and motorcyclists are classified as vulnerable road users because they have little to no protective structure around them in a collision. A pedestrian struck by a car has nothing between them and the impact; a motorcyclist has only a helmet and riding gear. Children and elderly people are especially vulnerable because they may misjudge vehicle speed or take longer to cross. As a driver, this means slowing down near schools, markets, and residential streets, giving generous space when passing cyclists, and never assuming a pedestrian has seen you just because you have seen them." },
+      { h:"The Role of the Federal Road Safety Corps (FRSC)", p:"The FRSC is Nigeria's primary road safety agency, responsible for enforcing traffic laws, educating road users, coordinating emergency rescue operations, and maintaining national crash data. Beyond issuing tickets, the Corps runs public awareness campaigns, inspects vehicles for roadworthiness, and operates the toll-free 122 emergency line. The Decentralised Standardization Support Programme (DSSP) — which this course is aligned with — is one of the ways FRSC works with universities and partners like Cubbes to raise safety standards before students ever get behind the wheel." },
+      { h:"Building a Personal Safety Mindset", p:"The single biggest predictor of a safe driver isn't reaction time or vehicle knowledge — it's attitude. Drivers who see safety as someone else's job (the government's, the road engineer's, other drivers') tend to take more risks. Drivers who see themselves as one link in a shared system tend to drive more defensively, whether or not anyone is watching. As you move through this course, notice how many topics come back to the same idea: safety is a series of small, consistent choices, repeated every single trip." }
+    ],
     diagram:{
       svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
         <rect width="400" height="200" fill="#F8FAFC"/>
@@ -479,6 +555,12 @@ const modulesData = [
     content:"Responsible mobility begins before turning the ignition key. Drivers must cultivate situational awareness, emotional discipline, and respect for other commuters. Safe drivers prioritize risk avoidance over speed or aggressive overtaking.",
     quiz:{ question:"Which attitude represents safe and responsible mobility on public roads?", options:["Asserting right-of-way by force","Prioritizing hazard avoidance over speed","Using horn constantly to clear traffic","Tailgating slow vehicles"], correct:1 },
     practice:{ question:"Responsible mobility begins:", options:["Only after a crash occurs","Before the ignition key is even turned","Only on highways","Only when police are present"], correct:1 },
+    contentSections:[
+      { h:"What It Means to Be a Responsible Driver", p:"Driver responsibility starts long before the engine turns over. It means accepting that the vehicle you control can seriously injure or kill someone if handled carelessly, and choosing to act accordingly every single trip — not just when you feel like it or when someone is watching. Responsible drivers check their vehicle before departure, plan their route and timing, and treat every other road user — pedestrian, cyclist, fellow driver — as someone whose safety matters as much as their own." },
+      { h:"Understanding and Managing Risk", p:"Risk awareness is the habit of constantly asking 'what could go wrong here?' — at a blind junction, in heavy rain, when a motorcyclist weaves between lanes. Experienced drivers scan continuously and build a mental model of nearby hazards, adjusting speed and positioning before a problem develops rather than reacting after it does. New drivers can build this skill deliberately: narrate hazards out loud while driving with a supervisor, and review near-misses afterward to understand what an earlier, calmer response would have looked like." },
+      { h:"Responsible Mobility in Practice", p:"Responsible mobility covers everything that happens around the act of driving: confirming your vehicle is roadworthy, checking the weather forecast, allowing enough time so you are not rushing, and considering whether a trip is even necessary. It also includes respect for other commuters — not blocking lanes, not double-parking, and giving way to pedestrians even when you technically have right of way. A responsible driver's goal on every trip is the same: arrive safely, and leave the road exactly as safe for the next person." },
+      { h:"Making Safe Decisions Under Pressure", p:"The real test of responsible mobility comes under pressure — running late, a passenger urging you to hurry, another driver behaving aggressively. Safe decision-making means having pre-committed rules that don't bend in the moment: you don't overtake on a blind bend no matter how late you are; you don't retaliate to provocation with your own reckless driving. Deciding these rules in advance, while calm, is far more reliable than trying to reason clearly in the middle of a stressful situation." }
+    ],
     diagram:{
       svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
         <rect width="400" height="200" fill="#0F172A"/>
@@ -508,6 +590,13 @@ const modulesData = [
     quiz:{ question:"What shape are regulatory traffic signs that give mandatory commands under FRSC standard?", options:["Triangular","Circular","Rectangular","Diamond-shaped"], correct:1 },
     practice:{ question:"A triangular sign on Nigerian roads typically indicates:", options:["A mandatory command","An informational direction","A warning of a hazard ahead","A parking zone"], correct:2 },
     dragDrop:true,
+    contentSections:[
+      { h:"The Three Families of Traffic Signs", p:"Nearly every traffic sign you'll encounter belongs to one of three families, and the shape tells you which one before you even read the words. Circular signs are Regulatory — they issue a command you must obey (a speed limit, a prohibition). Triangular signs are Warning — they alert you to a hazard ahead so you can adjust your driving in advance. Rectangular signs are Informational — directions, distances, facility markers. Learning to recognise shape first, at a glance, matters more than reading every sign fully, because at driving speed you often only have a fraction of a second." },
+      { h:"Regulatory Signs in Detail", p:"Regulatory signs are legally binding — ignoring one is a traffic offence, not just poor judgement. Common examples include speed limit circles, no-entry signs, no-overtaking signs, and mandatory direction arrows. Many regulatory signs use a red border or red circle-with-bar to indicate prohibition, while blue circular signs typically indicate a mandatory action (such as 'turn left ahead'). Because these signs carry legal weight, FRSC enforcement and fines are most commonly tied to regulatory sign violations." },
+      { h:"Warning Signs in Detail", p:"Warning signs exist to buy you reaction time. A triangular sign showing a winding road, falling rocks, a pedestrian crossing, or a school zone is telling you: something changes just ahead, so ease off now rather than reacting late. The correct response to a warning sign is almost always a reduction in speed and heightened attention — not a full stop, but active anticipation of whatever hazard the sign describes." },
+      { h:"Informational Signs & Road Markings", p:"Rectangular informational signs — usually blue or green — tell you about routes, distances, services, and facilities like hospitals, fuel stations, or parking. They carry no direct command but help you navigate and plan. Road markings work alongside signs: a single broken white line means overtaking is permitted with care, while a solid line (especially a double solid yellow) means overtaking is prohibited because visibility or road conditions make it unsafe." },
+      { h:"Traffic Signals and Right-of-Way", p:"Traffic light signals override general right-of-way rules at the junctions where they're installed: red means stop completely, amber means prepare to stop (not accelerate through), and green means proceed only if the junction ahead is clear. At junctions without signals or signs, right-of-way defaults to established local convention and courtesy — when in doubt, yield rather than assert, since a moment's delay is always cheaper than a collision." }
+    ],
     diagram:{
       svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
         <rect x="0" y="0" width="400" height="140" fill="#EFF6FF"/>
@@ -538,6 +627,13 @@ const modulesData = [
     content:"Traffic rules ensure orderly vehicular flow. Statutory speed limits in Nigeria dictate maximum speeds: 100 km/h on expressways, 80 km/h on highways, and 50 km/h in built-up urban zones unless indicated otherwise by signage.",
     quiz:{ question:"What is the standard national speed limit for private cars on Nigerian expressways?", options:["80 km/h","100 km/h","120 km/h","60 km/h"], correct:1 },
     practice:{ question:"In a built-up urban zone with no other signage, the standard speed limit is:", options:["50 km/h","80 km/h","100 km/h","No limit"], correct:0 },
+    contentSections:[
+      { h:"Right of Way", p:"Right-of-way rules exist so that every driver can predict what others will do at a junction without needing to communicate directly. In general, traffic already established in a roundabout or junction has priority over traffic entering it, and a vehicle turning must yield to oncoming traffic going straight. But right-of-way is a legal entitlement, not a guarantee — a defensive driver claims it cautiously, watching to confirm the other party has actually seen and is yielding, rather than pulling out on the assumption that they must." },
+      { h:"Speed Limits", p:"Nigeria's statutory speed limits are tiered by road type: 100 km/h on expressways, 80 km/h on highways, and 50 km/h in built-up urban zones, unless local signage states otherwise. These aren't arbitrary numbers — stopping distance increases sharply, not linearly, as speed rises, and impact severity in a crash rises with the square of speed. A crash at 80 km/h is far more than twice as violent as one at 50 km/h. Posted limits represent the maximum for good conditions; rain, poor lighting, or heavy traffic mean the safe speed is often lower still." },
+      { h:"Lane Discipline", p:"Lane discipline means staying in your lane except when actively and safely overtaking, and returning promptly afterward rather than lingering in the overtaking lane. It also covers signalling intentions early, checking mirrors and blind spots before any lane change, and never changing lanes across solid markings or within a junction. Poor lane discipline — weaving, straddling lines, or blocking the overtaking lane at low speed — is a major source of avoidable near-misses on multi-lane roads." },
+      { h:"Parking Regulations", p:"Parking rules exist mainly to keep sightlines and traffic flow clear for everyone else. Never park where you obstruct a junction, a pedestrian crossing, a fire hydrant, or another vehicle's exit. Double-parking, even briefly, forces other drivers into oncoming lanes to pass and is a common, underrated cause of urban collisions. Where marked parking bays or restrictions (yellow lines, no-parking signs) exist, they reflect real visibility or emergency-access concerns, not just bureaucracy." },
+      { h:"Pedestrian Responsibilities", p:"Pedestrian responsibilities go alongside driver obligations: use marked crossings and footbridges where available, look both ways even on one-way streets, and avoid stepping out from between parked vehicles where drivers can't see you until it's too late. Drivers, in turn, must treat any pedestrian near a crossing as having priority, slow down near schools and markets, and never assume a pedestrian has registered an approaching vehicle just because it seems obvious to the driver." }
+    ],
     diagram:{
       svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
         <rect width="400" height="200" fill="#F8FAFC"/>
@@ -570,6 +666,12 @@ const modulesData = [
         {text:"Increase your following distance and stay alert", correct:true, outcome:"Correct. Defensive spacing gives you time to react safely."},
         {text:"Flash your headlights repeatedly", correct:false, outcome:"This doesn't address the hazard — it may distract you from watching the road."}
       ] },
+    contentSections:[
+      { h:"Common Causes of Road Crashes", p:"When crashes are investigated, a small set of causes reappears again and again: excessive speed for the conditions, dangerous overtaking, sudden loss of vehicle control, tailgating, and distraction. Poor road conditions or mechanical faults do contribute, but they are far less common than driver behaviour as a root cause. This matters because it means most crashes are within an individual driver's power to prevent — they are not simply bad luck." },
+      { h:"Human Factors Behind the Wheel", p:"Human factors are the internal conditions that make errors more likely: fatigue, stress, overconfidence, impatience, and misjudging speed or distance. A driver doesn't need to be reckless to cause a crash — a momentarily distracted glance at a phone, or overestimating how quickly their vehicle can stop, is enough. Recognising your own human factors — 'I'm tired today,' 'I'm running late and feel rushed' — is the first step to consciously compensating for them with extra caution." },
+      { h:"Crash Prevention in Practice", p:"Practical crash prevention combines vehicle readiness with driving discipline: pre-trip checks on tyres, brakes, and lights; maintaining safe following distances; moderating speed for the actual conditions rather than the posted limit alone; and scanning continuously for hazards rather than fixating on the vehicle directly ahead. None of these habits are complicated, but they require consistency — a driver who does them 90% of the time is still exposed during the 10% when it matters most." },
+      { h:"Personal Responsibility and Behavioural Change", p:"Taking personal responsibility means resisting the urge to explain away near-misses as someone else's fault and instead asking what you could have done differently. Behavioural change is built through repetition: consciously slowing at the same junction every day until it becomes automatic, consciously leaving your phone out of reach until it becomes a non-issue. Over time, these deliberate habits become your default driving style — the goal of this entire course." }
+    ],
     diagram:{
       svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
         <rect width="400" height="200" fill="#F8FAFC"/>
@@ -610,6 +712,12 @@ const modulesData = [
         {text:"Ignore it completely until you're safely parked", correct:true, outcome:"Correct. Full attention on the road is the defensive choice."},
         {text:"Ask a passenger to read it to you while driving", correct:false, outcome:"Even listening can divide attention — safest to wait until stopped."}
       ] },
+    contentSections:[
+      { h:"Hazard Perception", p:"Hazard perception is the skill of spotting a developing risk before it becomes an emergency — a ball rolling into the road ahead of the child chasing it, brake lights flickering three cars ahead, a motorcyclist's body language suggesting they're about to change lanes. It's a learnable skill: scan far ahead (not just the car in front), sweep your eyes across the full width of the road, and check mirrors on a regular rhythm rather than only when you think you need to." },
+      { h:"Safe Following Distance", p:"The 3-second rule is the simplest way to keep a safe gap: pick a fixed point on the road, and count the seconds between the vehicle ahead passing it and you reaching the same point. Under three seconds means you're following too closely to stop safely if they brake suddenly. In rain, at night, or when following a large vehicle that blocks your view ahead, extend that gap further — the rule is a minimum, not a target." },
+      { h:"Anticipating Risk", p:"Anticipation means driving as if the worst-case version of any situation might happen: assume the car waiting to pull out hasn't actually seen you, assume the pedestrian near the crossing might step out before looking, assume the truck ahead might brake hard. This isn't pessimism — it's how experienced drivers stay calm, because they're rarely caught off guard. Positioning yourself with an escape route (space to your side or a clear path to brake into) is a core part of this habit." },
+      { h:"Managing Distractions", p:"A defensive driver treats full attention as non-negotiable: phones out of reach (not just on silent), navigation set before moving, food and drink handled while stationary, and passengers reminded that conversation pauses if the road demands it. Distraction doesn't have to be dramatic to be dangerous — even a few seconds looking away at typical road speeds covers a distance long enough for a hazard to appear and disappear from your reaction window entirely." }
+    ],
     diagram:{
       svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
         <rect x="0" y="0" width="400" height="200" fill="#F8FAFC"/>
@@ -646,6 +754,13 @@ const modulesData = [
         {text:"Hold back and let the truck complete its turn first", correct:true, outcome:"Correct. Staying out of the No-Zone until the truck clears is the safe choice."},
         {text:"Honk continuously to alert the driver", correct:false, outcome:"Doesn't remove the blind-spot risk — positioning safely is what matters."}
       ] },
+    contentSections:[
+      { h:"Sharing the Road with Pedestrians", p:"Pedestrians have no protection in a collision, and their behaviour is often less predictable than a vehicle's — they can change direction or pace instantly. Around markets, schools, and bus stops, assume pedestrians may step into the road with little warning, and slow down proactively rather than relying on your ability to brake at the last moment. At marked crossings, pedestrians already stepping out have priority; don't try to beat them across." },
+      { h:"Cyclists on the Road", p:"Cyclists are entitled to use the road and deserve the same respect as any vehicle, but they're far more vulnerable in a collision and can be harder to see, especially at night or in a driver's blind spot. When overtaking a cyclist, leave generous lateral space — a sudden wobble, pothole, or gust of wind can shift their position more than a car's. Never overtake a cyclist and immediately cut back in front of them to turn; wait until you've fully passed." },
+      { h:"Commercial Vehicles and Their Blind Spots", p:"Large trucks and buses have substantial blind spots — often called 'No-Zones' — along their sides, directly behind, and immediately in front. If you can't see the truck driver's mirrors, they very likely can't see you either. Avoid lingering alongside a large vehicle, especially near junctions where it may be turning, and give trucks extra room and time since their stopping distances and turning radii are far greater than a car's." },
+      { h:"Emergency Vehicles", p:"When an emergency vehicle approaches with sirens or lights active, your responsibility is to create space, not to race it or block it. Signal your intention, check your mirrors, and pull safely to the left (or the nearest safe side) as soon as you can, allowing it a clear path. Never follow closely behind an emergency vehicle to benefit from cleared traffic — this is both dangerous and against the spirit of the courtesy being extended." },
+      { h:"Motorcyclists", p:"Motorcyclists are among the most vulnerable road users because they have no external protection and can be difficult to spot, particularly in mirrors or at junctions where their narrower profile is easy to underestimate in distance and speed. Always do a deliberate second check for motorcycles before turning or changing lanes, and never assume a gap that's too small for a car is also too small for a motorcyclist to use." }
+    ],
     diagram:{
       svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
         <rect width="400" height="200" fill="#F8FAFC"/>
@@ -678,6 +793,12 @@ const modulesData = [
     content:"Before driving, perform the daily 'FORCES' check: Fuel, Oil, Rubber (Tyres), Coolant, Electrics, and Steering. Never drive on tyres with a tread depth lower than 1.6mm or tyres past their manufacture expiration date.",
     quiz:{ question:"What does the 'R' in the daily pre-drive vehicle safety check acronym stand for?", options:["Radiator","Rubber (Tyres)","Reverse gear","Rear light"], correct:1 },
     practice:{ question:"The minimum legal tyre tread depth referenced in this module is:", options:["0.5mm","1.6mm","5mm","No minimum"], correct:1 },
+    contentSections:[
+      { h:"Vehicle Controls", p:"Before driving a vehicle you haven't used before — a family car, a rental, a driving-school vehicle — take a minute to locate the essentials: indicators, headlight and wiper controls, hazard lights, horn, and handbrake. Adjust your seat and mirrors before moving, not after. Familiarity with controls matters most in an emergency, when you need to activate hazard lights or wipers instantly without hunting for the switch." },
+      { h:"Dashboard Indicators", p:"Modern dashboards use a consistent colour language: red warning lights (engine, brakes, oil pressure) mean stop as soon as it's safe to do so, while amber/yellow lights (check engine, low fuel, tyre pressure) mean attend to it soon but not necessarily immediately. Learning your specific vehicle's warning symbols — ideally from its manual — means you won't have to guess what a lit icon means at the exact moment it matters." },
+      { h:"Tyre Safety", p:"Tyres are the only part of the car actually touching the road, and their condition affects braking distance, cornering grip, and hydroplaning risk directly. Check tread depth regularly — the legal and safe minimum referenced in this course is 1.6mm — and inspect for uneven wear, cracks, or bulges, which can signal alignment or pressure problems. Under-inflated tyres both wear faster and reduce control, so check pressure when tyres are cold, ideally weekly." },
+      { h:"Routine Inspections", p:"A quick daily pre-drive check covers Fuel, Oil, Rubber (tyres), Coolant, Electrics, and Steering — the 'FORCES' checklist. This takes under two minutes but catches the majority of preventable breakdowns and defects before they become a hazard on the road. Beyond the daily check, periodic servicing (brakes, fluids, belts) catches slower-developing issues that a quick visual check won't reveal, which is why routine maintenance schedules matter even when nothing seems obviously wrong." }
+    ],
     diagram:{
       svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
         <rect width="400" height="200" fill="#F8FAFC"/>
@@ -713,6 +834,12 @@ const modulesData = [
         {text:"Reduce speed, use low beams, increase following distance", correct:true, outcome:"Correct. This combination maximises your visibility and reaction time."},
         {text:"Turn on hazard lights and speed up to get home faster", correct:false, outcome:"Hazard lights while moving is illegal/confusing to others, and speeding compounds risk."}
       ] },
+    contentSections:[
+      { h:"Night Driving", p:"Reduced visibility at night shrinks your reaction window, so speed and following distance should adjust accordingly, even on familiar roads. Use headlights appropriately — full beam on unlit stretches with no oncoming traffic, dipped beam when a vehicle approaches so you don't blind the other driver. Watch especially for pedestrians and cyclists in dark clothing, unlit vehicles, and animals, all of which are far harder to spot at night than in daylight." },
+      { h:"Hydroplaning Avoidance", p:"Hydroplaning happens when a layer of water builds up between your tyres and the road faster than the tread can channel it away, causing a sudden loss of contact and control. It's most likely at higher speeds, in standing water, or with worn tyres. The prevention is straightforward: slow down meaningfully in wet conditions, avoid sudden braking or steering in standing water, and if you do feel the car float or drift, ease off the accelerator gently rather than braking hard." },
+      { h:"Flooded Roads", p:"Never attempt to cross a flooded section if you can't clearly judge the depth — moving water as shallow as 30cm can float and sweep away a passenger car, and depth is often impossible to judge accurately by eye, especially at night. Following another vehicle through, or assuming a truck's clearance means it's safe for you, is a common and dangerous mistake. If the depth is unknown, the only safe choice is to turn around and find another route." },
+      { h:"Construction Zones", p:"Construction zones combine several risks at once: narrowed lanes, workers close to moving traffic, temporary and sometimes confusing signage, and uneven surfaces. Slow down well before the posted zone begins, follow temporary signage even if it contradicts what you remember from the normal route, and give extra space to any workers or equipment near the road edge, since they have far less room to react to your vehicle than you do to avoid them." }
+    ],
     diagram:{
       svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
         <rect width="400" height="200" fill="#0F172A"/>
@@ -751,6 +878,13 @@ const modulesData = [
         {text:"Arrange alternative transport or wait until fully sober", correct:true, outcome:"Correct. The safest, most responsible choice is to not drive at all after drinking."},
         {text:"Drink coffee first, then drive", correct:false, outcome:"Coffee does not reverse alcohol's effect on reaction time or judgement."}
       ] },
+    contentSections:[
+      { h:"Alcohol's Effects on Driving", p:"Alcohol impairs judgement, reaction time, coordination, and the ability to accurately track multiple hazards at once — well before someone feels visibly 'drunk'. This course treats alcohol and driving as fundamentally incompatible: even one drink measurably slows reaction time, and there is no reliable way to self-assess your own impairment once alcohol is involved. The only fully safe approach is not driving at all after drinking, not 'driving carefully' or waiting a short while." },
+      { h:"Drug Effects on Driving", p:"Both illegal drugs and many common prescription or over-the-counter medications (some antihistamines, sedatives, and pain medications) can impair reaction time, drowsiness, and coordination in ways similar to alcohol. Always check medication labels for driving warnings, and treat any drug that causes drowsiness or dizziness as a reason to arrange alternative transport rather than risk driving while affected." },
+      { h:"Fatigue", p:"Fatigue slows reaction time similarly to alcohol and, unlike alcohol, can produce brief involuntary 'micro-sleeps' — moments of losing consciousness for a second or two — which is extremely dangerous at any driving speed. Warning signs include heavy eyelids, drifting within your lane, and difficulty remembering the last few kilometres driven. The only real remedy is stopping to properly rest; opening a window or turning up music provides no meaningful protection." },
+      { h:"Mobile Phone Use", p:"Using a phone while driving — even hands-free — creates cognitive distraction, not just physical distraction. The mental effort of a conversation, reading a message, or navigating an app competes directly with the attention needed to drive safely, which is why hands-free use still measurably slows reaction time. Set your route before departure, and treat any phone interaction as something to do only when safely stopped." },
+      { h:"Emotional State", p:"Strong emotions — anger, grief, anxiety, even excitement — measurably affect driving performance by narrowing attention and encouraging impulsive decisions like aggressive overtaking or tailgating in response to another driver's behaviour. If you notice yourself driving emotionally, deliberately slow down, increase following distance, and consciously disengage from any confrontation with other road users; it is never worth escalating a road situation." }
+    ],
     diagram:{
       svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
         <rect width="400" height="200" fill="#F8FAFC"/>
@@ -781,6 +915,12 @@ const modulesData = [
     content:"In a crash emergency, first secure the scene with warning triangles to prevent secondary collisions. Call the national emergency toll-free number 122 to alert FRSC rescue teams.",
     quiz:{ question:"What is the official nationwide toll-free emergency call number for the FRSC in Nigeria?", options:["112","122","199","911"], correct:1 },
     practice:{ question:"At a crash scene, your first priority before first aid is:", options:["Moving the vehicles immediately","Securing the scene to prevent secondary collisions","Filming the scene","Leaving quickly"], correct:1 },
+    contentSections:[
+      { h:"Emergency Contact (122)", p:"122 is Nigeria's toll-free emergency number for reaching FRSC rescue teams, and it's worth saving in your phone before you ever need it. When you call, give your exact location as precisely as you can (road name, nearest landmark, direction of travel), describe the number of vehicles and people involved, and mention any obvious hazards like fire, spilled fuel, or blocked lanes so responders arrive prepared." },
+      { h:"Crash Scene Safety", p:"Your first priority at any crash scene — before first aid, before anything else — is preventing a second collision. Turn on hazard lights, and if you have a warning triangle, place it a good distance behind the incident to give approaching traffic time to react. Move to a safe position off the carriageway if possible, and only approach damaged vehicles if there's no visible fire or fuel leak risk." },
+      { h:"Basic First Aid", p:"Basic first aid at a road incident focuses on immediate life-threatening issues: check if the person is conscious and breathing, control severe bleeding with firm direct pressure, and avoid moving anyone with a suspected neck or spine injury unless they're in immediate danger (such as fire). You don't need to be a medical professional to help meaningfully — calling for help promptly and keeping someone calm and still until professionals arrive is often the most valuable thing you can do." },
+      { h:"Fire Prevention", p:"Vehicle fires are rare but can escalate quickly, so basic prevention matters: never smoke near a fuel leak, keep a small fire extinguisher in your vehicle if possible, and if you smell burning or see smoke while driving, pull over immediately and get everyone clear of the vehicle before investigating. If a fire does start, prioritise getting people to a safe distance over attempting to fight anything beyond a small, contained flame." }
+    ],
     diagram:{
       svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
         <rect width="400" height="200" fill="#EFF6FF"/>
@@ -811,6 +951,13 @@ const modulesData = [
     content:"A valid Learner's Permit requires driving under the supervision of a licensed instructor or driver. Drivers must carry valid insurance, vehicle inspection certificates, and proof of registration at all times.",
     quiz:{ question:"A holder of a valid Learner's Permit is legally required to:", options:["Drive only at night","Drive under supervision of a fully licensed driver","Carry commercial passengers","Drive without speed limits"], correct:1 },
     practice:{ question:"Third-party insurance primarily protects against:", options:["Your own vehicle's cosmetic damage only","Liability for injury/damage caused to others","Fuel costs","Parking tickets"], correct:1 },
+    contentSections:[
+      { h:"Your Cubbes Certificate vs. Your FRSC Driver's Licence", p:"It's worth being precise about these two documents, because they're easy to conflate. Completing this 15-module course and passing the Module 15 assessment earns you the Cubbes Certified Road Safety & Responsible Mobility Certificate — recognition that you've completed the education stage. It is not a driver's licence and does not authorise you to drive. Your official FRSC Driver's Licence is a separate government document, issued later, only after you've also completed simulator sign-off, practical driving school training, and the formal FRSC licensing application covered in Phase 4 of this platform." },
+      { h:"Driver Licensing", p:"An FRSC driver's licence is the legal authorisation to operate a vehicle on Nigerian roads, tied to a specific class of vehicle (for this course, Class PVT — private drive). Obtaining one involves proof of identity, a medical fitness check, and passing FRSC's own assessment process — the Cubbes course prepares you for that process but doesn't replace it. Licences are typically valid for a set period before requiring renewal, and driving without a valid licence is a serious offence regardless of your actual skill level." },
+      { h:"Learner Permits", p:"A Learner's Permit allows supervised practice before full licensing — the holder must drive under the direct supervision of a fully licensed driver or instructor at all times, and typically must display 'L' plates. It exists to let new drivers build real road experience legally and safely, with someone experienced able to intervene, before they're assessed for full, unsupervised licensing." },
+      { h:"Vehicle Documentation", p:"Drivers are legally required to carry and maintain several documents: a valid driver's licence, proof of vehicle registration, a current roadworthiness/inspection certificate, and valid insurance. These aren't just paperwork — inspection certificates confirm the vehicle meets basic safety standards, and registration ties the vehicle to an accountable owner. Keep physical or digital copies accessible, since you may be asked to present them at any routine checkpoint." },
+      { h:"Insurance Fundamentals", p:"Third-party insurance — the minimum most drivers need — covers injury or damage you cause to other people or their property; it does not cover your own vehicle. Comprehensive insurance extends coverage to your own vehicle as well, at higher cost. Insurance exists because even a careful, licensed driver can be involved in a crash, and it protects both you and anyone else affected from being left with costs they can't cover." }
+    ],
     diagram:{
       svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
         <rect width="400" height="200" fill="#F8FAFC"/>
@@ -842,6 +989,11 @@ const modulesData = [
     content:"Digital navigation tools enhance journey efficiency. Set your destination in mapping apps prior to setting off and mount mobile devices securely on dashboard holders to avoid handheld distractions.",
     quiz:{ question:"When should trip destinations be entered into a mobile GPS navigation system?", options:["While driving at high speed","Before starting the trip while safely stationary","At every traffic stop light","While steering around turns"], correct:1 },
     practice:{ question:"A responsible, sustainable mobility habit includes:", options:["Idling the engine unnecessarily","Carpooling and planning efficient routes","Speeding to reduce trip time","Ignoring vehicle servicing"], correct:1 },
+    contentSections:[
+      { h:"GPS Route Planning", p:"Navigation apps are genuinely useful for unfamiliar routes, traffic-aware timing, and avoiding known hazards, but they work best when set up before you start driving, not while you're already moving. Enter your destination, review the suggested route for anything unusual, and glance at estimated arrival time while still safely stationary — treat any mid-trip changes the same way, by waiting until you can pull over safely." },
+      { h:"Mounting Safety", p:"A phone lying on the seat or being held while glancing at directions is a significant distraction risk. Use a proper dashboard or windscreen mount positioned so a quick glance doesn't require looking far from the road, and set volume and voice guidance so you can rely on audio cues rather than reading the screen while driving. If a mount isn't available, plan your route fully before departure rather than checking a handheld phone en route." },
+      { h:"Sustainable Mobility", p:"Responsible mobility extends to the environmental and social impact of how we travel. Carpooling, combining errands into fewer trips, keeping your vehicle well maintained (which reduces fuel consumption and emissions), and choosing efficient routes all reduce your footprint. On a shared road network, these habits also mean less congestion and wear for everyone else, not just lower costs for you." }
+    ],
     diagram:{
       svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
         <rect width="400" height="200" fill="#F8FAFC"/>
@@ -870,6 +1022,12 @@ const modulesData = [
     quiz:{ question:"What is the core objective of the Phase 2 Simulator training module?", options:["To replace real driving entirely","To safely develop hazard perception & steering judgment in controlled environments","To test top vehicle speed","To practice mechanical engine repairs"], correct:1 },
     practice:{ question:"Hazard perception exercises mainly train a driver's:", options:["Vehicle horsepower knowledge","Speed of recognising and reacting to danger","Parallel parking skill","Fuel efficiency habits"], correct:1 },
     hazardGame:true,
+    contentSections:[
+      { h:"Reaction Time", p:"Reaction time is the gap between spotting a hazard and beginning to respond to it — and at speed, even a fraction of a second translates into real distance travelled 'blind' to the danger. Reaction time isn't fixed; it worsens with fatigue, distraction, and unfamiliarity with a situation, and improves with practice, alertness, and anticipation. The hazard-perception exercise in this module gives you a rough sense of your own baseline before you step into a real simulator." },
+      { h:"Hazard Scanning", p:"Effective scanning means systematically sweeping your attention across the whole scene ahead and to the sides — not fixating on one point, such as the car directly in front. Trained drivers develop a scanning rhythm: far ahead, near ahead, mirrors, far ahead again. This is a habit built through deliberate repetition, which is exactly why the simulator exists — to practice it repeatedly in a safe, controlled setting before doing it in real traffic." },
+      { h:"Situational Awareness", p:"Situational awareness is holding a constantly updating mental picture of everything around your vehicle: who's ahead, behind, and beside you, what they're likely to do next, and what your own escape options are if something goes wrong. It's built by actively questioning the scene rather than driving passively — noticing that the car ahead's brake lights just came on, or that a cyclist's head-turn suggests they're about to move." },
+      { h:"Decision-Making Readiness", p:"Ultimately, all of this feeds into faster, calmer decision-making under pressure. The goal of simulator training isn't to replace real driving experience — it's to safely rehearse the kind of split-second decisions (brake, swerve, hold steady) that are too risky to practice for the first time in live traffic. Arriving at your simulator session already comfortable with scanning and reaction concepts means you'll get more out of the limited time available." }
+    ],
     diagram:{
       svg:`<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
         <rect width="400" height="200" fill="#EFF6FF"/>
@@ -920,10 +1078,11 @@ function getDefaultState(){
       { id:'seed1', type:'announcement', title:'Welcome to the FRSC Mobility Course', message:'Complete Phase 1 modules to unlock simulator booking.', time:new Date().toLocaleString(), read:false },
       { id:'seed2', type:'announcement', title:'Programme Update', message:'The DSSP-aligned curriculum has been refreshed for this academic session.', time:new Date().toLocaleString(), read:false }
     ],
-    simulator: { hub:'', slot:'', booked:false, readinessScore:null, readinessPassed:false, hazardBestReaction:null },
+    simulator: { hub:'', slot:'', booked:false, readinessScore:null, readinessQuizPassed:false, readinessPassed:false, hazardBestReaction:null, approvalStatus:'none', approvedBy:'', approvalDate:'', approvalNote:'' },
     drivingSchool: { selected:null, attendance:[], hoursCompleted:0, signOff:false },
     licensing: { checklist:{}, applicationStatus:'not_started' },
-    certificate: { issued:false, verificationRef:'', dateIssued:'' },
+    certificate: { issued:false, verificationRef:'', dateIssued:'', validUntil:'' },
+    license: { issued:false, licenseNumber:'', dateIssued:'', expiryDate:'', licenseClass:'PVT' },
     milestonesShown: [],
     module3DragComplete: false
   };
@@ -943,6 +1102,7 @@ function loadState(){
     merged.drivingSchool = Object.assign({}, def.drivingSchool, saved.drivingSchool);
     merged.licensing = Object.assign({}, def.licensing, saved.licensing);
     merged.certificate = Object.assign({}, def.certificate, saved.certificate);
+    merged.license = Object.assign({}, def.license, saved.license);
     merged.moduleStatus = Object.assign({}, def.moduleStatus, saved.moduleStatus);
     merged.moduleAttempts = Object.assign({}, def.moduleAttempts, saved.moduleAttempts);
     merged.badges = saved.badges || [];
@@ -1169,6 +1329,21 @@ let signActivityCorrect = 0;
 let hazardResults = [];
 let hazardStartTime = null;
 
+// Reading Material — full-length structured content (kept separate from
+// mod.content, which stays a short summary used by the AI clarify engine).
+// Falls back to the short summary if a module has no long-form sections yet.
+function renderReadingMaterial(mod){
+  if(mod.contentSections && mod.contentSections.length){
+    return mod.contentSections.map(s => `
+      <div class="card">
+        <h4 style="font-size:14px; margin-bottom:8px; color:var(--primary);">${s.h}</h4>
+        <p style="font-size:14px; color:var(--text-main); line-height:1.7;">${s.p}</p>
+      </div>`).join('');
+  }
+  return `<div class="card"><h4 style="font-size:15px; margin-bottom:8px;">Core Curriculum Content</h4>
+    <p style="font-size:14px; color:var(--text-main); line-height:1.6;">${mod.content}</p></div>`;
+}
+
 // Annotated diagram — a hand-drawn SVG scene with floating labeled callouts,
 // piloted on modules where a visual anchor genuinely helps (signs, following
 // distance, vehicle parts, crash-scene safety). Returns '' when a module has
@@ -1224,8 +1399,7 @@ function loadModuleDetail(moduleId){
       <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">Video Lesson ${mod.videoDuration ? '(' + mod.videoDuration + ')' : ''}</p>
     </div>
     <div id="text-${moduleId}" class="lesson-content">
-      <div class="card"><h4 style="font-size:15px; margin-bottom:8px;">Core Curriculum Content</h4>
-      <p style="font-size:14px; color:var(--text-main); line-height:1.6;">${mod.content}</p></div>
+      ${renderReadingMaterial(mod)}
     </div>`;
 
   let interactiveHtml = '';
@@ -1652,6 +1826,18 @@ function submitFinalAssessment(){
     state.moduleStatus[15] = 'completed';
     state.xp += 50;
     saveState();
+
+    // Render the result FIRST, before anything that could throw (badges,
+    // notifications, certificate issuance). This is deliberate: it used to
+    // sit after checkCertificateEligibility(), and if that chain ever threw
+    // (e.g. a blocked prompt() in an installed PWA), this success message
+    // would never render — clicking Submit would silently appear to do
+    // nothing even though the pass was already recorded.
+    body.innerHTML = `<div class="card" style="text-align:center; border-color:var(--success);">
+      <div style="font-size:15px; font-weight:700;">Passed! Score: ${pct}%</div>
+      <button class="btn btn-primary" style="margin-top:10px;" onclick="switchView('view-certificate')">View Certificate</button>
+    </div>`;
+
     renderModulesList();
     renderHome();
     addNotification('module', 'Final Assessment Passed', `Score: ${pct}%`);
@@ -1659,10 +1845,6 @@ function submitFinalAssessment(){
     checkBadges();
     checkMilestones();
     checkCertificateEligibility();
-    body.innerHTML = `<div class="card" style="text-align:center; border-color:var(--success);">
-      <div style="font-size:15px; font-weight:700;">Passed! Score: ${pct}%</div>
-      <button class="btn btn-primary" style="margin-top:10px;" onclick="switchView('view-certificate')">View Certificate</button>
-    </div>`;
   } else {
     body.innerHTML = `<div class="card" style="text-align:center; border-color:#EF4444;">
       <div style="font-size:15px; font-weight:700; color:#EF4444;">Score: ${pct}% — 80% needed</div>
@@ -1679,8 +1861,10 @@ function renderBookingHub(){
   const simEl = document.getElementById('sim-summary-status');
   const pracEl = document.getElementById('practical-summary-status');
   if(!simEl || !pracEl) return;
-  simEl.innerText = state.simulator.readinessPassed ? `Passed (${state.simulator.readinessScore}%)`
-    : state.simulator.booked ? 'Booked — assessment pending'
+  simEl.innerText = state.simulator.readinessPassed ? `Approved (${state.simulator.readinessScore}%)`
+    : state.simulator.approvalStatus === 'pending' ? 'Awaiting instructor sign-off'
+    : state.simulator.approvalStatus === 'rejected' ? 'Sign-off not approved — retake needed'
+    : state.simulator.booked ? 'Booked — take the assessment'
     : completedCount() >= 5 ? 'Ready to book' : `Locked — complete 5+ modules first`;
   pracEl.innerText = state.drivingSchool.signOff ? 'Completed'
     : state.drivingSchool.selected ? `${state.drivingSchool.hoursCompleted.toFixed(1)}/10 hrs logged`
@@ -1747,6 +1931,13 @@ const readinessQuestions = [
   { q:"While driving, you feel your attention drifting and your eyelids getting heavy. You should:", options:["Continue driving to reach your destination faster","Open the windows and keep driving","Pull over safely and rest before continuing","Turn up the music volume"], correct:2 }
 ];
 
+// Passing the in-app quiz only makes a student ELIGIBLE for sign-off — an
+// FRSC-certified simulator instructor must still approve the session before
+// Phase 3 unlocks. In this single-device prototype, that instructor action
+// happens in the Simulator Instructor Panel (see renderSimAdminPanel) and
+// writes to the same shared state, so it reflects immediately in the
+// student-facing views. A production build would move this approval to a
+// separate admin login on a backend so it can happen on a different device.
 function renderReadinessCard(){
   const card = document.getElementById('readiness-assessment-card');
   if(!card) return;
@@ -1754,14 +1945,32 @@ function renderReadinessCard(){
     card.innerHTML = `<div style="font-size:12px; color:var(--text-muted);">Book a simulator session above to unlock your Driving Readiness Assessment.</div>`;
     return;
   }
-  if(state.simulator.readinessPassed){
-    card.innerHTML = `<h4 style="font-size:14px; font-weight:700; margin-bottom:6px;">Driving Readiness Assessment: Passed</h4>
-      <div style="font-size:13px; color:var(--text-main);">Score: ${state.simulator.readinessScore}% — you're cleared to proceed to Phase 3.</div>`;
+  const sim = state.simulator;
+  if(sim.approvalStatus === 'approved' && sim.readinessPassed){
+    card.innerHTML = `<h4 style="font-size:14px; font-weight:700; margin-bottom:6px;">Driving Readiness Assessment: Approved</h4>
+      <div style="font-size:13px; color:var(--text-main); line-height:1.6;">
+        Quiz score: ${sim.readinessScore}%<br>
+        Signed off by: ${sim.approvedBy || 'Simulator Instructor'} on ${sim.approvalDate}<br>
+        You're cleared to proceed to Phase 3.
+      </div>`;
+    return;
+  }
+  if(sim.approvalStatus === 'pending'){
+    card.innerHTML = `<h4 style="font-size:14px; font-weight:700; margin-bottom:6px;">Pending Instructor Sign-Off</h4>
+      <div style="font-size:13px; color:var(--text-main); margin-bottom:8px;">Quiz score: ${sim.readinessScore}% — submitted for review. An FRSC-certified simulator instructor needs to approve your session before Phase 3 unlocks.</div>
+      <div style="font-size:11px; color:var(--text-muted);">Demo: staff approve this in the <a href="#" onclick="switchView('view-sim-admin'); return false;" style="color:var(--primary-light); font-weight:600;">Simulator Instructor Panel</a>.</div>`;
+    return;
+  }
+  if(sim.approvalStatus === 'rejected'){
+    card.innerHTML = `<h4 style="font-size:14px; font-weight:700; margin-bottom:6px; color:#EF4444;">Sign-Off Not Approved</h4>
+      <div style="font-size:13px; color:var(--text-main); margin-bottom:8px;">${sim.approvalNote || 'Your instructor has asked you to retake the assessment.'}</div>
+      <div id="readiness-quiz-body"></div>
+      <button class="btn btn-secondary" onclick="showReadinessQuiz()">Retake Assessment</button>`;
     return;
   }
   card.innerHTML = `
     <h4 style="font-size:14px; font-weight:700; margin-bottom:8px;">Driving Readiness Assessment</h4>
-    <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">5 hazard-judgement questions. 70%+ required to pass and unlock Phase 3.</p>
+    <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">5 hazard-judgement questions. 70%+ submits your session for instructor sign-off before Phase 3 unlocks.</p>
     <div id="readiness-quiz-body"></div>
     <button class="btn btn-secondary" onclick="showReadinessQuiz()">Take Assessment</button>`;
 }
@@ -1776,7 +1985,8 @@ function showReadinessQuiz(){
           <input type="radio" name="readiness-q${i}" value="${idx}"> ${opt}
         </label>`).join('')}
     </div>`).join('') + `<button class="btn btn-primary" onclick="submitReadiness()">Submit Assessment</button>`;
-  document.querySelector('#readiness-assessment-card .btn-secondary').style.display = 'none';
+  const startBtn = document.querySelector('#readiness-assessment-card .btn-secondary');
+  if(startBtn) startBtn.style.display = 'none';
 }
 
 function submitReadiness(){
@@ -1787,11 +1997,116 @@ function submitReadiness(){
   });
   const pct = Math.round((correct / readinessQuestions.length) * 100);
   state.simulator.readinessScore = pct;
-  state.simulator.readinessPassed = pct >= 70;
+  state.simulator.readinessQuizPassed = pct >= 70;
+  state.simulator.readinessPassed = false; // only instructor approval sets this true
+  state.simulator.approvalStatus = state.simulator.readinessQuizPassed ? 'pending' : 'none';
+  state.simulator.approvalNote = '';
+  saveState();
+  if(state.simulator.readinessQuizPassed){
+    addNotification('assessment', 'Readiness Quiz Submitted', `Score: ${pct}% — awaiting instructor sign-off before Phase 3 unlocks.`);
+    showToast(`Quiz passed (${pct}%) — awaiting instructor sign-off.`);
+  } else {
+    addNotification('assessment', 'Readiness Assessment: Retry Needed', `Score: ${pct}% — 70%+ needed to submit for sign-off.`);
+    showToast(`Score: ${pct}% — 70%+ needed, try again.`);
+  }
+  renderReadinessCard();
+  renderBookingHub();
+  renderTracker();
+  renderHome();
+}
+
+// ---------------------------------------------------------------------
+// SIMULATOR INSTRUCTOR PANEL (demo admin side — same device/localStorage).
+// In production this would be a separate authenticated dashboard on a
+// backend; here it simulates the two-sided workflow the way the framework
+// describes it: student submits -> instructor reviews -> student sees the
+// outcome immediately once approved.
+// ---------------------------------------------------------------------
+let simAdminAuthed = false;
+const SIM_ADMIN_PASSCODE = 'FRSC-ADMIN';
+
+function renderSimAdminPanel(){
+  const container = document.getElementById('sim-admin-container');
+  if(!container) return;
+  if(!simAdminAuthed){
+    container.innerHTML = `
+      <div class="card">
+        <h4 style="font-size:14px; font-weight:700; margin-bottom:8px;">Instructor Login</h4>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Demo passcode: <code>${SIM_ADMIN_PASSCODE}</code> (staff-only in a real deployment).</p>
+        <input type="password" id="sim-admin-passcode" placeholder="Enter passcode" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); font-size:13px; margin-bottom:10px;">
+        <button class="btn btn-primary" onclick="simAdminLogin()">Log In</button>
+      </div>`;
+    return;
+  }
+
+  const sim = state.simulator;
+  if(!sim.booked){
+    container.innerHTML = `<div class="card"><div style="font-size:13px; color:var(--text-muted);">No simulator booking on this device yet.</div></div>`;
+    return;
+  }
+  if(sim.approvalStatus !== 'pending'){
+    container.innerHTML = `<div class="card">
+      <h4 style="font-size:14px; font-weight:700; margin-bottom:6px;">No Pending Sign-Offs</h4>
+      <div style="font-size:13px; color:var(--text-muted);">Current status: ${sim.approvalStatus === 'approved' ? 'Approved' : sim.approvalStatus === 'rejected' ? 'Rejected — awaiting student retake' : 'No submission yet'}.</div>
+    </div>`;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="card" style="border-color:var(--warning);">
+      <div style="font-size:11px; font-weight:700; color:var(--warning); text-transform:uppercase;">Pending Review</div>
+      <div style="font-size:14px; font-weight:700; margin-top:4px;">${state.studentName || 'Student'}</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">${state.institution || 'Institution not set'}</div>
+      <div style="font-size:13px; margin-top:10px; line-height:1.7;">
+        Hub: ${sim.hub}<br>Slot: ${sim.slot}<br>Quiz score: ${sim.readinessScore}%
+      </div>
+      <label style="font-size:12px; font-weight:600; display:block; margin:10px 0 6px;">Instructor name</label>
+      <input type="text" id="sim-admin-instructor-name" placeholder="e.g. Instructor Adebayo" style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--border); font-size:13px; margin-bottom:10px;">
+      <label style="font-size:12px; font-weight:600; display:block; margin-bottom:6px;">Note to student (only used if requesting a retake)</label>
+      <textarea id="sim-admin-note" rows="2" placeholder="e.g. Review hazard perception before retaking" style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--border); font-size:13px; margin-bottom:10px;"></textarea>
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-primary" style="flex:1;" onclick="simAdminApprove()">Approve</button>
+        <button class="btn btn-outline" style="flex:1;" onclick="simAdminReject()">Request Retake</button>
+      </div>
+    </div>`;
+}
+
+function simAdminLogin(){
+  const val = document.getElementById('sim-admin-passcode').value;
+  if(val === SIM_ADMIN_PASSCODE){
+    simAdminAuthed = true;
+    renderSimAdminPanel();
+  } else {
+    alert('Incorrect passcode.');
+  }
+}
+
+function simAdminApprove(){
+  const name = document.getElementById('sim-admin-instructor-name').value.trim() || 'Simulator Instructor';
+  state.simulator.readinessPassed = true;
+  state.simulator.approvalStatus = 'approved';
+  state.simulator.approvedBy = name;
+  state.simulator.approvalDate = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
   saveState();
   checkBadges();
-  addNotification('assessment', state.simulator.readinessPassed ? 'Readiness Assessment Passed' : 'Readiness Assessment: Retry Needed', `Score: ${pct}%`);
-  showToast(state.simulator.readinessPassed ? `Passed with ${pct}%!` : `Score: ${pct}% — 70%+ needed, try again.`);
+  addNotification('assessment', 'Readiness Assessment Approved', `Signed off by ${name}. Phase 3 is now unlocked.`);
+  showToast('Session approved — student can now proceed to Phase 3.');
+  renderSimAdminPanel();
+  renderReadinessCard();
+  renderBookingHub();
+  renderTracker();
+  renderHome();
+}
+
+function simAdminReject(){
+  const note = document.getElementById('sim-admin-note').value.trim() || 'Please review the material and retake the assessment.';
+  state.simulator.readinessPassed = false;
+  state.simulator.approvalStatus = 'rejected';
+  state.simulator.approvalNote = note;
+  saveState();
+  addNotification('assessment', 'Readiness Sign-Off Not Approved', note);
+  showToast('Student notified to retake the assessment.');
+  renderSimAdminPanel();
   renderReadinessCard();
   renderBookingHub();
   renderTracker();
@@ -1892,18 +2207,88 @@ function checkCertificateEligibility(){
 }
 
 function issueCertificate(){
-  if(!state.studentName) state.studentName = prompt('Enter your full name for your certificate:') || 'Cubbes Student';
-  if(!state.institution) state.institution = prompt('Enter your institution:') || 'Independent Learner';
+  // No blocking prompt() here — it's unreliable in installed PWAs and many
+  // mobile/in-app browsers, and a thrown/blocked dialog used to silently
+  // stop the whole submit flow before the pass/fail message could render.
+  // Use sensible fallbacks instead; students can correct these anytime from
+  // the Profile tab and the certificate preview updates immediately.
+  if(!state.studentName) state.studentName = 'Cubbes Student';
+  if(!state.institution) state.institution = 'Independent Learner';
+  const issue = new Date();
+  const validUntil = new Date(issue); validUntil.setFullYear(validUntil.getFullYear() + 2);
   state.certificate.issued = true;
-  state.certificate.dateIssued = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
-  state.certificate.verificationRef = 'CUBBES-' + new Date().getFullYear() + '-' + Math.random().toString(36).substring(2,8).toUpperCase();
+  state.certificate.dateIssued = issue.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+  state.certificate.validUntil = validUntil.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+  state.certificate.verificationRef = 'CC-RSRM-' + String(Math.floor(Math.random() * 100000)).padStart(5, '0');
   saveState();
   checkBadges();
   addNotification('certificate', 'Certificate Available!', 'Your Cubbes Certified Road Safety & Responsible Mobility Certificate is ready.');
-  showToast('Certificate unlocked! View it from the Tracker tab.');
+  showToast('Certificate unlocked! View it from your Profile.');
   renderCertificate();
+  renderProfileCertificateCard();
   renderTracker();
   renderHome();
+}
+
+function certificateCompetenceLevel(){
+  const score = state.moduleAttempts[15]?.bestScore ?? 100;
+  if(score >= 95) return 'Distinguished Competence';
+  if(score >= 90) return 'Advanced Competence';
+  return 'Basic Competence';
+}
+
+// Shared markup for the certificate itself — used by both the full Tracker
+// view and the compact preview embedded in Profile.
+function certificateMarkup(){
+  const c = state.certificate;
+  return `
+    <div class="cert-v2">
+      <span class="cert-corner tl"></span><span class="cert-corner tr"></span>
+      <span class="cert-corner bl"></span><span class="cert-corner br"></span>
+      <div class="cert-id">CERTIFICATE ID:<br>${c.verificationRef}</div>
+      <div class="cert-brand-title">CUBBES CERTIFIED</div>
+      <div class="cert-subtitle">ROAD SAFETY &amp; RESPONSIBLE MOBILITY</div>
+      <div class="cert-type-label">C E R T I F I C A T E</div>
+      <div class="cert-divider"></div>
+      <div class="cert-intro">This is to certify that</div>
+      <div class="cert-name-script">${state.studentName || 'Cubbes Student'}</div>
+      <div class="cert-name-underline"></div>
+      <div class="cert-body-text">has successfully completed the Cubbes Road Safety &amp; Responsible Mobility Programme<br>and demonstrated the knowledge, skills, and responsible attitude required<br>for safe and responsible road use.</div>
+      <div class="cert-badges">
+        <div class="cert-badge">
+          <div class="cert-badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v14"></path><path d="M4 19a2 2 0 0 0 2 2h11"></path><path d="M8 7h6"></path></svg></div>
+          <div><div class="cert-badge-label">Programme<br>Completed</div><div class="cert-badge-value">${c.dateIssued}</div></div>
+        </div>
+        <div class="cert-badge">
+          <div class="cert-badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="8" r="5"></circle><polyline points="8.21 13.89 7 22 12 19 17 22 15.79 13.88"></polyline></svg></div>
+          <div><div class="cert-badge-label">Level<br>Achieved</div><div class="cert-badge-value">${certificateCompetenceLevel()}</div></div>
+        </div>
+        <div class="cert-badge">
+          <div class="cert-badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg></div>
+          <div><div class="cert-badge-label">Date<br>Issued</div><div class="cert-badge-value">${c.dateIssued}</div></div>
+        </div>
+        <div class="cert-badge">
+          <div class="cert-badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"></path><polyline points="9 12 11 14 15 10"></polyline></svg></div>
+          <div><div class="cert-badge-label">Valid<br>Until</div><div class="cert-badge-value">${c.validUntil || ''}</div></div>
+        </div>
+      </div>
+      <div class="cert-sign-row">
+        <div class="cert-sign-col">
+          <div class="cert-sign-org">FEDERAL ROAD SAFETY CORPS (FRSC)</div>
+          <div class="cert-sign-name">R. Adeyemi</div>
+          <div class="cert-sign-line"></div>
+          <div class="cert-sign-title">Deputy Corps Marshal<br>Operations</div>
+        </div>
+        <div class="cert-sign-col">
+          <div class="cert-sign-org">CUBBES</div>
+          <div class="cert-sign-name">M. Balogun</div>
+          <div class="cert-sign-line"></div>
+          <div class="cert-sign-title">Chief Executive Officer<br>Cubbes Technologies Ltd.</div>
+        </div>
+      </div>
+      <div class="cert-stamp">PROTOTYPE<small>NOT FOR OFFICIAL USE</small></div>
+      <div class="cert-footer-note">This certificate is issued electronically and is valid when verified on the Cubbes Platform.</div>
+    </div>`;
 }
 
 function renderCertificate(){
@@ -1911,31 +2296,62 @@ function renderCertificate(){
   if(!container) return;
   if(!state.certificate.issued){
     container.innerHTML = `<div class="card" style="text-align:center; padding:40px 20px;">
-      
-      <p style="font-size:13px; color:var(--text-muted); margin-top:10px;">Pass the Module 15 Final Assessment (80%+) to unlock your certificate.</p>
+      <p style="font-size:13px; color:var(--text-muted);">Pass the Module 15 Final Assessment (80%+) to unlock your certificate.</p>
       <div style="font-size:12px; color:var(--text-main); margin-top:6px;">Progress: ${completedCount()}/15 modules completed.</div>
     </div>`;
     return;
   }
   container.innerHTML = `
-    <div class="certificate-frame">
-      <div style="font-size:11px; letter-spacing:1px; color:var(--text-muted); text-transform:uppercase;">National Student Road Safety & Responsible Mobility Framework</div>
-      <div style="font-size:22px; font-weight:800; color:var(--primary); margin-top:10px;">Certificate of Completion</div>
-      <div style="font-size:12px; color:var(--text-muted); margin-top:14px;">This certifies that</div>
-      <div style="font-size:20px; font-weight:700; margin-top:4px;">${state.studentName}</div>
-      <div style="font-size:12px; color:var(--text-muted); margin-top:6px;">of ${state.institution}</div>
-      <div style="font-size:13px; margin-top:14px; line-height:1.6;">has successfully completed Phase 1 of the FRSC Mobility Course and is hereby awarded the</div>
-      <div style="font-size:16px; font-weight:800; color:var(--accent); margin-top:8px;">Cubbes Certified Road Safety & Responsible Mobility Certificate</div>
-      <div class="cert-qr"></div>
-      <div style="font-size:10px; color:var(--text-muted);">Verification QR (preview placeholder)</div>
-      <div style="font-size:12px; margin-top:14px;"><strong>Date of Completion:</strong> ${state.certificate.dateIssued}</div>
-      <div style="font-size:12px; margin-top:2px;"><strong>Verification Reference:</strong> ${state.certificate.verificationRef}</div>
+    <div class="card" style="background:var(--primary-bg); border-color:var(--primary-light);">
+      <div style="font-size:12px; color:var(--text-main);">This is your <strong>Cubbes Certificate</strong> — recognition for completing Phase 1's education. It is <strong>not</strong> a driver's licence. Your official FRSC Driver's Licence is issued separately, later, after Phases 2–4.</div>
     </div>
-    <button class="btn btn-primary" style="margin-top:14px;" onclick="window.print()">Print / Save as PDF</button>`;
+    ${certificateMarkup()}
+    <div style="display:flex; gap:8px; margin-top:14px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="window.print()">Download (PDF)</button>
+      <button class="btn btn-secondary" style="flex:1;" onclick="shareCertificate()">Share</button>
+    </div>
+    ${state.license.issued ? `<button class="btn btn-secondary" style="margin-top:8px;" onclick="switchView('view-license')">View my Driver's Licence instead</button>` : ''}`;
+}
+
+// Compact certificate card surfaced directly in the Profile tab — locked
+// teaser before completion, live preview + actions once it's unlocked.
+function renderProfileCertificateCard(){
+  const container = document.getElementById('profile-certificate-container');
+  if(!container) return;
+  if(!state.certificate.issued){
+    container.innerHTML = `<div class="card" style="text-align:center; padding:28px 16px;">
+      <p style="font-size:13px; color:var(--text-muted);">Your certificate unlocks automatically once you complete all 15 modules and pass the Module 15 Final Assessment (80%+).</p>
+      <div style="font-size:12px; color:var(--text-main); margin-top:6px;">Progress: ${completedCount()}/15 modules completed.</div>
+    </div>`;
+    return;
+  }
+  container.innerHTML = `
+    <div class="cert-preview-mini">${certificateMarkup()}</div>
+    <div style="display:flex; gap:8px; margin-top:8px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="window.print()">Download</button>
+      <button class="btn btn-secondary" style="flex:1;" onclick="shareCertificate()">Share</button>
+    </div>`;
+}
+
+// Share via the native Web Share sheet where supported (mobile browsers);
+// otherwise copy a verification-ready summary to the clipboard.
+async function shareCertificate(){
+  const c = state.certificate;
+  const text = `I completed the Cubbes Road Safety & Responsible Mobility Programme! Certificate ID: ${c.verificationRef} (issued ${c.dateIssued}).`;
+  if(navigator.share){
+    try { await navigator.share({ title: 'My Cubbes Certificate', text }); return; }
+    catch(e) { /* user cancelled or unsupported — fall through to clipboard */ }
+  }
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast('Certificate details copied — paste anywhere to share.');
+  } catch(e) {
+    showToast('Use Download to save a copy you can share manually.');
+  }
 }
 
 // ---------------------------------------------------------------------
-// TRACKER — hero CTA, stepper, outstanding/checklist accordions, licensing stage
+// TRACKER — hero CTA, stepper, certificate status, licensing stage + checklist
 // ---------------------------------------------------------------------
 const CHECKLIST_ITEMS = [
   { key:'modules', label:'Complete all 15 digital modules' },
@@ -1972,7 +2388,7 @@ function getPrimaryCTA(){
   if(!state.drivingSchool.selected) return { label:'Enroll in Driving School →', action:"switchView('view-practical')" };
   if(!state.drivingSchool.signOff) return { label:'Log Training Hours →', action:"switchView('view-practical')" };
   if(!isLicensed()) return { label:'Advance Licensing Application →', action:"document.getElementById('licensing-stage-card').scrollIntoView({behavior:'smooth'})" };
-  return { label:'View Certificate', action:"switchView('view-certificate')" };
+  return { label:"View My Driver's Licence", action:"switchView('view-license')" };
 }
 
 function renderTrackerHero(){
@@ -1996,7 +2412,7 @@ function renderStepper(){
     { icon: completedCount() >= 15 ? '✓' : '1', label:'Phase 1: Digital Education', status:`${completedCount()}/15 modules`, done:completedCount() >= 15, action:"switchView('view-modules')" },
     { icon: state.simulator.readinessPassed ? '✓' : '2', label:'Phase 2: Simulation Assessment', status: state.simulator.readinessPassed ? `Passed (${state.simulator.readinessScore}%)` : 'Not yet passed', done:state.simulator.readinessPassed, action:"switchView('view-simulation')" },
     { icon: state.drivingSchool.signOff ? '✓' : '3', label:'Phase 3: Driving School', status: state.drivingSchool.signOff ? 'Sign-off received' : `${state.drivingSchool.hoursCompleted.toFixed(1)}/10 hrs`, done:state.drivingSchool.signOff, action:"switchView('view-practical')" },
-    { icon: isLicensed() ? '✓' : '4', label:"Phase 4: FRSC Licence", status: LICENSING_LABELS[state.licensing.applicationStatus], done:isLicensed(), action:"document.getElementById('licensing-stage-card').scrollIntoView({behavior:'smooth'})" },
+    { icon: isLicensed() ? '✓' : '4', label:"Phase 4: FRSC Licensing", status: isLicensed() ? "Driver's Licence issued" : LICENSING_LABELS[state.licensing.applicationStatus], done:isLicensed(), action:"document.getElementById('licensing-stage-card').scrollIntoView({behavior:'smooth'})" },
     { icon: isLicensed() ? '✓' : '5', label:'Phase 5: Continuous Development', status: isLicensed() ? 'Unlocked' : 'Preview available', done:isLicensed(), action:"switchView('view-profile')" }
   ];
   stepper.innerHTML = rows.map(r => `
@@ -2010,17 +2426,45 @@ function renderStepper(){
     </div>`).join('');
 }
 
+// Two deliberately separate cards — the Cubbes Certificate (Phase 1 education
+// recognition) and the FRSC Driver's Licence (Phase 4 legal authorisation)
+// are different documents from different issuers, earned at different times,
+// so they get different sections rather than being bundled into one card.
+function renderCertificateStatusCard(){
+  const card = document.getElementById('cubbes-certificate-status-card');
+  if(!card) return;
+  if(!state.certificate.issued){
+    card.innerHTML = `
+      <div style="font-size:13px; font-weight:700;">Not yet earned</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-top:6px;">Awarded by Cubbes on completing all 15 Phase 1 modules and passing the Module 15 Final Assessment (80%+).</div>
+      <div style="font-size:12px; color:var(--text-main); margin-top:8px;">Progress: ${completedCount()}/15 modules completed.</div>`;
+    return;
+  }
+  card.innerHTML = `
+    <div style="font-size:13px; font-weight:700; color:var(--success);">Earned — ${state.certificate.dateIssued}</div>
+    <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">Certificate ID: ${state.certificate.verificationRef}</div>
+    <div style="font-size:11px; color:var(--text-muted); margin-top:6px;">Issued by Cubbes for completing Phase 1 education. This is not a driver's licence.</div>
+    <button class="btn btn-primary" style="margin-top:10px;" onclick="switchView('view-certificate')">View / Download / Share</button>`;
+}
+
 function renderLicensingStageCard(){
   const card = document.getElementById('licensing-stage-card');
   if(!card) return;
   const eligible = completedCount() >= 15 && state.simulator.readinessPassed && state.drivingSchool.signOff;
   const currentIdx = LICENSING_STAGES.indexOf(state.licensing.applicationStatus);
   const nextStage = LICENSING_STAGES[currentIdx + 1];
+  if(state.license.issued){
+    card.innerHTML = `
+      <div style="font-size:13px; font-weight:700; color:var(--success);">Issued — ${state.license.dateIssued}</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">Licence Number: ${state.license.licenseNumber} • Class ${state.license.licenseClass}</div>
+      <div style="font-size:11px; color:var(--text-muted); margin-top:6px;">Issued by the Federal Road Safety Corps after completing the full pathway. This is separate from your Cubbes Certificate.</div>
+      <button class="btn btn-primary" style="margin-top:10px;" onclick="switchView('view-license')">View Driver's Licence</button>`;
+    return;
+  }
   card.innerHTML = `
-    <div style="font-size:13px; font-weight:700;">Phase 4: FRSC Licensing Application</div>
     <div style="font-size:13px; margin-top:4px;">Current stage: <strong>${LICENSING_LABELS[state.licensing.applicationStatus]}</strong></div>
-    ${eligible && nextStage ? `<button class="btn btn-secondary" style="margin-top:10px;" onclick="advanceLicensingStage()">Mark stage complete: "${LICENSING_LABELS[nextStage]}"</button>` : (!eligible ? `<div style="font-size:12px; color:var(--text-muted); margin-top:6px;">Complete Phases 1–3 to begin your licensing application.</div>` : '')}
-    ${state.certificate.issued ? `<button class="btn btn-primary" style="margin-top:10px;" onclick="switchView('view-certificate')">View Certificate</button>` : ''}`;
+    <div style="font-size:11px; color:var(--text-muted); margin-top:6px;">This is the formal FRSC application process — it produces your official Driver's Licence, not the Cubbes Certificate above.</div>
+    ${eligible && nextStage ? `<button class="btn btn-secondary" style="margin-top:10px;" onclick="advanceLicensingStage()">Mark stage complete: "${LICENSING_LABELS[nextStage]}"</button>` : (!eligible ? `<div style="font-size:12px; color:var(--text-muted); margin-top:6px;">Complete Phases 1–3 to begin your licensing application.</div>` : '')}`;
 }
 
 function advanceLicensingStage(){
@@ -2031,10 +2475,74 @@ function advanceLicensingStage(){
   saveState();
   addNotification('licensing', 'Licensing Stage Updated', LICENSING_LABELS[nextStage]);
   showToast(`Stage updated: ${LICENSING_LABELS[nextStage]}`);
-  if(nextStage === 'licensed') checkBadges();
+  if(nextStage === 'licensed'){
+    issueDriverLicense();
+    checkBadges();
+  }
   renderTracker();
   renderHome();
   renderGraduateHub();
+}
+
+// ---------------------------------------------------------------------
+// FRSC DRIVER'S LICENCE — a distinct artifact from the Cubbes Certificate.
+// The Certificate (issued earlier, after Module 15) recognises completion
+// of Cubbes' Phase 1 road-safety education. The Driver's Licence is the
+// official government document, issued only after practical training and
+// the formal FRSC licensing application (Phase 4) are both complete.
+// They are never the same object and are never issued at the same time.
+// ---------------------------------------------------------------------
+function issueDriverLicense(){
+  if(state.license.issued) return;
+  const issue = new Date();
+  const expiry = new Date(issue); expiry.setFullYear(expiry.getFullYear() + 5);
+  state.license.issued = true;
+  state.license.licenseNumber = 'FRSC-' + Math.floor(10000000 + Math.random() * 89999999);
+  state.license.dateIssued = issue.toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+  state.license.expiryDate = expiry.toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+  state.license.licenseClass = 'PVT';
+  saveState();
+  addNotification('license', "FRSC Driver's Licence Issued", 'Your official driver\'s licence is separate from your Cubbes Certificate — view it under Tracker.');
+  showToast("Congratulations — your FRSC Driver's Licence has been issued!");
+}
+
+function renderLicenseView(){
+  const container = document.getElementById('license-container');
+  if(!container) return;
+  if(!state.license.issued){
+    container.innerHTML = `<div class="card" style="text-align:center; padding:40px 20px;">
+      <p style="font-size:13px; color:var(--text-muted);">Your FRSC Driver's Licence is a separate document from your Cubbes Certificate. It's issued only after Phase 4 (the formal FRSC licensing application) reaches "Licensed".</p>
+      <div style="font-size:12px; color:var(--text-main); margin-top:6px;">Current stage: ${LICENSING_LABELS[state.licensing.applicationStatus]}</div>
+    </div>`;
+    return;
+  }
+  container.innerHTML = `
+    <div class="license-card">
+      <div class="license-card-header">
+        <div>
+          <div style="font-size:10px; letter-spacing:1px; opacity:0.85; text-transform:uppercase;">Federal Republic of Nigeria</div>
+          <div style="font-size:15px; font-weight:800; margin-top:2px;">FRSC Driver's Licence</div>
+        </div>
+        <div style="font-size:10px; font-weight:700; background:rgba(255,255,255,0.2); padding:4px 8px; border-radius:6px;">Class ${state.license.licenseClass}</div>
+      </div>
+      <div class="license-card-body">
+        <div style="font-size:11px; opacity:0.75;">Licence Holder</div>
+        <div style="font-size:16px; font-weight:700; margin-top:2px;">${state.studentName || 'Cubbes Student'}</div>
+        <div style="display:flex; justify-content:space-between; margin-top:14px; gap:10px;">
+          <div><div style="font-size:10px; opacity:0.75;">Licence Number</div><div style="font-size:13px; font-weight:700;">${state.license.licenseNumber}</div></div>
+          <div><div style="font-size:10px; opacity:0.75;">Class</div><div style="font-size:13px; font-weight:700;">${state.license.licenseClass} (Private Drive)</div></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-top:10px; gap:10px;">
+          <div><div style="font-size:10px; opacity:0.75;">Issue Date</div><div style="font-size:13px; font-weight:700;">${state.license.dateIssued}</div></div>
+          <div><div style="font-size:10px; opacity:0.75;">Expiry Date</div><div style="font-size:13px; font-weight:700;">${state.license.expiryDate}</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="border-color:var(--border); background:var(--bg-canvas);">
+      <div style="font-size:12px; color:var(--text-muted);">This is your official FRSC Driver's Licence — separate from and issued after your Cubbes Certificate. It authorises you to legally operate a private vehicle in Nigeria.</div>
+    </div>
+    <button class="btn btn-primary" onclick="window.print()">Print / Save as PDF</button>
+    <button class="btn btn-secondary" style="margin-top:8px;" onclick="switchView('view-certificate')">View Cubbes Certificate instead</button>`;
 }
 
 function toggleChecklist(key, checked){ state.licensing.checklist[key] = checked; saveState(); renderTracker(); }
@@ -2046,14 +2554,6 @@ function renderTracker(){
 
   renderTrackerHero();
   renderStepper();
-
-  const outstanding = CHECKLIST_ITEMS.filter(item => !state.licensing.checklist[item.key]).map(item => item.label);
-  const outstandingCard = document.getElementById('outstanding-card');
-  if(outstandingCard){
-    outstandingCard.innerHTML = outstanding.length ?
-      `<ul style="font-size:13px; padding-left:18px;">${outstanding.map(o => `<li style="margin-bottom:6px;">${o}</li>`).join('')}</ul>` :
-      `<div style="font-size:13px; color:var(--success); font-weight:600;">✓ Everything is complete — you're ready for FRSC licensing!</div>`;
-  }
 
   const checklistCard = document.getElementById('checklist-card');
   if(checklistCard){
@@ -2067,6 +2567,7 @@ function renderTracker(){
     }).join('');
   }
 
+  renderCertificateStatusCard();
   renderLicensingStageCard();
 }
 
@@ -2180,16 +2681,18 @@ function switchView(viewId){
   document.getElementById(viewId).classList.add('active');
 
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  const map = { 'view-home':0, 'view-modules':1, 'view-module-detail':1, 'view-booking':2, 'view-simulation':2, 'view-practical':2, 'view-tracker':3, 'view-certificate':3, 'view-profile':4 };
+  const map = { 'view-home':0, 'view-modules':1, 'view-module-detail':1, 'view-booking':2, 'view-simulation':2, 'view-sim-admin':2, 'view-practical':2, 'view-tracker':3, 'view-certificate':3, 'view-license':3, 'view-profile':4 };
   const idx = map[viewId];
   if(idx !== undefined) document.querySelector(`.nav-item[data-idx="${idx}"]`).classList.add('active');
 
   if(viewId === 'view-booking') renderBookingHub();
   if(viewId === 'view-simulation'){ renderSimulatorCard(); renderReadinessCard(); }
+  if(viewId === 'view-sim-admin') renderSimAdminPanel();
   if(viewId === 'view-practical') renderDrivingSchoolCard();
   if(viewId === 'view-tracker') renderTracker();
   if(viewId === 'view-certificate') renderCertificate();
-  if(viewId === 'view-profile'){ renderProfileHeader(false); renderLeaderboard(); renderBadges(); renderGraduateHub(); }
+  if(viewId === 'view-license') renderLicenseView();
+  if(viewId === 'view-profile'){ renderProfileHeader(false); renderProfileCertificateCard(); renderLeaderboard(); renderBadges(); renderGraduateHub(); }
   if(viewId === 'view-home') renderHome();
 }
 

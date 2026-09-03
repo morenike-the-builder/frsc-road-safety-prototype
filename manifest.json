@@ -1,6 +1,6 @@
 {
-  "name": "Cubbes FRSC Mobility Course",
-  "short_name": "Cubbes",
+  "name": "Cubbes Mobility",
+  "short_name": "Cubbes Mobility",
   "description": "National Road Safety & Responsible Mobility learning platform — from digital education through simulation, practical training, and FRSC licensing.",
   "start_url": "./index.html",
   "scope": "./",
